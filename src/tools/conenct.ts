@@ -1,10 +1,81 @@
 import Web3 from "web3"
+import BounceERC20 from '@/tools/web3/abi/BounceERC20.json'
 
 export const web3Provide = Web3.givenProvider || 'https://mainnet.infura.io/v3/0b500c5f885b43a4ab192e8048f6fa8'
 const web3 = new Web3(web3Provide)
+import { BigNumber } from 'bignumber.js';
+BigNumber.config({ EXPONENTIAL_AT: [-30, 30] })
+
+export const getWei = (decimals: string) => {
+  switch (decimals) {
+    case '0':
+      return 'nanoether'
+    case '1':
+      return 'wei';
+    case '3':
+      return 'kwei'
+    case '6':
+      return 'mwei'
+    case '9':
+      return 'gwei'
+    case '12':
+      return 'szabo'
+    case '15':
+      return 'finney'
+    case '18':
+      return 'ether'
+    default:
+      return 'ether'
+  }
+}
+
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 export const myweb3 = () => {
   return web3
+}
+
+export const fromWei = (value: string, decimals = 18) => {
+  return new BigNumber(value).dividedBy(new BigNumber(10).pow(decimals))
+}
+export const weiToNum = (value: string, decimals = 18, fixed = 6) => {
+  return new BigNumber(fromWei(value, decimals).toFixed(fixed === -1 ? 0 : fixed, 1)).toNumber().toString()
+}
+
+
+export function getContract (abi: any, address: string) {
+  return new web3.eth.Contract(abi, address)
+}
+
+export const exportErc20Info = async (tokenAddr: string) => {
+  let price = 0
+  if (tokenAddr === ZERO_ADDRESS) {
+    // const balanceOf = await web3.eth.getBalance(account)
+    return {
+      // chainId,
+      contract: tokenAddr,
+      decimals: 18,
+      // symbol: chainId === 56 || chainId === 97 ? 'BNB' : 'ETH',
+      // balanceOf,
+      // balance: weiToNum(balanceOf),
+      price
+    }
+  }
+  let BounceERC20_CT = getContract(BounceERC20.abi, tokenAddr)
+
+  const decimals = await BounceERC20_CT.methods.decimals().call()
+  const symbol = await BounceERC20_CT.methods.symbol().call()
+  // const balanceOf = await BounceERC20_CT.methods.balanceOf(account).call()
+
+  return {
+    // chainId,
+    contract: tokenAddr,
+    decimals: parseInt(decimals),
+    symbol,
+    // balanceOf,
+    // balance: weiToNum(balanceOf, decimals),
+    price
+  }
 }
 
 // TODO 离开页面自动取消连接

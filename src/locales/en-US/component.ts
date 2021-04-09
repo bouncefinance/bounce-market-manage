@@ -6,4 +6,5 @@ export default {
   'component.tagSelect.all': 'All',
   'component.table.null': 'Null Data',
   'component.button.del': 'Del',
+  'component.button.update': 'Update',
 };

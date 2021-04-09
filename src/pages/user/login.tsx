@@ -75,6 +75,9 @@ const Login: React.FC<LoginProps> = (props) => {
             history.replace('/usermanager/nft')
           }else{
             setLoadingStatus({type: 'login-fail', message: intl.formatMessage({id: 'pages.login.loadingStatusMessge.login-fail'})})
+            setTimeout(() => {
+              setLoadingStatus({type: 'await', message: intl.formatMessage({id: 'pages.login.loadingStatusMessge.await'})})
+            }, 1e3)
           }
         }else{
           setLoadingStatus({type: 'account-fail', message: intl.formatMessage({id: 'pages.login.loadingStatusMessge.account-fail'})})
@@ -93,12 +96,19 @@ const Login: React.FC<LoginProps> = (props) => {
         message: dataToSign,
         signature: signature
       }
-      const res_getSignToken = await request.post('/api/bouadmin/main/jwtauth', { data: params })
-      if (res_getSignToken.code === 200) {
-        const { token } = res_getSignToken.data
-        return token
-      } else {
-        return ''
+      try{
+        const res_getSignToken = await request.post('/api/bouadmin/main/jwtauth', { data: params })
+        console.log(res_getSignToken)
+        if (res_getSignToken.code === 200) {
+          const { token } = res_getSignToken.data
+          return token
+        } else {
+          message.error(res_getSignToken.msg || 'error')
+          return ''
+        }
+      }catch(err){
+        setLoadingStatus({type: 'await', message: intl.formatMessage({id: 'pages.login.loadingStatusMessge.await'})})
+        message.error('error')
       }
     } else {
       console.log('connect..')

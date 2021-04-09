@@ -29,6 +29,7 @@
     "@umijs/preset-react": "^1.4.8",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
+    "graphql": "^15.5.0",
     "react-intl": "^5.15.5",
     "styled-components": "^5.2.3",
     "umi": "3.4.1",

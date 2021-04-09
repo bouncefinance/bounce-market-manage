@@ -23,3 +23,8 @@ declare interface Window {
 }
 
 declare var ethereum: typeEthereum
+
+declare module '*.json' {
+  const value: any;
+  export default value;
+}

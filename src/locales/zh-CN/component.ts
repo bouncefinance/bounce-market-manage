@@ -6,4 +6,5 @@ export default {
   'component.tagSelect.all': '全部',
   'component.table.null': '暂无数据',
   'component.button.del': '删除',
+  'component.button.update': '更新',
 };

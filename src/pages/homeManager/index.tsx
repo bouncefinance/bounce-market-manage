@@ -107,7 +107,6 @@ export default function HomeManagerPage () {
 
       ; (async () => {
         try {
-          // const res = await request.post('http://market-test.bounce.finance:11000/api/v2/main/getitemsbyfilter', {
           const res = await request.post('/api/bouadmin/main/auth/getitemsbyfilter', {
             data: {
               ids: list,

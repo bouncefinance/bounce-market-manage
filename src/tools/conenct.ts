@@ -1,9 +1,10 @@
 import Web3 from "web3"
 import BounceERC20 from '@/tools/web3/abi/BounceERC20.json'
-
-export const web3Provide = Web3.givenProvider || 'https://mainnet.infura.io/v3/0b500c5f885b43a4ab192e8048f6fa8'
-const web3 = new Web3(web3Provide)
 import { BigNumber } from 'bignumber.js';
+import { APIPrefixUrl } from "./const";
+
+export const web3Provide = Web3.givenProvider || APIPrefixUrl
+const web3 = new Web3(web3Provide)
 BigNumber.config({ EXPONENTIAL_AT: [-30, 30] })
 
 export const getWei = (decimals: string) => {

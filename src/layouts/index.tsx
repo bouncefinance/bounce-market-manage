@@ -17,14 +17,15 @@ import { ApolloProvider } from '@apollo/client';
 import { Web3ReactProvider } from "@web3-react/core"
 
 import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { APIPrefixUrl, ApolloClientUrl } from '@/tools/const';
 const client = new ApolloClient({
-  uri: 'https://api.thegraph.com/subgraphs/name/winless/bouncenft2',     // bsc test
+  uri: ApolloClientUrl,     // bsc test
   cache: new InMemoryCache(),
 })
 
 let _history : any = {}
 
-const prefix = 'http://market-test.bounce.finance:11001'
+const prefix = APIPrefixUrl
 // request.extendOptions({
 //   prefix,
 // })
@@ -121,15 +122,3 @@ export default function Layout ({ children, location, route, history, match }: I
     </Web3ReactProvider>
   </ApolloProvider>
 }
-
-
-
-// request.interceptors.request.use(
-//   (url, options) => {
-//     return {
-//       url: `https://market-test.bounce.finance/${url}`,
-//       options: { ...options, interceptors: true },
-//     }
-//   },
-//   { global: true }
-// );

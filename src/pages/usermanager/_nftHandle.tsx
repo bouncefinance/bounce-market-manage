@@ -37,7 +37,6 @@ const defaultParams = {
   likename: ''
 }
 let params = JSON.parse(JSON.stringify(defaultParams))
-// const testData = [{"id":16780,"brandid":6,"contractaddress":"0x7AD22017907F1313A9Cb3Bee8de64f1994cB827a","metadata":"","category":"image","channel":"Fine Arts","itemsymbol":"","standard":2,"itemname":"rouyuan","externallink":"","description":"a cat","fileurl":"https://market-test.bounce.finance/jpgfileget/微信图片_20210324113102-1616556820.jpg","properties":"","levels":"","stats":"","unlockablecontent":0,"supply":3,"ownername":"","owneraddress":"0x344ddf5a03afe67543fb23c674c6797599a0a507","price":"","status":1,"popularweight":0,"created_at":"2021-03-24T03:33:40Z","updated_at":"2021-03-24T03:33:40Z"}]
 
 export default function NFTCheckHandle ({ type, tabType }: INFTCheckHandle) {
   const onSearch = (value: string) => {

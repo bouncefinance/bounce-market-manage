@@ -9,7 +9,7 @@ export const ApolloClientUrl = APPWORKTYPE === 'onlineOfficial'
   ? 'https://api.thegraph.com/subgraphs/name/winless/bouncenft'
   : 'https://api.thegraph.com/subgraphs/name/winless/bouncenft2'
 export const APIPrefixUrl = APPWORKTYPE === 'onlineOfficial'
-  ? 'http://bounce-market.bounce.finance:11001'
+  ? 'https://bounce-market.bounce.finance:11001'
   : 'http://market-test.bounce.finance:11001'
 
 export const DEBOUNCE = 300;

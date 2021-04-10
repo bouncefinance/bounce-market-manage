@@ -1,7 +1,7 @@
 type APPWORKTYPE = 'onlineOfficial' | 'localhostTest'
 const hostname = window.location.hostname
 // TODO
-export const APPWORKTYPE: APPWORKTYPE = hostname.includes('bounce.finance') || hostname.includes('127.0.0.1')
+export const APPWORKTYPE: APPWORKTYPE = hostname.includes('netlify.app') || hostname.includes('bounce.finance') ||  hostname.includes('127.0.0.1')
   ? 'onlineOfficial'
   : 'localhostTest'
 export const WEB3ProvideUrl = 'https://mainnet.infura.io/v3/0b500c5f885b43a4ab192e8048f6fa8'
@@ -9,7 +9,7 @@ export const ApolloClientUrl = APPWORKTYPE === 'onlineOfficial'
   ? 'https://api.thegraph.com/subgraphs/name/winless/bouncenft'
   : 'https://api.thegraph.com/subgraphs/name/winless/bouncenft2'
 export const APIPrefixUrl = APPWORKTYPE === 'onlineOfficial'
-  ? 'http://18.141.173.241:11001'
+  ? 'http://bounce-market.bounce.finance:11001'
   : 'http://market-test.bounce.finance:11001'
 
 export const DEBOUNCE = 300;

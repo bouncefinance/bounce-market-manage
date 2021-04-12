@@ -118,18 +118,31 @@ export default function HomeManagerPage () {
           if (res.code !== 1) {
             return setLoding2(false)
           }
-          const _list = res.data.map((item: any, index: number) => {
-            const poolInfo = pools.find((pool: any) => pool.tokenId === item.id);
+          // const _list = res.data.map((item: any, index: number) => {
+          //   const poolInfo = pools.find((pool: any) => pool.tokenId === item.id);
+          //   return {
+          //     ...item,
+          //     poolType: poolInfo.poolType,
+          //     poolId: poolInfo.poolId,
+          //     price: poolInfo.price,
+          //     createTime: poolInfo.createTime,
+          //     token1: poolInfo.token1
+          //   }
+          // })
+          const _list = pools.map((pool: any) => {
+            const itemInfo = res.data.find((item: any) => pool.tokenId === item.id);
             return {
-              ...item,
-              poolType: poolInfo.poolType,
-              poolId: poolInfo.poolId,
-              price: poolInfo.price,
-              createTime: poolInfo.createTime,
-              token1: poolInfo.token1
+              ...itemInfo,
+              poolType: pool.poolType,
+              poolId: pool.poolId,
+              price: pool.price,
+              createTime: pool.createTime,
+              token1: pool.token1
             }
           })
+            .filter((item: any) => item.fileurl)
             .sort((a: any, b: any) => b.createTime - a.createTime);
+          console.log(_list)
           setTokenList(_list);
           // setFilterList(_list);
           getPoolsWeight(pools, _list)

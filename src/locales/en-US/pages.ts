@@ -1,4 +1,12 @@
 export default {
+  'pages.banner.add.titleText': 'Create Brand Data',
+  'pages.banner.add.submit': 'Add Banner',
+  'pages.banner.add.BaseInfo': 'Base Info',
+  'pages.banner.add.setAirNftWeight': 'Set NFTs Weight',
+  'pages.banner.add.baseInfoTitle': 'Title',
+  'pages.banner.add.baseInfoSubtitle': 'Subtitle',
+  'pages.banner.add.baseInfoAirAddress': 'AirAddress',
+  'pages.banner.add.SearchAirNft': 'Select And Search Air NFTs',
   'pages.layouts.userLayout.title': 'Bounce Manager Background',
   'pages.login.accountLogin.tab': 'Account Login',
   'pages.login.accountLogin.errorMessage': 'Incorrect username/password（admin/ant.design)',

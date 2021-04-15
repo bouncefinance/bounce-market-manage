@@ -10,6 +10,7 @@ import styles from './index.less'
 import barndStyles from '../usermanager/_nftHandle.less'
 import { exportErc20Info, weiToNum } from '@/tools/conenct';
 import { FormattedMessage } from 'umi'
+import { getPriceByToken1 } from '@/tools';
 const { Search } = Input
 const { confirm } = Modal;
 
@@ -52,24 +53,19 @@ export default function HomeManagerPage () {
   const getPoolsWeight = async (pools: Array<any>, list: Array<any>) => {
     setLoding3(true)
     weightMap = new Map()
-    // console.log('--pools--', pools)
     const res = await request.post('/api/bouadmin/main/auth/getpoolsinfo', {
       data: {
-        // poolids: list.map((e: { poolId: number }) => e.poolId),
-        // poolids: list.map((e: { poolId: number; standard: number }) => ({ id: e.poolId, standard: e.standard }))
         poolids: list.map((e: { poolId: number }) => e.poolId),
         standards: list.map((e: { poolType: string }) => getPoolTypeNumber(e.poolType)),
       }
     })
     setLoding3(false)
     if (res.code === 1) {
-      // console.log(res.data)
       res.data
         .map((item: any) => {
           weightMap.set(`${item.poolid}_${getStandardTypeValue(item.standard)}`, item.poolweight)
         })
       const _list: any = list.map((item: any) => {
-        // console.log(`${item.poolId}_${item.poolType}`)
         return {
           ...item,
           defaultWeight: weightMap.get(`${item.poolId}_${item.poolType}`) ?? 0
@@ -77,7 +73,6 @@ export default function HomeManagerPage () {
       })
         .sort((a: any, b: any) => b.defaultWeight - a.defaultWeight)
       setFilterList(_list);
-      // console.log(_list, weightMap)
     }
   }
   const onSearch = (value: string) => {
@@ -118,17 +113,6 @@ export default function HomeManagerPage () {
           if (res.code !== 1) {
             return setLoding2(false)
           }
-          // const _list = res.data.map((item: any, index: number) => {
-          //   const poolInfo = pools.find((pool: any) => pool.tokenId === item.id);
-          //   return {
-          //     ...item,
-          //     poolType: poolInfo.poolType,
-          //     poolId: poolInfo.poolId,
-          //     price: poolInfo.price,
-          //     createTime: poolInfo.createTime,
-          //     token1: poolInfo.token1
-          //   }
-          // })
           const _list = pools.map((pool: any) => {
             const itemInfo = res.data.find((item: any) => pool.tokenId === item.id);
             return {
@@ -142,7 +126,7 @@ export default function HomeManagerPage () {
           })
             .filter((item: any) => item.fileurl)
             .sort((a: any, b: any) => b.createTime - a.createTime);
-          console.log(_list)
+          // console.log(_list)
           setTokenList(_list);
           // setFilterList(_list);
           getPoolsWeight(pools, _list)
@@ -206,15 +190,6 @@ interface ItemProps extends ItemInterface{
 }
 const Item = ({ fileurl, price, token1, itemname, poolType, poolId, defaultWeight, standard, update }: ItemProps) => {
   const [newPrice, setNewPrice] = useState('Loading Price ...')
-  const getPriceByToken1 = async (price: string, token1: string) => {
-    if (!price || !token1) return setNewPrice('--')
-    const tokenInfo = await exportErc20Info(token1)
-    const newPrice = weiToNum(price, tokenInfo.decimals)
-
-    // ${ tokenInfo.symbol }
-    setNewPrice(`${newPrice}`)
-  }
-
   const onSearch = async (weight: string) => {
     // 数字校验
     console.log('update weight: ', weight)
@@ -227,7 +202,7 @@ const Item = ({ fileurl, price, token1, itemname, poolType, poolId, defaultWeigh
     }
   }
   useEffect(() => {
-    getPriceByToken1(price, token1)
+    getPriceByToken1(price, token1).then((e: string) => setNewPrice(e))
   }, [token1, price])
   return (<div className={"flex " + styles.itemRow}>
     <ImgFit src={fileurl} width={162} height={162} />

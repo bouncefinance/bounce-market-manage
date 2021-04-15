@@ -2,12 +2,13 @@ import { FormattedHTMLMessage, IRouteComponentProps, Link, useHistory, useIntl }
 import request from 'umi-request'
 import { setLocale } from 'umi';
 import styles from './index.less';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from 'antd';
 import ProLayout, { MenuDataItem, PageContainer } from '@ant-design/pro-layout';
 import { ReactComponent as Logo } from '../assets/logo.svg'
 import { getMenuData } from '@ant-design/pro-layout';
 import { Menu, Switch, Dropdown } from 'antd';
+import { LeftOutlined } from '@ant-design/icons';
 const { SubMenu } = Menu;
 import { connect, SelectLang } from 'umi';
 import Avatar from '../components/GlobalHeader/AvatarDropdown';
@@ -44,21 +45,45 @@ request.use(async (ctx, next) => {
 })
 
 
-
-
-const blackList = ['/404', '/', '/user/login']
 export default function Layout ({ children, location, route, history, match }: IRouteComponentProps) {
   const intl = useIntl();
   window.intl = intl
 
   const { routes = [] } = route;
-  const { breadcrumb, menuData } = getMenuData(routes);
+  // const { breadcrumb, menuData } = getMenuData(routes);
   _history = history
 
+  // console.log(location)
 
-  const routerInfo: { [key: string]: { name: string } } = {
-    '/homeManager': { name: intl.formatMessage({ id: 'menu.homeManager' }) },
-    '/usermanager/nft': { name: intl.formatMessage({ id: 'menu.usermanager.nft' }) },
+
+  type menu = {
+    name: string;
+    path: string;
+    top?: boolean;
+    children?: menu [];
+  }
+  type menuList = menu[]
+  const menuList: menuList = [
+    {
+      name: intl.formatMessage({ id: 'menu.banner' }), path: '/banner', top: true, children: [
+        { name: intl.formatMessage({ id: 'menu.banner.list' }), top: true, path: '/banner/list' },
+        {name: intl.formatMessage({ id: 'menu.banner.addTitle' }), path: '/banner/add',}
+      ]
+    },
+    { name: intl.formatMessage({ id: 'menu.homeManager' }), top: true,  path: '/homeManager'},
+    { name: intl.formatMessage({ id: 'menu.usermanager.nft' }), top: true,  path: '/usermanager/nft'},
+  ]
+  const menuOpenKeyMap: Map<string, menu> = new Map()
+  const menuKeyMap: Map<string, menu> = new Map()
+  for (let item of menuList) {
+    if (item.children) {
+      for (let item2 of item.children) {
+        menuOpenKeyMap.set(item2.path, item)
+        menuKeyMap.set(item2.path, item2)
+      }
+    } else {
+      menuKeyMap.set(item.path, item)
+    }
   }
 
   useEffect(() => {
@@ -70,27 +95,39 @@ export default function Layout ({ children, location, route, history, match }: I
     if(!localStorage.token){
       history.replace('/user/login')
     }
-    // getMetaMskAccount().then((account) => {
-    //   alert(account)
-    // })
-    // onConnect(type)
 
   }, [])
+
+  const [openKeys, setOpenKeys] = useState<Array<string>>([menuOpenKeyMap.get(location.pathname)?.path ?? ''])
 
 
   const menuRender = (): React.ReactNode => <div className={styles.menubox} style={{ width: '220px', backgroundColor: '#fff' }}>
     <div style={{ padding: '10px 20px' }}>
       <Logo width={150}></Logo>
     </div>
-    <Menu defaultSelectedKeys={[location.pathname]} mode="inline">{menuData.filter((e) => !(blackList.includes(e.path ?? ''))).map((item) => {
-      return <Menu.Item title={item.path} key={item.key}>
-        <Link to={item.path ?? ''} >{routerInfo[item.path ?? '']?.name}</Link>
-      </Menu.Item>
-    })}</Menu>
+    <Menu style={{userSelect: 'none'}} mode="inline" selectedKeys={[location.pathname]} openKeys={openKeys}>
+      {menuList.map(item => {
+        return item.children ? <SubMenu onTitleClick={(e) => {
+          const keys = [e.key ?? '']
+          if (keys.join(',') == openKeys.join(',')) {
+            return setOpenKeys([])
+          }
+          setOpenKeys(keys)
+        }} title={item.name} key={item.path}>
+          {item.children.map(item => <Menu.Item title={item.name} key={item.path}>
+            <Link to={item.path ?? ''} >{item.name}</Link>
+          </Menu.Item>)}
+        </SubMenu> : <Menu.Item title={item.name} key={item.path}>
+          <Link to={item.path ?? ''} >{item.name}</Link>
+        </Menu.Item>
+      })}
+    </Menu>
   </div>
   const headerRender = () => {
     return <div className={[styles.headbox, "flex flex-space-x flex-center-y"].join(' ')}>
-      <div></div>
+      <div>
+        {menuKeyMap.get(location.pathname)?.top || <Button onClick={() => history.goBack()} type="text" icon={<LeftOutlined />}></Button>}
+        {menuKeyMap.get(location.pathname)?.name}</div>
       <div className="flex flex-center-y">
         <Avatar />
         <SelectLang className={styles.action} />
@@ -114,7 +151,7 @@ export default function Layout ({ children, location, route, history, match }: I
           menuRender={menuRender}
           headerRender={headerRender}
         >
-          <div style={{ marginTop: '0px' }}>
+          <div style={{ width: 'calc(100vw - 232px)', overflow: 'hidden', marginTop: '0px' }}>
             {children}
           </div>
         </ProLayout>

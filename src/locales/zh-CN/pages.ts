@@ -1,4 +1,12 @@
 export default {
+  'pages.banner.add.titleText': '新建轮播',
+  'pages.banner.add.submit': '添加轮播',
+  'pages.banner.add.BaseInfo': '基本信息填写',
+  'pages.banner.add.baseInfoTitle': '标题',
+  'pages.banner.add.baseInfoSubtitle': '副标题',
+  'pages.banner.add.baseInfoAirAddress': '艺术区地址',
+  'pages.banner.add.setAirNftWeight': '设置NFT权重(排序)',
+  'pages.banner.add.SearchAirNft': '搜索艺术家修改NFT权重',
   'pages.layouts.userLayout.title': 'Bounce 后台管理系统',
   'pages.login.accountLogin.tab': '账户密码登录',
   'pages.login.accountLogin.errorMessage': '错误的用户名和密码（admin/ant.design)',

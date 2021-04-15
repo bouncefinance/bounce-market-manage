@@ -43,3 +43,27 @@ export const QueryMarketTradePools = gql`
     }
   }
 `
+
+export const QueryAirMarketTradePools = gql`
+  query queryTradeInfo2($creator: String!){
+    tradePools (where: {creator: $creator}){
+      tokenId
+      poolId
+      token1
+      price
+      createTime
+      state
+      creator
+    }
+    tradeAuctions (where: {creator: $creator}){
+      tokenId
+      poolId
+      token1
+      lastestBidAmount
+      amountMin1
+      createTime
+      state
+      creator
+    }
+  }
+`

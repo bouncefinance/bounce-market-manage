@@ -6,7 +6,7 @@ import { ImgFit } from '@/components/ImgFit';
 import { useCallback, useEffect, useState } from 'react';
 import homeStyles from '../../homeManager/index.less'
 import request from 'umi-request';
-import { FormattedMessage, useHistory } from 'umi'
+import { FormattedMessage, useHistory, useParams } from 'umi'
 const { Search } = Input
 
 const layout = {
@@ -17,6 +17,8 @@ const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
 
+interface FormDataType { artistaddress: string; subhead: string; title: string}
+
 export default () => {
   const history = useHistory()
   const [variables, setVariables] = useState({ creator: '' })
@@ -24,11 +26,14 @@ export default () => {
   const [submitLoding, setSubmitLoding] = useState(false)
   const [tradeList, setTradeList] = useState <tradeList>([])
   const [pagination] = useState({ current: 1, pageSize: 10, })
+  const { id }: { id: string } = useParams()
+  const [initialValues, setInitialValues] = useState<FormDataType>({ artistaddress: '', subhead: '', title: '' })
+  const [getInitInfoLoding, setgetInitInfoLoding] = useState(id ? true : false)
   const { loading, error, data, refetch } = useQuery(QueryAirMarketTradePools, {
     variables: variables,
     skip: !variables.creator
   })
-  const onFinish = async (data: { artistaddress: string; subhead: string; title: string}) => {
+  const onFinish = async (data: FormDataType) => {
     setSubmitLoding(true)
     const res = await request.post('/api/bouadmin/main/auth/dealbanner', { data })
     if (res.code === 1) {
@@ -64,23 +69,38 @@ export default () => {
     if (loading) {
       return
     }
-    console.log(data)
     if (!data) {
       return
     }
     initTradeList(data)
   }, [loading])
+  useEffect(() => {
+    if (id) {
+      setgetInitInfoLoding(true)
+      request.post('/api/bouadmin/main/auth/getonebanner', { data: { id: parseInt(id) } }).then((res) => {
+        if (res.code === 1) {
+          setInitialValues(res.data)
+          // auto refetch
+          setNftLoding(true)
+          res.data?.artistaddress && setVariables({ ...variables, creator: res.data.artistaddress })
+        } else {
+          message.error('get banner info error')
+        }
+        setgetInitInfoLoding(false)
+      })
+    }
+  }, [id])
   const handleTableChange = useCallback((pagination, filters, sorter) => {
     // TODO
     console.log(pagination, filters, sorter)
   }, [])
 
-  return <div>
-    <Card title={intl.formatMessage({ id: 'pages.banner.add.titleText'})} bordered={false} style={{ width: '100%' }}>
-      <Form
+  return <Spin spinning={getInitInfoLoding} tip="Loading...">
+    <Card title={intl.formatMessage({ id: !id ? 'pages.banner.add.titleText' : 'pages.banner.update.titleText'})} bordered={false} style={{ width: '100%' }}>
+      {getInitInfoLoding || <Form
         {...layout}
         name="basic"
-        initialValues={{ remember: true }}
+        initialValues={initialValues}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         labelCol={{ span: 4 }}
@@ -117,12 +137,12 @@ export default () => {
         </Card>
         <Form.Item {...tailLayout}>
           <Button loading={submitLoding} type="primary" htmlType="submit">
-            <FormattedMessage id="pages.banner.add.submit" />
+            <FormattedMessage id={!id ? "pages.banner.add.submit" : "pages.banner.update.submit"} />
           </Button>
         </Form.Item>
-      </Form>
+      </Form>}
     </Card>
-  </div>
+  </Spin>
 }
 
 const columns = (update: () => void) => [

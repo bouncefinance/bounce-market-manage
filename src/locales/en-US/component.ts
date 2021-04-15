@@ -1,4 +1,5 @@
 export default {
+  'component.handle': 'Handle',
   'component.input.searchPlaceholder': 'input search text',
   'component.input.search': 'Search',
   'component.tagSelect.expand': 'Expand',

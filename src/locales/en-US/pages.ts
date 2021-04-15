@@ -7,6 +7,8 @@ export default {
   'pages.banner.add.baseInfoSubtitle': 'Subtitle',
   'pages.banner.add.baseInfoAirAddress': 'AirAddress',
   'pages.banner.add.SearchAirNft': 'Select And Search Air NFTs',
+  'pages.banner.update.titleText': 'Banner Update',
+  'pages.banner.update.submit': 'Update Banner',
   'pages.layouts.userLayout.title': 'Bounce Manager Background',
   'pages.login.accountLogin.tab': 'Account Login',
   'pages.login.accountLogin.errorMessage': 'Incorrect username/password（admin/ant.design)',

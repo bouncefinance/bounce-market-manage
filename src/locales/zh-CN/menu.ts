@@ -4,4 +4,5 @@ export default {
   'menu.banner.list': '轮播列表',
   'menu.banner.addTitle': '添加轮播',
   'menu.usermanager.nft': 'NFT管理',
+  'menu.banner.updateTitle': '轮播更新',
 };

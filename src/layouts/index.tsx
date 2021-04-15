@@ -44,6 +44,7 @@ request.use(async (ctx, next) => {
   }
 })
 
+const mathPath = (path: string, historyPath: string) => historyPath.match(path) ? historyPath : path
 
 export default function Layout ({ children, location, route, history, match }: IRouteComponentProps) {
   const intl = useIntl();
@@ -59,6 +60,7 @@ export default function Layout ({ children, location, route, history, match }: I
   type menu = {
     name: string;
     path: string;
+    menuPath?: string;
     top?: boolean;
     children?: menu [];
   }
@@ -66,8 +68,12 @@ export default function Layout ({ children, location, route, history, match }: I
   const menuList: menuList = [
     {
       name: intl.formatMessage({ id: 'menu.banner' }), path: '/banner', top: true, children: [
-        { name: intl.formatMessage({ id: 'menu.banner.list' }), top: true, path: '/banner/list' },
-        {name: intl.formatMessage({ id: 'menu.banner.addTitle' }), path: '/banner/add',}
+        {
+          name: intl.formatMessage({ id: 'menu.banner.list' }), top: true, path: '/banner/list', children: [
+            { name: intl.formatMessage({ id: 'menu.banner.addTitle' }),  path: '/banner/add'},
+            { name: intl.formatMessage({ id: 'menu.banner.updateTitle' }), path: mathPath('/banner/add/\\d+', location.pathname)},
+          ]
+        },
       ]
     },
     { name: intl.formatMessage({ id: 'menu.homeManager' }), top: true,  path: '/homeManager'},
@@ -80,6 +86,10 @@ export default function Layout ({ children, location, route, history, match }: I
       for (let item2 of item.children) {
         menuOpenKeyMap.set(item2.path, item)
         menuKeyMap.set(item2.path, item2)
+        if (item2.children) for (let item3 of item2.children) {
+          menuOpenKeyMap.set(item3.path, item)
+          menuKeyMap.set(item3.path, { ...item3, menuPath: item2.path})
+        }
       }
     } else {
       menuKeyMap.set(item.path, item)
@@ -99,13 +109,17 @@ export default function Layout ({ children, location, route, history, match }: I
   }, [])
 
   const [openKeys, setOpenKeys] = useState<Array<string>>([menuOpenKeyMap.get(location.pathname)?.path ?? ''])
+  const getSelectedKeys = (): Array<string>  => {
+    // console.log(menuKeyMap.get(location.pathname)?.menuPath)
+    return [menuKeyMap.get(location.pathname)?.menuPath ?? location.pathname]
+  }
 
 
   const menuRender = (): React.ReactNode => <div className={styles.menubox} style={{ width: '220px', backgroundColor: '#fff' }}>
     <div style={{ padding: '10px 20px' }}>
       <Logo width={150}></Logo>
     </div>
-    <Menu style={{userSelect: 'none'}} mode="inline" selectedKeys={[location.pathname]} openKeys={openKeys}>
+    <Menu style={{userSelect: 'none'}} mode="inline" selectedKeys={getSelectedKeys()} openKeys={openKeys}>
       {menuList.map(item => {
         return item.children ? <SubMenu onTitleClick={(e) => {
           const keys = [e.key ?? '']
@@ -126,6 +140,7 @@ export default function Layout ({ children, location, route, history, match }: I
   const headerRender = () => {
     return <div className={[styles.headbox, "flex flex-space-x flex-center-y"].join(' ')}>
       <div>
+        {/* TODO breadcrumb */}
         {menuKeyMap.get(location.pathname)?.top || <Button onClick={() => history.goBack()} type="text" icon={<LeftOutlined />}></Button>}
         {menuKeyMap.get(location.pathname)?.name}</div>
       <div className="flex flex-center-y">

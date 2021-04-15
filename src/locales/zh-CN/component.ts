@@ -1,4 +1,5 @@
 export default {
+  'component.handle': '操作',
   'component.input.searchPlaceholder': '输入搜索内容',
   'component.input.search': '搜索',
   'component.tagSelect.expand': '展开',

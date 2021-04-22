@@ -42,7 +42,7 @@ export const getTradeList = async (data: any, poolweightKey: string) => {
     const res = await request.post('/api/bouadmin/main/auth/getitemsbyfilter', {
       data: {
         ids: tradePools.map((e: {tokenId: string}) => e.tokenId),
-        category: "Image",
+        category: "",
         channel: '',
       }
     })

@@ -112,7 +112,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
-      content: initialState?.token,
+      // content: initialState?.token,
     },
     footerRender: false,
     onPageChange: () => {

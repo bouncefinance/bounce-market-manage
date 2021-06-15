@@ -147,7 +147,7 @@ export default function recommend() {
     refresh: poolRefresh,
   }: { data: Ipoolweight[]; loading: boolean; refresh: any } = useRequest(
     () => {
-      return getPoolsInfobypage(0, 30);
+      return getPoolsInfobypage(0, 11);
     },
   );
   // console.log('recommendPools>>>>>', recommendPoolsLoading, recommendPools);
@@ -169,8 +169,6 @@ export default function recommend() {
       return getPopularBrands();
     },
   );
-  console.log('popularBrandsLoading >>>>>', popularBrandsLoading);
-  console.log('popularBrands >>>>>', popularBrands);
 
   const {
     data: brands,

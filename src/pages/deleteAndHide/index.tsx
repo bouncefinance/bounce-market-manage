@@ -1,6 +1,6 @@
 import { ExclamationCircleOutlined, StarOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, List, Image, Tag, Tabs, Input, Space, message, Modal } from 'antd';
+import { Card, List, Image, Tag, Tabs, Input, Space, message, Modal, Button } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { useRequest } from 'umi';
 import request from 'umi-request';
@@ -8,6 +8,12 @@ import request from 'umi-request';
 const { TabPane } = Tabs;
 const { Search } = Input;
 const { confirm } = Modal;
+
+interface IRecommendPool {
+  poolid: number;
+  standard: number; // 0: fixed swap, 1: English auction
+  poolweight: number;
+}
 interface INftItem {
   artistpoolweight: number;
   category: string;
@@ -51,6 +57,26 @@ interface IBrandInfo {
   status: number;
   updated_at: string;
 }
+
+// get pools weight
+const getRecommendPools = function (offset: number, limit: number) {
+  return request.post('[FGB_V2]/api/v2/main/getpoolsinfobypage', {
+    data: {
+      limit,
+      offset,
+      orderweight: 1,
+    },
+  });
+};
+
+// get brands weight
+const getRecommendBrands = function () {
+  return request.post('[FGB_V2]/api/v2/main/getpopularbrands', {
+    data: {
+      accountaddress: '',
+    },
+  });
+};
 
 const getPoolsList = function (
   likename: string = '',
@@ -220,6 +246,23 @@ const handleHideBrand = async function (
 };
 
 const index: React.FC = () => {
+  // const {
+  //   data: recommendPools,
+  //   loading: recommendPoolsLoading,
+  //   // refresh: poolRefresh,
+  // } = useRequest(() => {
+  //   return getRecommendPools(0, 11);
+  // });
+
+  const {
+    data: recommendBrands,
+    // loading: recommendBrandsLoading,
+    // refresh: brandRefresh,
+  } = useRequest(() => {
+    return getRecommendBrands();
+  });
+
+  // requests items
   const {
     data: itemData,
     loading: itemLoading,
@@ -243,6 +286,7 @@ const index: React.FC = () => {
     },
   );
 
+  // request brands
   const {
     data: brandData,
     loading: brandLoading,
@@ -297,7 +341,7 @@ const index: React.FC = () => {
                   <List.Item
                     style={{ height: 82 }}
                     actions={[
-                      <a
+                      <Button
                         key="list-loadmore-hide"
                         onClick={() => {
                           item.status === 0
@@ -311,16 +355,16 @@ const index: React.FC = () => {
                         }}
                       >
                         {item.status === 0 ? 'Hide' : 'Show'}
-                      </a>,
-                      <a
-                        style={{ color: 'red' }}
+                      </Button>,
+                      <Button
+                        danger
                         key="list-loadmore-delete"
                         onClick={() => {
                           handleDeleteItem(item.contractaddress, item.tokenid, reloadItem);
                         }}
                       >
                         Delete
-                      </a>,
+                      </Button>,
                     ]}
                   >
                     <List.Item.Meta
@@ -340,7 +384,12 @@ const index: React.FC = () => {
                       description={
                         <>
                           <Tag color="default">Id: {item.id}</Tag>
-                          <Tag color="default">Contract Address: {`${item.contractaddress.slice(0, 6)}...${item.contractaddress.slice(-4)}`}</Tag>
+                          <Tag color="default">
+                            Contract Address:{' '}
+                            {`${item.contractaddress.slice(0, 6)}...${item.contractaddress.slice(
+                              -4,
+                            )}`}
+                          </Tag>
                           {item.status === 1 ? <Tag color="warning">Hiding</Tag> : <></>}
                         </>
                       }
@@ -376,8 +425,15 @@ const index: React.FC = () => {
                   <List.Item
                     style={{ height: 82 }}
                     actions={[
-                      <a
+                      <Button
                         key="list-loadmore-hide"
+                        disabled={
+                          recommendBrands.map((recommendBrand: IBrandInfo) => {
+                            recommendBrand.id === brand.id;
+                          })
+                            ? true
+                            : false
+                        }
                         onClick={() => {
                           brand.status === 0
                             ? handleHideBrand(brand.id, 'hide', reloadBrand)
@@ -385,16 +441,23 @@ const index: React.FC = () => {
                         }}
                       >
                         {brand.status === 0 ? 'Hide' : 'Show'}
-                      </a>,
-                      <a
-                        style={{ color: 'red' }}
+                      </Button>,
+                      <Button
+                        danger
                         key="list-loadmore-delete"
+                        disabled={
+                          recommendBrands.map((recommendBrand: IBrandInfo) => {
+                            recommendBrand.id === brand.id;
+                          })
+                            ? true
+                            : false
+                        }
                         onClick={() => {
                           handleDeleteBrand(brand.id, reloadBrand);
                         }}
                       >
                         Delete
-                      </a>,
+                      </Button>,
                     ]}
                   >
                     <List.Item.Meta
@@ -409,10 +472,22 @@ const index: React.FC = () => {
                       title={<span>{brand.brandname}</span>}
                       description={
                         <>
-                          <Tag color="default">Pool Id: {brand.id}</Tag>
-                          <Tag color="default">Contract Address: {`${brand.contractaddress.slice(0, 6)}...${brand.contractaddress.slice(-4)}`}</Tag>
-                          <Tag color="default">Owner Address: {`${brand.owneraddress.slice(0, 6)}...${brand.owneraddress.slice(-4)}`}</Tag>
+                          <Tag color="default">Id: {brand.id}</Tag>
+                          <Tag color="default">
+                            Contract Address:{' '}
+                            {`${brand.contractaddress.slice(0, 6)}...${brand.contractaddress.slice(
+                              -4,
+                            )}`}
+                          </Tag>
+                          <Tag color="default">
+                            Owner Address:{' '}
+                            {`${brand.owneraddress.slice(0, 6)}...${brand.owneraddress.slice(-4)}`}
+                          </Tag>
                           {brand.status === 1 ? <Tag color="warning">Hiding</Tag> : <></>}
+                          {recommendBrands.map((recommendBrand: IBrandInfo) => {
+                            recommendBrand.id === brand.id;
+                          })
+                            ? <Tag color="warning">Recommended brand</Tag> : <></>}
                         </>
                       }
                     />

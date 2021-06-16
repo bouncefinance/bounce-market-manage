@@ -93,4 +93,6 @@ export default {
   'pages.nft.handile.notAudit': 'Not audit',
   'pages.nft.handile.theApproved': 'The approved',
   'pages.nft.handile.hasBanned': 'Has banned',
+  'pages.recommend.index.Pools': 'Pools',
+  'pages.recommend.index.Brands': 'Brands',
 };

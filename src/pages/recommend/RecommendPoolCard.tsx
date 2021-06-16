@@ -6,6 +6,7 @@ import {
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
 import { IpoolItem } from '.';
+import React from 'react';
 const { Meta } = Card;
 
 function RecommendPoolCard({
@@ -47,16 +48,16 @@ function RecommendPoolCard({
         )
       }
       actions={[
-        <VerticalAlignBottomOutlined
-          style={{
-            fontSize: 22,
-          }}
-          key="reset"
-          title="Reset"
-          onClick={() => {
-            handleReset(item);
-          }}
-        />,
+        // <VerticalAlignBottomOutlined
+        //   style={{
+        //     fontSize: 22,
+        //   }}
+        //   key="reset"
+        //   title="Reset"
+        //   onClick={() => {
+        //     handleReset(item);
+        //   }}
+        // />,
         <EditOutlined
           style={{
             fontSize: 22,

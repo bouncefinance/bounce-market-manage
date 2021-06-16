@@ -6,6 +6,7 @@ import {
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
 import { IPopularBrand } from '.';
+import React from 'react';
 const { Meta } = Card;
 
 function RecommendBrandCard({
@@ -42,16 +43,16 @@ function RecommendBrandCard({
         />
       }
       actions={[
-        <VerticalAlignBottomOutlined
-          style={{
-            fontSize: 22,
-          }}
-          key="reset"
-          title="Reset"
-          onClick={() => {
-            handleReset(item);
-          }}
-        />,
+        // <VerticalAlignBottomOutlined
+        //   style={{
+        //     fontSize: 22,
+        //   }}
+        //   key="reset"
+        //   title="Reset"
+        //   onClick={() => {
+        //     handleReset(item);
+        //   }}
+        // />,
         <EditOutlined
           style={{
             fontSize: 22,

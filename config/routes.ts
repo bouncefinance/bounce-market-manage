@@ -34,26 +34,26 @@ const routes: MenuDataItem[] = [
     icon: 'Edit',
     component: './deleteAndHide',
   },
-  {
-      name: 'box',
-      path: '/box',
-      icon: 'PlusSquare',
-      component: './box/createBox.tsx',
-      routes:[
-        {
-          name: 'view',
-          path: 'View',
-          // icon: 'DownSquare',
-          component: './box/viewBoxs.tsx',
-        },
-        {
-          name: 'create',
-          path: 'Create',
-          // icon: 'DownSquare',
-          component: './box/createBox.tsx',
-        }
-      ]
-    },
+  // {
+  //     name: 'box',
+  //     path: '/box',
+  //     icon: 'PlusSquare',
+  //     component: './box/createBox.tsx',
+  //     routes:[
+  //       {
+  //         name: 'view',
+  //         path: 'View',
+  //         // icon: 'DownSquare',
+  //         component: './box/viewBoxs.tsx',
+  //       },
+  //       {
+  //         name: 'create',
+  //         path: 'Create',
+  //         // icon: 'DownSquare',
+  //         component: './box/createBox.tsx',
+  //       }
+  //     ]
+  //   },
   // {
   //   name: 'test',
   //   path: '/test',

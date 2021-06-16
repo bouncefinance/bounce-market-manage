@@ -1,11 +1,8 @@
 import { Image, Skeleton, Card } from 'antd';
 
-import {
-  PlusOutlined,
-  EditOutlined,
-  VerticalAlignBottomOutlined,
-} from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, VerticalAlignBottomOutlined } from '@ant-design/icons';
 import { IpoolItem } from '.';
+import React from 'react';
 const { Meta } = Card;
 
 function RecommendPoolCard({
@@ -39,11 +36,7 @@ function RecommendPoolCard({
         item.category === 'video' ? (
           <video controls src={item.fileurl} style={{ height: '162px' }} />
         ) : (
-          <Image
-            alt="image"
-            src={item.fileurl}
-            style={{ height: '156px', objectFit: 'contain' }}
-          />
+          <Image alt="image" src={item.fileurl} style={{ height: '156px', objectFit: 'contain' }} />
         )
       }
       actions={[
@@ -83,10 +76,12 @@ function RecommendPoolCard({
     // Card with a plus
     <Card
       hoverable
-      className="flex flex-center-x flex-center-y"
       style={{
-        height: 360,
+        height: 413,
         border: '2px dashed',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
       onClick={() => {
         handleAdd(index, 'Fast Mover');
@@ -95,7 +90,7 @@ function RecommendPoolCard({
       <PlusOutlined
         title="Add"
         style={{
-          fontSize: 60,
+          fontSize: 76,
         }}
       />
     </Card>

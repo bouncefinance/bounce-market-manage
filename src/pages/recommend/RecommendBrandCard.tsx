@@ -6,6 +6,7 @@ import {
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
 import { IPopularBrand } from '.';
+import React from 'react';
 const { Meta } = Card;
 
 function RecommendBrandCard({
@@ -77,10 +78,12 @@ function RecommendBrandCard({
     // Card with a plus
     <Card
       hoverable
-      className="flex flex-center-x flex-center-y"
       style={{
         height: 360,
         border: '2px dashed',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
       onClick={() => {
         handleAdd(index, 'Fast Mover');
@@ -89,7 +92,7 @@ function RecommendBrandCard({
       <PlusOutlined
         title="Add"
         style={{
-          fontSize: 60,
+          fontSize: 76,
         }}
       />
     </Card>

@@ -2,24 +2,9 @@ import React, { useState } from 'react';
 import request from 'umi-request';
 import { RECOMMEND_BRANDS_AMOUNT } from '@/tools/const';
 import './index.less';
-import {
-  Typography,
-  message,
-  Modal,
-  Select,
-  Image,
-  Skeleton,
-  Tag,
-  List,
-  Input,
-  Empty,
-} from 'antd';
+import { Typography, message, Modal, Select, Image, Skeleton, Tag, List, Input, Empty } from 'antd';
 
-import {
-  CheckCircleFilled,
-  CloseCircleOutlined,
-  StopOutlined,
-} from '@ant-design/icons';
+import { CheckCircleFilled, CloseCircleOutlined, StopOutlined } from '@ant-design/icons';
 
 import { IPopularBrand } from '.';
 const { Option } = Select;
@@ -44,10 +29,10 @@ function EditBrandModal({
   setBrandModalVisible: any;
   refresh: any;
 }) {
-  const [searchType, setSearchType] = useState<'Name' | 'ID'>('Name');
+  const [searchType, setSearchType] = useState<'Name' | 'ID'>('ID');
   const [searchResultList, setSearchResultList] = useState<IPopularBrand[]>();
   const [newBrandItem, setNewBrandItem] = useState<IPopularBrand | undefined>();
-  
+
   const handleSetBrandWeight = async () => {
     request
       .post('/api/bouadmin/main/auth/updateweight', {
@@ -139,6 +124,9 @@ function EditBrandModal({
                 );
               }
           }}
+          onChange={() => {
+            setNewBrandItem(undefined);
+          }}
         />
       </Input.Group>
 
@@ -153,15 +141,16 @@ function EditBrandModal({
                 <List.Item
                   key={item.id}
                   onClick={() => {
-                    if (oldBrandItem.id === item.id) setNewBrandItem(undefined);
-                    else {
-                      newBrandItem === item
-                        ? setNewBrandItem(undefined)
-                        : setNewBrandItem(item);
-                    }
+                    // if (oldBrandItem.id === item.id) setNewBrandItem(undefined);
+                    // else {
+                    //   newBrandItem === item
+                    //     ? setNewBrandItem(undefined)
+                    //     : setNewBrandItem(item);
+                    // }
+                    newBrandItem === item ? setNewBrandItem(undefined) : setNewBrandItem(item);
                   }}
                   extra={
-                    oldBrandItem.id === item.id ? (
+                    oldBrandItem && oldBrandItem.id === item.id ? (
                       <Tag
                         color="error"
                         style={{ fontSize: 16, marginTop: 60 }}
@@ -192,9 +181,7 @@ function EditBrandModal({
                       e.stopPropagation();
                     }}
                   />
-                  <Typography.Title level={4}>
-                    {item.brandname}
-                  </Typography.Title>
+                  <Typography.Title level={4}>{item.brandname}</Typography.Title>
                   <Tag color="#000">ID： {item.id}</Tag>
                   {/* <Tag color="#000">Pool Weight： {item.poolweight}</Tag> */}
                 </List.Item>

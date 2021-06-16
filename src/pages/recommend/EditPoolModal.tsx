@@ -1,19 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import request from 'umi-request';
 import { RECOMMEND_POOLS_AMOUNT } from '@/tools/const';
 import './index.less';
-import {
-  Typography,
-  message,
-  Modal,
-  Select,
-  Image,
-  Skeleton,
-  Tag,
-  List,
-  Input,
-  Empty,
-} from 'antd';
+import { Typography, message, Modal, Select, Image, Skeleton, Tag, List, Input, Empty } from 'antd';
 
 import { CheckCircleFilled, CloseCircleOutlined } from '@ant-design/icons';
 
@@ -40,9 +29,13 @@ function EditPoolModal({
   setPoolModalVisible: any;
   refresh: any;
 }) {
-  const [searchType, setSearchType] = useState<'Name' | 'ID'>('Name');
+  const [searchType, setSearchType] = useState<'Name' | 'ID'>('ID');
   const [searchResultList, setSearchResultList] = useState<IpoolItem[]>();
   const [newPoolItem, setNewPoolItem] = useState<IpoolItem | undefined>();
+
+  useEffect(() => {
+    console.log('newPoolItem: ', newPoolItem);
+  }, [newPoolItem]);
 
   const handleSetPoolWeight = async () => {
     request
@@ -96,9 +89,7 @@ function EditPoolModal({
   return (
     <Modal
       title={`Select No.${
-        clickedCardType === 'Banner'
-          ? clickedCardIndex + 1
-          : clickedCardIndex - 2
+        clickedCardType === 'Banner' ? clickedCardIndex + 1 : clickedCardIndex - 2
       } ${clickedCardType}`}
       centered
       visible={poolModalVisible}
@@ -140,6 +131,9 @@ function EditPoolModal({
                 );
               }
           }}
+          onChange={() => {
+            setNewPoolItem(undefined);
+          }}
         />
       </Input.Group>
 
@@ -154,18 +148,18 @@ function EditPoolModal({
                 <List.Item
                   key={`${item.poolid}_${item.pooltype}`}
                   onClick={() => {
-                    if (
-                      oldPoolItem.poolid === item.poolid &&
-                      oldPoolItem.pooltype === item.pooltype
-                    )
-                      setNewPoolItem(undefined);
-                    else {
-                      newPoolItem === item
-                        ? setNewPoolItem(undefined)
-                        : setNewPoolItem(item);
-                    }
+                    // if (
+                    //   !oldPoolItem ||
+                    //   (oldPoolItem.poolid === item.poolid && oldPoolItem.pooltype === item.pooltype)
+                    // )
+                    //   setNewPoolItem(undefined);
+                    // else {
+                    //   newPoolItem === item ? setNewPoolItem(undefined) : setNewPoolItem(item);
+                    // }
+                    newPoolItem === item ? setNewPoolItem(undefined) : setNewPoolItem(item);
                   }}
                   extra={
+                    oldPoolItem &&
                     oldPoolItem.poolid === item.poolid &&
                     oldPoolItem.pooltype === item.pooltype ? (
                       <Tag
@@ -198,11 +192,7 @@ function EditPoolModal({
                   }
                 >
                   {item.category === 'video' ? (
-                    <video
-                      src={item.fileurl}
-                      autoPlay={false}
-                      style={{ width: 80, height: 80 }}
-                    />
+                    <video src={item.fileurl} autoPlay={false} style={{ width: 80, height: 80 }} />
                   ) : (
                     <Image
                       style={{ objectFit: 'contain' }}
@@ -218,8 +208,7 @@ function EditPoolModal({
                   <Typography.Title level={4}>{item.itemname}</Typography.Title>
                   <Tag color="#000">Pool ID： {item.poolid}</Tag>
                   <Tag color="#000">
-                    Pool Type：{' '}
-                    {item.pooltype === 2 ? 'Fixed Swap' : 'English Auction'}
+                    Pool Type： {item.pooltype === 2 ? 'Fixed Swap' : 'English Auction'}
                   </Tag>
                   {/* <Tag color="#000">Pool Weight： {item.poolweight}</Tag> */}
                 </List.Item>

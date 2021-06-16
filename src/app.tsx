@@ -18,7 +18,9 @@ let _history: any = {};
 UMIRequest.use(async (ctx, next) => {
   if (ctx.req.url.substring(0, 4) !== 'http') {
     const beforeUrl = ctx.req.url;
+    console.log("beforeUrl: ", beforeUrl)
     const fixMatch = moduleUrlReplace(ctx.req, AXIOS_URL_MATCH_ARRAY);
+    console.log("fixMatch: ", fixMatch)
     if (beforeUrl === fixMatch.url) {
       ctx.req.url = APIPrefixUrl + ctx.req.url;
     }
@@ -30,8 +32,9 @@ UMIRequest.use(async (ctx, next) => {
   if (ctx.req.url === 'https://nftview.bounce.finance/v2/bsc/nft') delete headers.token;
   ctx.req.options.headers = headers;
   await next();
+  console.log("ctx.res.code: ", ctx.res.code)
   if (ctx.res.code === -1) {
-    _history.replace('/user/login');
+    history.replace('/user/login');
   }
 });
 

@@ -47,9 +47,7 @@ function EditBrandModal({
   const [searchType, setSearchType] = useState<'Name' | 'ID'>('Name');
   const [searchResultList, setSearchResultList] = useState<IPopularBrand[]>();
   const [newBrandItem, setNewBrandItem] = useState<IPopularBrand | undefined>();
-
-  console.log('brands: ', brands);
-
+  
   const handleSetBrandWeight = async () => {
     request
       .post('/api/bouadmin/main/auth/updateweight', {

@@ -111,12 +111,15 @@ const getPopularBrands = function () {
 };
 
 const getBrandsByPage = function (
+  likename: string = '',
   offset: number,
   limit: number,
   orderfield: 1 | 2 = 1, // 1: 按最新创建排序	2：按 Popular weight 排序
 ) {
-  return request.post('[FGB_V2]/api/v2/main/getbrandsbypage', {
+  // return request.post('[FGB_V2]/api/v2/main/getbrandsbypage', {
+  return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
     data: {
+      likename: likename,
       offset: offset,
       limit: limit, // 单页显示数量
       orderfield: orderfield,
@@ -174,9 +177,9 @@ export default function recommend() {
     data: brands,
     loading: brandsLoading,
   }: { data: IPopularBrand[]; loading: boolean } = useRequest(() => {
-    return getBrandsByPage(0, 500, 2);
+    return getBrandsByPage('', 0, 500, 2);
   });
-  console.log('getBrandsByPage >>>>>', brands, brandsLoading);
+  // console.log('getBrandsByPage >>>>>', brands, brandsLoading);
 
   useEffect(() => {
     if (
@@ -196,7 +199,7 @@ export default function recommend() {
           return accumulator;
         }, {});
 
-      console.log('pools: ', pools);
+      // console.log('pools: ', pools);
 
       setFilterPoolList(
         recommendPools
@@ -212,22 +215,22 @@ export default function recommend() {
     }
   }, [pools, recommendPools, recommendPoolsLoading, poolsLoading]);
 
-  useEffect(() => {
-    console.log('clickedCardIndex: ', clickedCardIndex);
-  }, [clickedCardIndex]);
+  // useEffect(() => {
+  //   console.log('clickedCardIndex: ', clickedCardIndex);
+  // }, [clickedCardIndex]);
 
   const poolResultList = new Array(RECOMMEND_POOLS_AMOUNT)
     .fill(0)
     .map((v, i) => filterPoolList[i] || v)
     .sort((a, b) => (a?.poolweight > b?.poolweight ? -1 : 1));
 
-  console.log('poolResultList >>>>>', poolResultList);
+  // console.log('poolResultList >>>>>', poolResultList);
 
   /* ------------------------------- */
 
   useEffect(() => {
-    console.log('popularBrandsLoading >>>>>', popularBrandsLoading);
-    console.log('popularBrands >>>>>', popularBrands);
+    // console.log('popularBrandsLoading >>>>>', popularBrandsLoading);
+    // console.log('popularBrands >>>>>', popularBrands);
     if (!popularBrandsLoading && !popularBrands) {
       setResultBrandsLoading(true);
       message.error('Brand API Error !');
@@ -236,17 +239,17 @@ export default function recommend() {
       setFilterBrandList(popularBrands);
       setResultBrandsLoading(false);
     }
-    console.log('resultBrandsLoading >>>>>', resultBrandsLoading);
+    // console.log('resultBrandsLoading >>>>>', resultBrandsLoading);
   }, [popularBrands, popularBrandsLoading]);
 
-  console.log('filterPoolList >>>>>', filterPoolList);
+  // console.log('filterPoolList >>>>>', filterPoolList);
 
   const brandResultList = new Array(RECOMMEND_BRANDS_AMOUNT)
     .fill(0)
     .map((zero, index) => filterBrandList[index] || zero)
     .sort((a, b) => (a?.popularweight > b?.popularweight ? -1 : 1));
 
-  console.log('brandResultList >>>>>', brandResultList);
+  // console.log('brandResultList >>>>>', brandResultList);
 
   const resetPoolWeight = async () => {
     if (!oldPoolItem) return;
@@ -276,7 +279,7 @@ export default function recommend() {
         resetPoolWeight();
       },
       onCancel() {
-        console.log('Cancel reset');
+        // console.log('Cancel reset');
       },
     });
   };
@@ -329,7 +332,7 @@ export default function recommend() {
         resetBrandWeight();
       },
       onCancel() {
-        console.log('Cancel reset');
+        // console.log('Cancel reset');
       },
     });
   };

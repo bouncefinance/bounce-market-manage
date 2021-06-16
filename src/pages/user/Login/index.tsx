@@ -51,7 +51,7 @@ const Login: React.FC = () => {
         setInitialState({
           token,
         });
-        history.replace('/usermanager/nft');
+        history.replace('/');
       } else {
         setLoadingStatus({
           type: 'login-fail',

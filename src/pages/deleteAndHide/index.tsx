@@ -1,7 +1,7 @@
-import { ExclamationCircleOutlined, StarOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, List, Image, Tag, Tabs, Input, Space, message, Modal, Button } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import { Card, List, Image, Tag, Tabs, Input, Space, message, Modal, Button, Tooltip } from 'antd';
+import React from 'react';
 import { useRequest } from 'umi';
 import request from 'umi-request';
 
@@ -246,13 +246,13 @@ const handleHideBrand = async function (
 };
 
 const index: React.FC = () => {
-  // const {
-  //   data: recommendPools,
-  //   loading: recommendPoolsLoading,
-  //   // refresh: poolRefresh,
-  // } = useRequest(() => {
-  //   return getRecommendPools(0, 11);
-  // });
+  const {
+    data: recommendPools,
+    // loading: recommendPoolsLoading,
+    // refresh: poolRefresh,
+  } = useRequest(() => {
+    return getRecommendPools(0, 11);
+  });
 
   const {
     data: recommendBrands,
@@ -261,6 +261,8 @@ const index: React.FC = () => {
   } = useRequest(() => {
     return getRecommendBrands();
   });
+
+  console.log('recommendBrands: ', recommendBrands);
 
   // requests items
   const {
@@ -384,12 +386,14 @@ const index: React.FC = () => {
                       description={
                         <>
                           <Tag color="default">Id: {item.id}</Tag>
-                          <Tag color="default">
-                            Contract Address:{' '}
-                            {`${item.contractaddress.slice(0, 6)}...${item.contractaddress.slice(
-                              -4,
-                            )}`}
-                          </Tag>
+                          <Tooltip placement="top" title={<span>{item.contractaddress}</span>}>
+                            <Tag color="default">
+                              Contract Address:{' '}
+                              {`${item.contractaddress.slice(0, 6)}...${item.contractaddress.slice(
+                                -4,
+                              )}`}
+                            </Tag>
+                          </Tooltip>
                           {item.status === 1 ? <Tag color="warning">Hiding</Tag> : <></>}
                         </>
                       }
@@ -428,8 +432,8 @@ const index: React.FC = () => {
                       <Button
                         key="list-loadmore-hide"
                         disabled={
-                          recommendBrands.map((recommendBrand: IBrandInfo) => {
-                            recommendBrand.id === brand.id;
+                          recommendBrands.find((recommendBrand: IBrandInfo) => {
+                            return recommendBrand.id === brand.id;
                           })
                             ? true
                             : false
@@ -446,8 +450,8 @@ const index: React.FC = () => {
                         danger
                         key="list-loadmore-delete"
                         disabled={
-                          recommendBrands.map((recommendBrand: IBrandInfo) => {
-                            recommendBrand.id === brand.id;
+                          recommendBrands.find((recommendBrand: IBrandInfo) => {
+                            return recommendBrand.id === brand.id;
                           })
                             ? true
                             : false
@@ -473,21 +477,28 @@ const index: React.FC = () => {
                       description={
                         <>
                           <Tag color="default">Id: {brand.id}</Tag>
-                          <Tag color="default">
-                            Contract Address:{' '}
-                            {`${brand.contractaddress.slice(0, 6)}...${brand.contractaddress.slice(
-                              -4,
-                            )}`}
-                          </Tag>
-                          <Tag color="default">
-                            Owner Address:{' '}
-                            {`${brand.owneraddress.slice(0, 6)}...${brand.owneraddress.slice(-4)}`}
-                          </Tag>
+                          <Tooltip placement="top" title={<span>{brand.contractaddress}</span>}>
+                            <Tag color="default">
+                              Contract Address:{' '}
+                              {`${brand.contractaddress.slice(0, 6)}...${brand.contractaddress.slice(
+                                -4,
+                              )}`}
+                            </Tag>
+                          </Tooltip>
+                          <Tooltip placement="top" title={<span>{brand.owneraddress}</span>}>
+                            <Tag color="default">
+                              Owner Address:{' '}
+                              {`${brand.owneraddress.slice(0, 6)}...${brand.owneraddress.slice(-4)}`}
+                            </Tag>
+                          </Tooltip>
                           {brand.status === 1 ? <Tag color="warning">Hiding</Tag> : <></>}
-                          {recommendBrands.map((recommendBrand: IBrandInfo) => {
-                            recommendBrand.id === brand.id;
-                          })
-                            ? <Tag color="warning">Recommended brand</Tag> : <></>}
+                          {recommendBrands.find((recommendBrand: IBrandInfo) => {
+                            return recommendBrand.id === brand.id;
+                          }) ? (
+                            <Tag color="warning">Recommended brand</Tag>
+                          ) : (
+                            <></>
+                          )}
                         </>
                       }
                     />

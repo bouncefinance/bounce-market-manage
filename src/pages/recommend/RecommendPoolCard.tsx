@@ -34,7 +34,7 @@ function RecommendPoolCard({
       title={`No. ${cardType === 'Fast Mover' ? index - 2 : index + 1}`}
       cover={
         item.category === 'video' ? (
-          <video controls src={item.fileurl} style={{ height: '162px' }} />
+          <video controls src={item.fileurl} style={{ height: '156px' }} />
         ) : (
           <Image alt="image" src={item.fileurl} style={{ height: '156px', objectFit: 'contain' }} />
         )

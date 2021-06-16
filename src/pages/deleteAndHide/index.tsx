@@ -394,7 +394,7 @@ const index: React.FC = () => {
                               )}`}
                             </Tag>
                           </Tooltip>
-                          {item.status === 1 ? <Tag color="warning">Hiding</Tag> : <></>}
+                          {item.status === 1 ? <Tag color="warning">Hiden</Tag> : <></>}
                         </>
                       }
                     />
@@ -429,23 +429,23 @@ const index: React.FC = () => {
                   <List.Item
                     style={{ height: 82 }}
                     actions={[
-                      <Button
-                        key="list-loadmore-hide"
-                        disabled={
-                          recommendBrands.find((recommendBrand: IBrandInfo) => {
-                            return recommendBrand.id === brand.id;
-                          })
-                            ? true
-                            : false
-                        }
-                        onClick={() => {
-                          brand.status === 0
-                            ? handleHideBrand(brand.id, 'hide', reloadBrand)
-                            : handleHideBrand(brand.id, 'show', reloadBrand);
-                        }}
-                      >
-                        {brand.status === 0 ? 'Hide' : 'Show'}
-                      </Button>,
+                      // <Button
+                      //   key="list-loadmore-hide"
+                      //   disabled={
+                      //     recommendBrands.find((recommendBrand: IBrandInfo) => {
+                      //       return recommendBrand.id === brand.id;
+                      //     })
+                      //       ? true
+                      //       : false
+                      //   }
+                      //   onClick={() => {
+                      //     brand.status === 0
+                      //       ? handleHideBrand(brand.id, 'hide', reloadBrand)
+                      //       : handleHideBrand(brand.id, 'show', reloadBrand);
+                      //   }}
+                      // >
+                      //   {brand.status === 0 ? 'Hide' : 'Show'}
+                      // </Button>,
                       <Button
                         danger
                         key="list-loadmore-delete"
@@ -491,7 +491,7 @@ const index: React.FC = () => {
                               {`${brand.owneraddress.slice(0, 6)}...${brand.owneraddress.slice(-4)}`}
                             </Tag>
                           </Tooltip>
-                          {brand.status === 1 ? <Tag color="warning">Hiding</Tag> : <></>}
+                          {brand.status === 1 ? <Tag color="warning">hiden</Tag> : <></>}
                           {recommendBrands.find((recommendBrand: IBrandInfo) => {
                             return recommendBrand.id === brand.id;
                           }) ? (

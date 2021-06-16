@@ -8,6 +8,7 @@ export default {
   'menu.banner.addTitle': '添加轮播',
   'menu.usermanager.nft': 'NFT管理',
   'menu.delete': '删除',
+  'menu.deleteAndHide': '删除和隐藏',
   'menu.banner.updateTitle': '轮播更新',
   'menu.box': '盲盒',
   'menu.box.view': '管理',

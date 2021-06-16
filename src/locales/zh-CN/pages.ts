@@ -88,4 +88,7 @@ export default {
   'pages.nft.handile.notAudit': '未审核',
   'pages.nft.handile.theApproved': '已审核',
   'pages.nft.handile.hasBanned': '已拒绝',
+  'pages.recommend.index.Pools': '池子',
+  'pages.recommend.index.Brands': '品牌',
+  // 'pages.recommend.index.Banner': '轮播',
 };

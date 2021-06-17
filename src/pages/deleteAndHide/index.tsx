@@ -297,7 +297,7 @@ const index: React.FC = () => {
     refresh: reloadBrand,
   } = useRequest(
     ({ pageSize: limit, current: offset }, searchText) =>
-      getBrandsList(searchText, (offset - 1) * limit, limit),  // Filter out brand which id = 10 and which id =11
+      getBrandsList(searchText, (offset - 1) * limit + 2, limit),  // Filter out brand which id = 10 and which id =11
     {
       paginated: true,
       cacheKey: 'brands',

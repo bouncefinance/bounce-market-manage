@@ -96,13 +96,13 @@ const getPopularBrands = function () {
   });
 };
 
-const getBrandsByPage = function (likename: string = '', offset: number, limit: number) {
+const getBrandsByPage = function (likename: string = '', offset: number/* , limit: number */) {
   // return request.post('[FGB_V2]/api/v2/main/getbrandsbypage', {
   return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
     data: {
       likename: likename,
       offset: offset,
-      limit: limit, // 单页显示数量
+      // limit: limit, // 单页显示数量
     },
   });
 };
@@ -146,7 +146,7 @@ export default function recommend() {
   });
 
   const { data: brands }: { data: IPopularBrand[]; loading: boolean } = useRequest(() => {
-    return getBrandsByPage('', 0, 500);
+    return getBrandsByPage('', 0/* , 500 */);
   });
   // console.log('getBrandsByPage >>>>>', brands, brandsLoading);
 

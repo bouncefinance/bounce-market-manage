@@ -297,7 +297,7 @@ const index: React.FC = () => {
     refresh: reloadBrand,
   } = useRequest(
     ({ pageSize: limit, current: offset }, searchText) =>
-      getBrandsList(searchText, (offset - 1) * limit, limit),
+      getBrandsList(searchText, (offset - 1) * limit + 2, limit),  // Filter out brand which id = 10 and which id =11
     {
       paginated: true,
       cacheKey: 'brands',
@@ -424,7 +424,9 @@ const index: React.FC = () => {
                   onShowSizeChange: brandPagination.onChange,
                   pageSize: 7,
                 }}
-                dataSource={brandData?.list}
+                dataSource={brandData?.list/* .filter((brand) => {
+                  return brand.id !== 10 && brand.id !== 11;
+                }) */}
                 renderItem={(brand: IBrandInfo) => (
                   <List.Item
                     style={{ height: 82 }}
@@ -480,15 +482,18 @@ const index: React.FC = () => {
                           <Tooltip placement="top" title={<span>{brand.contractaddress}</span>}>
                             <Tag color="default">
                               Contract Address:{' '}
-                              {`${brand.contractaddress.slice(0, 6)}...${brand.contractaddress.slice(
-                                -4,
-                              )}`}
+                              {`${brand.contractaddress.slice(
+                                0,
+                                6,
+                              )}...${brand.contractaddress.slice(-4)}`}
                             </Tag>
                           </Tooltip>
                           <Tooltip placement="top" title={<span>{brand.owneraddress}</span>}>
                             <Tag color="default">
                               Owner Address:{' '}
-                              {`${brand.owneraddress.slice(0, 6)}...${brand.owneraddress.slice(-4)}`}
+                              {`${brand.owneraddress.slice(0, 6)}...${brand.owneraddress.slice(
+                                -4,
+                              )}`}
                             </Tag>
                           </Tooltip>
                           {brand.status === 1 ? <Tag color="warning">hiden</Tag> : <></>}

@@ -73,11 +73,7 @@ export interface IPopularBrand {
   status: number;
 }
 
-const getPoolLists = function (
-  offset: number,
-  limit: number,
-  orderfield: 1 | 2 = 1,
-) {
+const getPoolLists = function (offset: number, limit: number, orderfield: 1 | 2 = 1) {
   return request.post('[FGB_V2]/api/v2/main/getauctionpoolsbypage', {
     data: {
       limit,
@@ -137,9 +133,7 @@ let clickedCardType: 'Banner' | 'Fast Mover' | 'Brand';
 export default function recommend() {
   const [poolModalVisible, setPoolModalVisible] = useState(false);
   const [filterPoolList, setFilterPoolList] = useState<Array<IpoolItem>>([]);
-  const [filterBrandList, setFilterBrandList] = useState<Array<IPopularBrand>>(
-    [],
-  );
+  const [recommendBrandList, setRecommendBrandList] = useState<Array<IPopularBrand>>([]);
   const [brandModalVisible, setBrandModalVisible] = useState(false);
   const [resultPoolsLoading, setResultPoolsLoading] = useState(true);
   const [resultBrandsLoading, setResultBrandsLoading] = useState(true);
@@ -148,44 +142,33 @@ export default function recommend() {
     data: recommendPools,
     loading: recommendPoolsLoading,
     refresh: poolRefresh,
-  }: { data: Ipoolweight[]; loading: boolean; refresh: any } = useRequest(
-    () => {
-      return getPoolsInfobypage(0, 11);
-    },
-  );
+  }: { data: Ipoolweight[]; loading: boolean; refresh: any } = useRequest(() => {
+    return getPoolsInfobypage(0, 11);
+  });
   // console.log('recommendPools>>>>>', recommendPoolsLoading, recommendPools);
 
-  const {
-    data: pools,
-    loading: poolsLoading,
-  }: { data: IpoolItem[]; loading: boolean } = useRequest(() => {
-    return getPoolLists(0, 1000);
-  });
+  const { data: pools, loading: poolsLoading }: { data: IpoolItem[]; loading: boolean } =
+    useRequest(() => {
+      return getPoolLists(0, 1000);
+    });
   // console.log('getPoolLists>>>>>', pools, poolsLoading);
 
   const {
     data: popularBrands,
     loading: popularBrandsLoading,
     refresh: brandRefresh,
-  }: { data: IPopularBrand[]; loading: boolean; refresh: any } = useRequest(
-    () => {
-      return getPopularBrands();
-    },
-  );
-
-  const {
-    data: brands,
-    loading: brandsLoading,
-  }: { data: IPopularBrand[]; loading: boolean } = useRequest(() => {
-    return getBrandsByPage('', 0, 500, 2);
+  }: { data: IPopularBrand[]; loading: boolean; refresh: any } = useRequest(() => {
+    return getPopularBrands();
   });
+
+  const { data: brands, loading: brandsLoading }: { data: IPopularBrand[]; loading: boolean } =
+    useRequest(() => {
+      return getBrandsByPage('', 0, 500, 2);
+    });
   // console.log('getBrandsByPage >>>>>', brands, brandsLoading);
 
   useEffect(() => {
-    if (
-      (!recommendPoolsLoading && !recommendPools) ||
-      (!poolsLoading && !pools)
-    ) {
+    if ((!recommendPoolsLoading && !recommendPools) || (!poolsLoading && !pools)) {
       setResultPoolsLoading(true);
       message.error('API Error !');
     }
@@ -236,7 +219,7 @@ export default function recommend() {
       message.error('Brand API Error !');
     }
     if (!popularBrandsLoading && popularBrands) {
-      setFilterBrandList(popularBrands);
+      setRecommendBrandList(popularBrands);
       setResultBrandsLoading(false);
     }
     // console.log('resultBrandsLoading >>>>>', resultBrandsLoading);
@@ -246,7 +229,7 @@ export default function recommend() {
 
   const brandResultList = new Array(RECOMMEND_BRANDS_AMOUNT)
     .fill(0)
-    .map((zero, index) => filterBrandList[index] || zero)
+    .map((zero, index) => recommendBrandList[index] || zero)
     .sort((a, b) => (a?.popularweight > b?.popularweight ? -1 : 1));
 
   // console.log('brandResultList >>>>>', brandResultList);
@@ -296,10 +279,7 @@ export default function recommend() {
     setPoolModalVisible(true);
   };
 
-  const handleAddPool = (
-    index: number,
-    cardType: 'Banner' | 'Fast Mover' | 'Brand',
-  ) => {
+  const handleAddPool = (index: number, cardType: 'Banner' | 'Fast Mover' | 'Brand') => {
     clickedCardIndex = index;
     clickedCardType = cardType;
     modalAction = 'add';
@@ -414,10 +394,7 @@ export default function recommend() {
       <EditPoolModal
         pools={pools?.filter((pool) => {
           return !filterPoolList.find((filterPool) => {
-            return (
-              pool.poolid === filterPool.poolid &&
-              pool.pooltype === filterPool.pooltype
-            );
+            return pool.poolid === filterPool.poolid && pool.pooltype === filterPool.pooltype;
           });
         })}
         clickedCardIndex={clickedCardIndex}
@@ -431,9 +408,14 @@ export default function recommend() {
 
       <EditBrandModal
         brands={brands?.filter((brand) => {
-          return !filterBrandList.find((filterBrand) => {
-            return filterBrand.id === brand.id;
-          });
+          return (
+            // Filter out brands that have been recommended 
+            !recommendBrandList.find((recommendBrand) => {
+              return recommendBrand.id === brand.id;
+            }) &&
+            brand.id !== 10 &&
+            brand.id !== 11
+          );
         })}
         clickedCardIndex={clickedCardIndex}
         clickedCardType={clickedCardType}

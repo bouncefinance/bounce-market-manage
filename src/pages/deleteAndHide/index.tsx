@@ -5,6 +5,8 @@ import React from 'react';
 import { useRequest } from 'umi';
 import request from 'umi-request';
 
+import placeholderImg from '@/assets/images/placeholderImg.svg'
+
 const { TabPane } = Tabs;
 const { Search } = Input;
 const { confirm } = Modal;
@@ -379,6 +381,15 @@ const index: React.FC = () => {
                             width={70}
                             height={70}
                             style={{ objectFit: 'contain' }}
+                            placeholder={
+                              <Image
+                                preview={false}
+                                src={placeholderImg}
+                                width={70}
+                                height={70}
+                                style={{background: 'white'}}
+                              />
+                            }
                           />
                         )
                       }
@@ -477,6 +488,15 @@ const index: React.FC = () => {
                           width={70}
                           height={70}
                           style={{ objectFit: 'contain' }}
+                          placeholder={
+                            <Image
+                              preview={false}
+                              src={placeholderImg}
+                              width={70}
+                              height={70}
+                              style={{background: 'white'}}
+                            />
+                          }
                         />
                       }
                       title={<span>{brand.brandname}</span>}

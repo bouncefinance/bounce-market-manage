@@ -32,25 +32,6 @@ export interface IpoolItem {
   category: string;
   channel: string;
 }
-
-interface IBrandData {
-  id: number; // Brand 的 ID
-  creator: string;
-  ownername: string; // 铸造者（艺术家）昵称
-  owneraddress: string;
-  contractaddress: string; // 子合约地址
-  brandname: string; // Brand name
-  brandsymbol: string;
-  description: string; // Brand 描述信息
-  imgurl: string; // Brand 主图在线链接
-  standard: number; // 1: ERC721 	2：ERC1155
-  status: number; // 0: Live		1: Close
-  popularweight: number; // 池子的权重信息
-  bandimgurl: string; // Brand 背景图在线链接
-  ownerimg: string; // 铸造者（艺术家）头像
-  totalcount: number;
-}
-
 interface Ipoolweight {
   poolid: number;
   standard: number; // 0: fixed swap, 1: English auction
@@ -98,27 +79,30 @@ const getPoolsInfobypage = function (offset: number, limit: number) {
 };
 
 // get brands weight
+// const getPopularBrands = function () {
+//   return request.post('[FGB_V2]/api/v2/main/getpopularbrands', {
+//     data: {
+//       accountaddress: '',
+//     },
+//   });
+// };
 const getPopularBrands = function () {
-  return request.post('[FGB_V2]/api/v2/main/getpopularbrands', {
+  return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
     data: {
-      accountaddress: '',
+      likename: '',
+      offset: 0,
+      limit: RECOMMEND_BRANDS_AMOUNT, // 单页显示数量
     },
   });
 };
 
-const getBrandsByPage = function (
-  likename: string = '',
-  offset: number,
-  limit: number,
-  orderfield: 1 | 2 = 1, // 1: 按最新创建排序	2：按 Popular weight 排序
-) {
+const getBrandsByPage = function (likename: string = '', offset: number, limit: number) {
   // return request.post('[FGB_V2]/api/v2/main/getbrandsbypage', {
   return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
     data: {
       likename: likename,
       offset: offset,
       limit: limit, // 单页显示数量
-      orderfield: orderfield,
     },
   });
 };
@@ -161,10 +145,9 @@ export default function recommend() {
     return getPopularBrands();
   });
 
-  const { data: brands, loading: brandsLoading }: { data: IPopularBrand[]; loading: boolean } =
-    useRequest(() => {
-      return getBrandsByPage('', 0, 500, 2);
-    });
+  const { data: brands }: { data: IPopularBrand[]; loading: boolean } = useRequest(() => {
+    return getBrandsByPage('', 0, 500);
+  });
   // console.log('getBrandsByPage >>>>>', brands, brandsLoading);
 
   useEffect(() => {
@@ -409,7 +392,7 @@ export default function recommend() {
       <EditBrandModal
         brands={brands?.filter((brand) => {
           return (
-            // Filter out brands that have been recommended 
+            // Filter out brands that have been recommended
             !recommendBrandList.find((recommendBrand) => {
               return recommendBrand.id === brand.id;
             }) &&

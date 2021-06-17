@@ -297,14 +297,16 @@ const index: React.FC = () => {
     refresh: reloadBrand,
   } = useRequest(
     ({ pageSize: limit, current: offset }, searchText) =>
-      getBrandsList(searchText, (offset - 1) * limit + 2, limit),  // Filter out brand which id = 10 and which id =11
+      getBrandsList(searchText, (offset - 1) * limit, limit), // Filter out brand which id = 10 and which id =11
     {
       paginated: true,
       cacheKey: 'brands',
       defaultParams: [{ pageSize: 7, current: 1 }],
       formatResult(data: any) {
         return {
-          list: data.data,
+          list: data.data.filter((item: IBrandInfo) => {
+            return item.id !== 10 && item.id !== 11;
+          }),
           total: data.total,
         };
       },
@@ -341,7 +343,7 @@ const index: React.FC = () => {
                 dataSource={itemData?.list}
                 renderItem={(item: INftItem) => (
                   <List.Item
-                    style={{ height: 82 }}
+                    style={{ height: 78 }}
                     actions={[
                       <Button
                         key="list-loadmore-hide"
@@ -424,12 +426,14 @@ const index: React.FC = () => {
                   onShowSizeChange: brandPagination.onChange,
                   pageSize: 7,
                 }}
-                dataSource={brandData?.list/* .filter((brand) => {
+                dataSource={
+                  brandData?.list /* .filter((brand) => {
                   return brand.id !== 10 && brand.id !== 11;
-                }) */}
+                }) */
+                }
                 renderItem={(brand: IBrandInfo) => (
                   <List.Item
-                    style={{ height: 82 }}
+                    style={{ height: 78 }}
                     actions={[
                       // <Button
                       //   key="list-loadmore-hide"

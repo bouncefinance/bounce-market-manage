@@ -304,9 +304,7 @@ const index: React.FC = () => {
       defaultParams: [{ pageSize: 7, current: 1 }],
       formatResult(data: any) {
         return {
-          list: data.data.filter((item: IBrandInfo) => {
-            return item.id !== 10 && item.id !== 11;
-          }),
+          list: data.data,
           total: data.total,
         };
       },
@@ -456,6 +454,8 @@ const index: React.FC = () => {
                         danger
                         key="list-loadmore-delete"
                         disabled={
+                          brand.id === 10 ||
+                          brand.id === 11 ||
                           recommendBrands.find((recommendBrand: IBrandInfo) => {
                             return recommendBrand.id === brand.id;
                           })

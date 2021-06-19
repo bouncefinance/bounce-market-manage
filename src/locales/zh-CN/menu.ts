@@ -13,4 +13,5 @@ export default {
   'menu.box': '盲盒',
   'menu.box.view': '管理',
   'menu.box.create': '创建',
+  'menu.login': 'Connect Wallet',
 };

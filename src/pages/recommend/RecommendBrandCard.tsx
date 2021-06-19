@@ -3,7 +3,6 @@ import { Image, Skeleton, Card } from 'antd';
 import {
   PlusOutlined,
   EditOutlined,
-  VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
 import { IPopularBrand } from '.';
 import React from 'react';

@@ -21,6 +21,10 @@ const Login: React.FC = () => {
     }),
   });
 
+  useEffect(() => {
+    console.log('loadingStatus: ', loadingStatus);
+  }, [loadingStatus]);
+
   const init = async () => {
     setLoadingStatus({
       type: 'loading',
@@ -28,17 +32,34 @@ const Login: React.FC = () => {
         id: 'pages.login.loadingStatusMessge.loading',
       }),
     });
-    const _account = await getMetaMskAccount();
-    setLoadingStatus({
-      type: 'login-success',
-      message: intl.formatMessage({
-        id: 'pages.login.loadingStatusMessge.loading',
-      }),
-    });
-    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    // const _account = await getMetaMskAccount()
+    let _account;
+    await getMetaMskAccount().then(
+      (res) => {
+        console.log('successed', res);
+        _account = res;
+      },
+      (res) => {
+        console.log('failed', res);
+        _account = undefined;
+      },
+    );
+
+    // setLoadingStatus({
+    //   type: 'login-success',
+    //   message: intl.formatMessage({
+    //     id: 'pages.login.loadingStatusMessge.loading',
+    //   }),
+    // });
+
+    // await new Promise((resolve) => setTimeout(resolve, 300));
+
     setAccount(_account);
+
     if (_account) {
       const token = await getNewToken(_account ?? '444');
+      console.log('token: ', token);
       if (token) {
         // console.log('登录成功', token)
         setLoadingStatus({
@@ -75,8 +96,17 @@ const Login: React.FC = () => {
           id: 'pages.login.loadingStatusMessge.account-fail',
         }),
       });
+      setTimeout(() => {
+        setLoadingStatus({
+          type: 'await',
+          message: intl.formatMessage({
+            id: 'pages.login.loadingStatusMessge.await',
+          }),
+        });
+      }, 1e3);
     }
   };
+
   useEffect(() => {
     loadingStatus.type !== 'await' && init();
   }, []);
@@ -84,12 +114,22 @@ const Login: React.FC = () => {
   const getNewToken = async (account: string) => {
     if (typeof account === 'string') {
       const web3 = myweb3();
-      const signature = await web3.eth.personal.sign(dataToSign, account, password);
+      const signature = await web3.eth.personal.sign(dataToSign, account, password).then(
+        (res) => {
+          console.log('Signing succeeded');
+          return res
+        },
+        (res) => {
+          console.log('Signing failed', res);
+        },
+      );
+
       const params = {
         accountaddress: account,
         message: dataToSign,
         signature: signature,
       };
+
       try {
         const res_getSignToken = await request.post('/api/bouadmin/main/jwtauth', { data: params });
         console.log(res_getSignToken);

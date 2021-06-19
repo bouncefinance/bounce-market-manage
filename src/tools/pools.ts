@@ -68,7 +68,7 @@ export const getTradeList = async (data: any, poolweightKey: string) => {
     }
     return getPoolsWeight(tradeList, poolweightKey)
   } catch (error) {
-    message.error(error)
+    return message.error(error)
   }
 }
 

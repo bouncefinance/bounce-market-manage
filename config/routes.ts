@@ -18,9 +18,9 @@ const routes: MenuDataItem[] = [
     ],
   },
   {
-    name: 'recommend',
+    name: 'marketplace',
     path: '/',
-    icon: 'OrderedList',
+    icon: 'Shop',
     component: './recommend',
   },
   // {
@@ -33,6 +33,30 @@ const routes: MenuDataItem[] = [
     path: '/deleteAndHide',
     icon: 'Edit',
     component: './deleteAndHide',
+  },
+  {
+    name: 'NFT',
+    path: '/NFT',
+    icon: 'icon-cube',
+    component: './NFT',
+  },
+  {
+    name: 'brand',
+    path: '/Brand',
+    icon: 'icon-brand',
+    component: './brand',
+  },
+  {
+    name: 'account',
+    path: '/Account',
+    icon: 'User',
+    component: './account',
+  },
+  {
+    name: 'history',
+    path: '/History',
+    icon: 'History',
+    component: './history',
   },
   // {
   //     name: 'box',

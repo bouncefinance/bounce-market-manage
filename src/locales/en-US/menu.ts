@@ -1,5 +1,6 @@
 export default {
   'menu.homeManager': 'Home Recommend',
+  'menu.marketplace': 'Marketplace',
   'menu.recommend': 'Recommend',
   'menu.recommendBrand': 'Recommend Brand',
   'menu.recommendNFT': 'Recommend NFT',
@@ -10,6 +11,10 @@ export default {
   'menu.usermanager.nft': 'NFT Manager',
   'menu.delete': 'Delete',
   'menu.deleteAndHide': 'Delete And Hide',
+  'menu.NFT': 'NFT',
+  'menu.account': 'Account',
+  'menu.brand': 'Brand',
+  'menu.history': 'History',
   'menu.box': 'Box',
   'menu.box.view': 'View',
   'menu.box.create': 'Create',

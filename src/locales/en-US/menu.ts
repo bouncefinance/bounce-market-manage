@@ -10,6 +10,7 @@ export default {
   'menu.usermanager.nft': 'NFT Manager',
   'menu.delete': 'Delete',
   'menu.deleteAndHide': 'Delete And Hide',
+  'menu.account': 'Account',
   'menu.box': 'Box',
   'menu.box.view': 'View',
   'menu.box.create': 'Create',

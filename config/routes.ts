@@ -34,6 +34,12 @@ const routes: MenuDataItem[] = [
     icon: 'Edit',
     component: './deleteAndHide',
   },
+  {
+    name: 'account',
+    path: '/account',
+    icon: 'User',
+    component: './account',
+  },
   // {
   //     name: 'box',
   //     path: '/box',

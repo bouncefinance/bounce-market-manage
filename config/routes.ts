@@ -28,12 +28,12 @@ const routes: MenuDataItem[] = [
   //   path: '/usermanager/nft',
   //   component: './usermanager/nft',
   // },
-  {
-    name: 'deleteAndHide',
-    path: '/deleteAndHide',
-    icon: 'Edit',
-    component: './deleteAndHide',
-  },
+  // {
+  //   name: 'deleteAndHide',
+  //   path: '/deleteAndHide',
+  //   icon: 'Edit',
+  //   component: './deleteAndHide',
+  // },
   {
     name: 'NFT',
     path: '/NFT',

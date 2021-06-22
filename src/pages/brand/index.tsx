@@ -256,7 +256,7 @@ const index: React.FC = () => {
                         </Tag>
                       </Tooltip>
                       {brand.status === 1 ? <Tag color="warning">hiden</Tag> : <></>}
-                      {recommendBrands.find((recommendBrand: IBrandInfo) => {
+                      {recommendBrands?.find((recommendBrand: IBrandInfo) => {
                         return recommendBrand.id === brand.id;
                       }) ? (
                         <Tag color="warning">Recommended brand</Tag>

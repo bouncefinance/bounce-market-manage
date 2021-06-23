@@ -12,7 +12,7 @@ const Settings: LayoutSettings & {
   fixSiderbar: true,
   title: false,
   pwa: false,
-  iconfontUrl: '//at.alicdn.com/t/font_2626662_42w0ewci2lt.js',
+  iconfontUrl: '//at.alicdn.com/t/font_2626662_v1c3o9lrbe.js',
   logo: '/logo.svg',
   menu: {
     locale: true,

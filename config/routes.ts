@@ -58,6 +58,12 @@ const routes: MenuDataItem[] = [
     icon: 'History',
     component: './history',
   },
+  {
+    name: 'authority',
+    path: '/Authority',
+    icon: 'Key',
+    component: './authority',
+  },
   // {
   //     name: 'box',
   //     path: '/box',

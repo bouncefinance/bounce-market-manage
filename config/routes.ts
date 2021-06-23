@@ -17,12 +17,6 @@ const routes: MenuDataItem[] = [
       },
     ],
   },
-  {
-    name: 'marketplace',
-    path: '/',
-    icon: 'Shop',
-    component: './recommend',
-  },
   // {
   //   name: 'delete',
   //   path: '/usermanager/nft',
@@ -34,6 +28,30 @@ const routes: MenuDataItem[] = [
   //   icon: 'Edit',
   //   component: './deleteAndHide',
   // },
+  {
+    name: 'overview',
+    path: '/Overview',
+    icon: 'BarChart',
+    component: './overview',
+  },
+  {
+    name: 'Landing Page',
+    path: '/LandingPage',
+    icon: 'Home',
+    component: './landingPage',
+  },
+  {
+    name: 'marketplace',
+    path: '/',
+    icon: 'Shop',
+    component: './recommend',
+  },
+  {
+    name: 'drops',
+    path: '/Drops',
+    icon: 'Fire',
+    component: './drops',
+  },
   {
     name: 'NFT',
     path: '/NFT',
@@ -53,16 +71,16 @@ const routes: MenuDataItem[] = [
     component: './account',
   },
   {
-    name: 'history',
-    path: '/History',
-    icon: 'History',
-    component: './history',
-  },
-  {
     name: 'authority',
     path: '/Authority',
     icon: 'Key',
     component: './authority',
+  },
+  {
+    name: 'history',
+    path: '/History',
+    icon: 'History',
+    component: './history',
   },
   // {
   //     name: 'box',
@@ -89,14 +107,14 @@ const routes: MenuDataItem[] = [
     path: '/test',
     icon: 'BorderInner',
     component: './test',
-    routes:[
+    routes: [
       {
         name: 'hhh',
         path: 'hhh',
         icon: 'DownSquare',
         component: './test/edit.tsx',
-      }
-    ]
+      },
+    ],
   },
   {
     component: './404',

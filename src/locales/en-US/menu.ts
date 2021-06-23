@@ -1,4 +1,6 @@
 export default {
+  'menu.overview': 'Overview',
+  'menu.landingPage': 'Landing Page',
   'menu.homeManager': 'Home Recommend',
   'menu.marketplace': 'Marketplace',
   'menu.recommend': 'Recommend',

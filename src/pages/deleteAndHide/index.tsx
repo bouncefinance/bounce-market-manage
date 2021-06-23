@@ -248,13 +248,13 @@ const handleHideBrand = async function (
 };
 
 const index: React.FC = () => {
-  const {
-    data: recommendPools,
-    // loading: recommendPoolsLoading,
-    // refresh: poolRefresh,
-  } = useRequest(() => {
-    return getRecommendPools(0, 11);
-  });
+  // const {
+  //   data: recommendPools,
+  //   // loading: recommendPoolsLoading,
+  //   // refresh: poolRefresh,
+  // } = useRequest(() => {
+  //   return getRecommendPools(0, 11);
+  // });
 
   const {
     data: recommendBrands,

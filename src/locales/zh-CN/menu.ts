@@ -1,4 +1,6 @@
 export default {
+  'menu.overview': '总览',
+  'menu.landingPage': 'Landing Page',
   'menu.homeManager': '旧首页推荐管理',
   'menu.marketplace': '市场',
   'menu.recommend': '首页推荐管理',

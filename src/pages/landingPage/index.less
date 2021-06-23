@@ -1,0 +1,41 @@
+.recommend-box {
+  .dropdown {
+    margin: 1px 0px;
+  }
+  .itemRow {
+    height: 100%;
+    margin: 10px 0px;
+    padding: 10px;
+    background-color: #fff;
+    .infoWrapper {
+      padding: 0px 10px;
+      // flex: 0 0 33%;
+      .itemName {
+        max-width: 500px;
+        overflow: hidden;
+        font-weight: 600;
+        font-size: 20px;
+        text-overflow: ellipsis;
+        word-break: break-all;
+      }
+    }
+  }
+  .updateSearch {
+    input {
+      border-color: #333;
+    }
+    button {
+      color: #333;
+      background-color: #fff;
+      border-color: #333;
+    }
+  }
+
+  :global(.ant-select) {
+    height: 800px;
+  }
+  .ant-descriptions-row > th,
+  .ant-descriptions-row > td {
+    padding: 0;
+  }
+}

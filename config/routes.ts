@@ -40,12 +40,12 @@ const routes: MenuDataItem[] = [
     icon: 'icon-cube',
     component: './NFT',
   },
-  {
-    name: 'brand',
-    path: '/Brand',
-    icon: 'icon-brand',
-    component: './brand',
-  },
+  // {
+  //   name: 'brand',
+  //   path: '/Brand',
+  //   icon: 'icon-brand',
+  //   component: './brand',
+  // },
   {
     name: 'account',
     path: '/Account',

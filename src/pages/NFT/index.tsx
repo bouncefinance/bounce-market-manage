@@ -10,6 +10,7 @@ import {
   Modal,
   message,
   Space,
+  Tabs,
 } from 'antd';
 import React from 'react';
 import { useRequest } from 'umi';
@@ -18,9 +19,10 @@ import request from 'umi-request';
 const { Column } = Table;
 const { Search } = Input;
 const { confirm } = Modal;
+const { TabPane } = Tabs;
 
 import placeholderImg from '@/assets/images/placeholderImg.svg';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, StarFilled } from '@ant-design/icons';
 
 interface INftItem {
   artistpoolweight: number;
@@ -47,11 +49,7 @@ interface INftItem {
   updated_at: string;
 }
 
-const getPoolsList = function (
-  likename: string = '',
-  offset: number,
-  limit: number = 7,
-) {
+const getPoolsList = function (likename: string = '', offset: number, limit: number = 7) {
   return request.post('/api/bouadmin/main/auth/getpoolsbylikename', {
     data: {
       likename,
@@ -135,14 +133,119 @@ const handleHideItem = async function (
   });
 };
 
-const index: React.FC = () => {
+interface IBrandInfo {
+  auditor: string;
+  bandimgurl: string;
+  brandname: string;
+  brandsymbol: string;
+  contractaddress: string;
+  created_at: string;
+  description: string;
+  faildesc: string;
+  id: number;
+  imgurl: string;
+  owneraddress: string;
+  ownername: string;
+  popularweight: number;
+  standard: number;
+  status: number;
+  updated_at: string;
+}
 
+// get brands weight
+const getRecommendBrands = function () {
+  return request.post('[FGB_V2]/api/v2/main/getpopularbrands', {
+    data: {
+      accountaddress: '',
+    },
+  });
+};
+
+const getBrandsList = function (
+  likename: string = '',
+  offset: number,
+  limit: number = 7,
+  orderfield: 1 | 2 = 1,
+) {
+  return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
+    data: {
+      likename,
+      limit,
+      offset,
+    },
+  });
+};
+
+const handleDeleteBrand = async function (id: number, reload: () => void) {
+  const deleteBrand = async (id: number) => {
+    const res = await request.post('/api/bouadmin/main/auth/delbrand', {
+      data: {
+        id,
+      },
+    });
+    if (res.code === 1) {
+      message.success('Deleted successfully');
+    } else {
+      message.error('Delete failed');
+    }
+  };
+
+  confirm({
+    // title: 'Delete',
+    icon: <ExclamationCircleOutlined />,
+    title: 'Do you Want to delete this brand?',
+    onOk() {
+      deleteBrand(id).then(() => {
+        reload();
+      });
+    },
+    onCancel() {},
+  });
+};
+
+const handleHideBrand = async function (
+  tokenid: number,
+  actionType: 'hide' | 'show',
+  reload: () => void,
+) {
+  const status = actionType === 'hide' ? 1 : 0;
+
+  const hideBrand = async (id: number, actionType: 'hide' | 'show') => {
+    const res = await request.post('/api/bouadmin/main/auth/updatebrandstatus', {
+      data: {
+        id,
+        status, // status: 1:to hide, 2:to show
+      },
+    });
+    if (res.code === 1) {
+      actionType === 'hide'
+        ? message.success('Hide successfully')
+        : message.success('Show successfully');
+    } else {
+      actionType === 'hide' ? message.error('Failed to hide') : message.error('Failed to show');
+    }
+  };
+
+  confirm({
+    // title: 'Delete',
+    icon: <ExclamationCircleOutlined />,
+    title: `Do you Want to ${actionType} this Brand?`,
+    onOk() {
+      hideBrand(tokenid, actionType).then(() => {
+        reload();
+      });
+    },
+    onCancel() {},
+  });
+};
+
+const index: React.FC = () => {
   const {
     // data: itemData,
     // loading: itemLoading,
     // pagination: itemPagination,
     // params: itemParams,
-    tableProps: itemProps,
+    tableProps: itemTableProps,
     run: searchItem,
     refresh: reloadItem,
   } = useRequest(
@@ -162,120 +265,304 @@ const index: React.FC = () => {
     },
   );
 
+  const {
+    data: recommendBrands,
+    // loading: recommendBrandsLoading,
+    // refresh: brandRefresh,
+  } = useRequest(() => {
+    return getRecommendBrands();
+  });
+
+  const {
+    // data: brandData,
+    // loading: brandLoading,
+    // pagination: brandPagination,
+    tableProps: brandTableProps,
+    run: searchBrand,
+    refresh: reloadBrand,
+  } = useRequest(
+    ({ pageSize: limit, current: offset }, searchText) =>
+      getBrandsList(searchText, (offset - 1) * limit, limit), // Filter out brand which id = 10 and which id =11
+    {
+      paginated: true,
+      cacheKey: 'brands',
+      defaultParams: [{ pageSize: 7, current: 1 }],
+      formatResult(data: any) {
+        return {
+          list: data.data,
+          total: data.total,
+        };
+      },
+    },
+  );
+
   return (
     <PageContainer>
-      <Space direction={'vertical'} style={{ width: '100%' }}>
-        <Search
-          placeholder="input search text"
-          allowClear
-          onSearch={(value) => searchItem({ current: 1, pageSize: 7 }, value)}
-          style={{ width: '75%' }}
-          size="middle"
-        />
-        <Card>
-
-          <Table {...itemProps}>
-            <Column
-              title="Image"
-              dataIndex="fileurl"
-              key="fileurl"
-              width={110}
-              align={'center'}
-              render={(fileurl, record: INftItem) => {
-                console.log('record: ', record);
-                return record?.category === 'image' ? (
-                  <Image
-                    src={fileurl}
-                    style={{ objectFit: 'contain' }}
-                    width={64}
-                    height={64}
-                    placeholder={
+      <Tabs defaultActiveKey="1">
+        <TabPane tab="Item" key="1">
+          <Space direction={'vertical'} style={{ width: '100%' }}>
+            <Search
+              placeholder="input search text"
+              allowClear
+              onSearch={(value) => searchItem({ current: 1, pageSize: 7 }, value)}
+              style={{ width: '75%' }}
+              size="middle"
+            />
+            <Card>
+              <Table {...itemTableProps}>
+                <Column
+                  title="Image"
+                  dataIndex="fileurl"
+                  key="fileurl"
+                  width={110}
+                  align={'center'}
+                  render={(fileurl, record: INftItem) => {
+                    console.log('record: ', record);
+                    return record?.category === 'image' ? (
                       <Image
-                        preview={false}
-                        src={placeholderImg}
+                        src={fileurl}
+                        style={{ objectFit: 'contain' }}
                         width={64}
                         height={64}
-                        style={{ background: 'white' }}
+                        placeholder={
+                          <Image
+                            preview={false}
+                            src={placeholderImg}
+                            width={64}
+                            height={64}
+                            style={{ background: 'white' }}
+                          />
+                        }
                       />
-                    }
-                  />
-                ) : (
-                  <video src={fileurl} width={70} height={70} controls={false} />
-                );
-              }}
-            />
-
-            <Column
-              title="Name"
-              dataIndex="itemname"
-              key="itemname"
-              align={'center'}
-              ellipsis={{ showTitle: false }}
-              render={(itemname) => {
-                return (
-                  <Tooltip placement="topLeft" title={itemname}>
-                    {itemname}
-                  </Tooltip>
-                );
-              }}
-            />
-
-            <Column title="Id" dataIndex="id" key="id" width={110}
-              align={'center'} />
-
-            <Column
-              title="Contract Address"
-              dataIndex="contractaddress"
-              key="contractaddress"
-              align={'center'}
-              render={(contractaddress, record) => {
-                return (
-                  <Tooltip placement="top" title={<span>{contractaddress}</span>}>
-                    {`${contractaddress.slice(0, 6)}...${contractaddress.slice(-4)}`}
-                  </Tooltip>
-                );
-              }}
-            />
-
-            <Column
-              title="Hide Creation"
-              key="hide"
-              width={110}
-              align={'center'}
-              render={(record: INftItem) => (
-                <Switch
-                  checked={record.status === 1 ? true : false}
-                  checkedChildren="Hide"
-                  unCheckedChildren="Show"
-                  onChange={(checked: boolean) => {
-                    checked
-                      ? handleHideItem(record.contractaddress, record.tokenid, 'hide', reloadItem)
-                      : handleHideItem(record.contractaddress, record.tokenid, 'show', reloadItem);
+                    ) : (
+                      <video src={fileurl} width={70} height={70} controls={false} />
+                    );
                   }}
                 />
-              )}
-            />
 
-            <Column
-              title="Disable"
-              key="disable"
-              width={110}
-              align={'center'}
-              render={(record: INftItem) => (
-                <Button
-                  danger
-                  key="list-loadmore-delete"
-                  onClick={() => {
-                    handleDeleteItem(record.contractaddress, record.tokenid, reloadItem);
+                <Column
+                  title="Name"
+                  dataIndex="itemname"
+                  key="itemname"
+                  align={'center'}
+                  ellipsis={{ showTitle: false }}
+                  render={(itemname) => {
+                    return (
+                      <Tooltip placement="topLeft" title={itemname}>
+                        {itemname}
+                      </Tooltip>
+                    );
                   }}
-                >
-                  Delete
-                </Button>
-              )}
+                />
+
+                <Column title="Id" dataIndex="id" key="id" width={110} align={'center'} />
+
+                <Column
+                  title="Contract Address"
+                  dataIndex="contractaddress"
+                  key="contractaddress"
+                  align={'center'}
+                  render={(contractaddress, record) => {
+                    return (
+                      <Tooltip placement="top" title={<span>{contractaddress}</span>}>
+                        {`${contractaddress.slice(0, 6)}...${contractaddress.slice(-4)}`}
+                      </Tooltip>
+                    );
+                  }}
+                />
+
+                <Column
+                  title="Hide Creation"
+                  key="hide"
+                  width={110}
+                  align={'center'}
+                  render={(record: INftItem) => (
+                    <Switch
+                      checked={record.status === 1 ? true : false}
+                      checkedChildren="Hide"
+                      unCheckedChildren="Show"
+                      onChange={(checked: boolean) => {
+                        checked
+                          ? handleHideItem(
+                              record.contractaddress,
+                              record.tokenid,
+                              'hide',
+                              reloadItem,
+                            )
+                          : handleHideItem(
+                              record.contractaddress,
+                              record.tokenid,
+                              'show',
+                              reloadItem,
+                            );
+                      }}
+                    />
+                  )}
+                />
+
+                <Column
+                  title="Disable"
+                  key="disable"
+                  width={110}
+                  align={'center'}
+                  render={(record: INftItem) => (
+                    <Button
+                      danger
+                      key="list-loadmore-delete"
+                      onClick={() => {
+                        handleDeleteItem(record.contractaddress, record.tokenid, reloadItem);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  )}
+                />
+              </Table>
+            </Card>
+          </Space>
+        </TabPane>
+
+        <TabPane tab="Brand" key="2">
+          <Space direction={'vertical'} style={{ width: '100%' }}>
+            <Search
+              placeholder="input search text"
+              allowClear
+              onSearch={(value) => {
+                searchBrand({ current: 1, pageSize: 7 }, value);
+              }}
+              style={{ width: '75%' }}
+              size="middle"
             />
-          </Table>
-        </Card>
-      </Space>
+            <Card>
+              <Table {...brandTableProps}>
+                <Column
+                  title="Image"
+                  dataIndex="imgurl"
+                  key="imgurl"
+                  width={110}
+                  align={'center'}
+                  render={(imgurl, record: IBrandInfo) => {
+                    console.log('record: ', record);
+                    return (
+                      <Image
+                        src={imgurl}
+                        style={{ objectFit: 'contain' }}
+                        width={64}
+                        height={64}
+                        placeholder={
+                          <Image
+                            preview={false}
+                            src={placeholderImg}
+                            width={64}
+                            height={64}
+                            style={{ background: 'white' }}
+                          />
+                        }
+                      />
+                    );
+                  }}
+                />
+
+                <Column
+                  title="Brand Name"
+                  dataIndex="brandname"
+                  key="brandname"
+                  align={'center'}
+                  ellipsis={{ showTitle: false }}
+                  render={(brandname) => {
+                    return (
+                      <Tooltip placement="topLeft" title={brandname}>
+                        {brandname}
+                      </Tooltip>
+                    );
+                  }}
+                />
+
+                <Column title="Id" dataIndex="id" key="id" width={110} align={'center'} />
+
+                <Column
+                  title="Contract Address"
+                  dataIndex="contractaddress"
+                  key="contractaddress"
+                  align={'center'}
+                  render={(contractaddress, record) => {
+                    return (
+                      <Tooltip placement="top" title={<span>{contractaddress}</span>}>
+                        {`${contractaddress.slice(0, 6)}...${contractaddress.slice(-4)}`}
+                      </Tooltip>
+                    );
+                  }}
+                />
+
+                <Column
+                  title="Ownner Name"
+                  dataIndex="ownername"
+                  key="ownername"
+                  width={130}
+                  align={'center'}
+                  render={(ownername, record) => {
+                    return ownername ? (
+                      <Tooltip placement="top" title={<span>{ownername}</span>}>
+                        {ownername}
+                      </Tooltip>
+                    ) : (
+                      '--'
+                    );
+                  }}
+                />
+
+                <Column
+                  title="Ownner Address"
+                  dataIndex="owneraddress"
+                  key="owneraddress"
+                  align={'center'}
+                  render={(owneraddress, record) => {
+                    return (
+                      <Tooltip placement="top" title={<span>{owneraddress}</span>}>
+                        {`${owneraddress.slice(0, 6)}...${owneraddress.slice(-4)}`}
+                      </Tooltip>
+                    );
+                  }}
+                />
+
+                <Column
+                  title="Delete"
+                  key="delete"
+                  width={110}
+                  align={'center'}
+                  render={(record: IBrandInfo) => {
+                    return recommendBrands?.find((recommendBrand: IBrandInfo) => {
+                      console.log(recommendBrand.id, record.id, recommendBrand.id === record.id);
+                      return recommendBrand.id === record.id;
+                    }) ? (
+                      <StarFilled style={{ color: '#f58220', fontSize: 20 }} />
+                    ) : (
+                      <Button
+                        danger
+                        key="list-loadmore-delete"
+                        disabled={
+                          record.id === 10 ||
+                          record.id === 11 ||
+                          recommendBrands?.find((recommendBrand: IBrandInfo) => {
+                            return recommendBrand.id === record.id;
+                          })
+                            ? true
+                            : false
+                        }
+                        onClick={() => {
+                          handleDeleteBrand(record.id, reloadBrand);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    );
+                  }}
+                />
+              </Table>
+            </Card>
+          </Space>
+        </TabPane>
+      </Tabs>
     </PageContainer>
   );
 };

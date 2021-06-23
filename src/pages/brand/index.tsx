@@ -126,7 +126,7 @@ const index: React.FC = () => {
     return getRecommendBrands();
   });
 
-  console.log('recommendBrands: ', recommendBrands);
+//   console.log('recommendBrands: ', recommendBrands);
 
   // request brands
   const {

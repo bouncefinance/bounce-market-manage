@@ -1,6 +1,19 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, List, Image, Tag, Input, Space, message, Modal, Button, Tooltip } from 'antd';
+import {
+  Card,
+  List,
+  Image,
+  Tag,
+  Input,
+  Space,
+  message,
+  Modal,
+  Button,
+  Tooltip,
+  Select,
+  Switch,
+} from 'antd';
 import React from 'react';
 import { useRequest } from 'umi';
 import request from 'umi-request';
@@ -125,7 +138,6 @@ const handleHideItem = async function (
 };
 
 const index: React.FC = () => {
-
   // requests items
   const {
     data: itemData,
@@ -152,96 +164,101 @@ const index: React.FC = () => {
 
   return (
     <PageContainer>
-          <Space direction={'vertical'} style={{ width: '100%' }}>
-            <Search
-              placeholder="input search text"
-              allowClear
-              onSearch={(value) => searchItem({ current: 1, pageSize: 7 }, value)}
-              style={{ width: '75%' }}
-              size="middle"
-            />
-            <Card bordered={false}>
-              <List
-                loading={itemLoading}
-                pagination={{
-                  ...(itemPagination as any),
-                  onShowSizeChange: itemPagination.onChange,
-                  pageSize: 7,
-                }}
-                dataSource={itemData?.list}
-                renderItem={(item: INftItem) => (
-                  <List.Item
-                    style={{ height: 78 }}
-                    actions={[
-                      <Button
-                        key="list-loadmore-hide"
-                        onClick={() => {
-                          item.status === 0
-                            ? handleHideItem(item.contractaddress, item.tokenid, 'hide', reloadItem)
-                            : handleHideItem(
-                                item.contractaddress,
-                                item.tokenid,
-                                'show',
-                                reloadItem,
-                              );
-                        }}
-                      >
-                        {item.status === 0 ? 'Hide' : 'Show'}
-                      </Button>,
-                      <Button
-                        danger
-                        key="list-loadmore-delete"
-                        onClick={() => {
-                          handleDeleteItem(item.contractaddress, item.tokenid, reloadItem);
-                        }}
-                      >
-                        Delete
-                      </Button>,
-                    ]}
+      <Space direction={'vertical'} style={{ width: '100%' }}>
+        <Search
+          placeholder="input search text"
+          allowClear
+          onSearch={(value) => searchItem({ current: 1, pageSize: 7 }, value)}
+          style={{ width: '75%' }}
+          size="middle"
+        />
+        <Card bordered={false}>
+          <List
+            loading={itemLoading}
+            pagination={{
+              ...(itemPagination as any),
+              onShowSizeChange: itemPagination.onChange,
+              pageSize: 7,
+            }}
+            dataSource={itemData?.list}
+            renderItem={(item: INftItem) => (
+              <List.Item
+                style={{ height: 78 }}
+                actions={[
+                  <Switch
+                    checked={item.status === 1 ? true : false}
+                    checkedChildren="Hide"
+                    unCheckedChildren="Show"
+                    onChange={(checked: boolean) => {
+                      checked
+                        ? handleHideItem(item.contractaddress, item.tokenid, 'hide', reloadItem)
+                        : handleHideItem(item.contractaddress, item.tokenid, 'show', reloadItem);
+                    }}
+                  />,
+                  // <Button
+                  //   key="list-loadmore-hide"
+                  //   onClick={() => {
+                  //     item.status === 0
+                  //       ? handleHideItem(item.contractaddress, item.tokenid, 'hide', reloadItem)
+                  //       : handleHideItem(item.contractaddress, item.tokenid, 'show', reloadItem);
+                  //   }}
+                  // >
+                  //   {item.status === 0 ? 'Hide' : 'Show'}
+                  // </Button>,
+                  <Button
+                    danger
+                    key="list-loadmore-delete"
+                    onClick={() => {
+                      handleDeleteItem(item.contractaddress, item.tokenid, reloadItem);
+                    }}
                   >
-                    <List.Item.Meta
-                      avatar={
-                        item.category === 'video' ? (
-                          <video src={item.fileurl} width={70} height={70} controls={false}></video>
-                        ) : (
+                    Delete
+                  </Button>,
+                ]}
+              >
+                <List.Item.Meta
+                  avatar={
+                    item.category === 'video' ? (
+                      <video src={item.fileurl} width={70} height={70} controls={false}></video>
+                    ) : (
+                      <Image
+                        src={item.fileurl}
+                        width={70}
+                        height={70}
+                        style={{ objectFit: 'contain' }}
+                        placeholder={
                           <Image
-                            src={item.fileurl}
+                            preview={false}
+                            src={placeholderImg}
                             width={70}
                             height={70}
-                            style={{ objectFit: 'contain' }}
-                            placeholder={
-                              <Image
-                                preview={false}
-                                src={placeholderImg}
-                                width={70}
-                                height={70}
-                                style={{ background: 'white' }}
-                              />
-                            }
+                            style={{ background: 'white' }}
                           />
-                        )
-                      }
-                      title={<span>{item.itemname}</span>}
-                      description={
-                        <>
-                          <Tag color="default">Id: {item.id}</Tag>
-                          <Tooltip placement="top" title={<span>{item.contractaddress}</span>}>
-                            <Tag color="default">
-                              Contract Address:{' '}
-                              {`${item.contractaddress.slice(0, 6)}...${item.contractaddress.slice(
-                                -4,
-                              )}`}
-                            </Tag>
-                          </Tooltip>
-                          {item.status === 1 ? <Tag color="warning">Hiden</Tag> : <></>}
-                        </>
-                      }
-                    />
-                  </List.Item>
-                )}
-              />
-            </Card>
-          </Space>
+                        }
+                      />
+                    )
+                  }
+                  title={<span>{item.itemname}</span>}
+                  description={
+                    <>
+                      <Tag color="default">Id: {item.id}</Tag>
+                      <Tooltip placement="top" title={<span>{item.contractaddress}</span>}>
+                        <Tag color="default">
+                          Contract Address:{' '}
+                          {`${item.contractaddress.slice(0, 6)}...${item.contractaddress.slice(
+                            -4,
+                          )}`}
+                        </Tag>
+                      </Tooltip>
+                      {/* {item.status === 1 ? <Tag color="warning">Hiden</Tag> : <></>} */}
+                    </>
+                  }
+                />
+              </List.Item>
+            )}
+          />
+        </Card>
+      </Space>
     </PageContainer>
   );
 };

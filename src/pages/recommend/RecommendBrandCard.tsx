@@ -1,11 +1,11 @@
 import { Image, Skeleton, Card } from 'antd';
 
-import {
-  PlusOutlined,
-  EditOutlined,
-} from '@ant-design/icons';
+import { PlusOutlined, EditOutlined } from '@ant-design/icons';
 import { IPopularBrand } from '.';
 import React from 'react';
+
+import placeholderImg from '@/assets/images/placeholderImg.svg';
+
 const { Meta } = Card;
 
 function RecommendBrandCard({
@@ -39,6 +39,15 @@ function RecommendBrandCard({
           alt="image"
           src={item.imgurl}
           style={{ height: '162px', objectFit: 'contain' }}
+          placeholder={
+            <Image
+              preview={false}
+              src={placeholderImg}
+              width={302}
+              height={162}
+              style={{ background: 'white' }}
+            />
+          }
         />
       }
       actions={[

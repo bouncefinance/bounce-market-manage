@@ -48,11 +48,13 @@ export const initialStateConfig = {
  * */
 export async function getInitialState(): Promise<{
   token?: API.Token;
+  authority?: 'super' | 'normal' | 'guest'
   settings?: Partial<LayoutSettings>;
 }> {
   const token = localStorage.token;
   return {
     settings: {},
+    authority: 'guest',
     token,
   };
 }

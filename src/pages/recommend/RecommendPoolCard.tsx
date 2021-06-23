@@ -3,6 +3,9 @@ import { Image, Skeleton, Card } from 'antd';
 import { PlusOutlined, EditOutlined, VerticalAlignBottomOutlined } from '@ant-design/icons';
 import { IpoolItem } from '.';
 import React from 'react';
+
+import placeholderImg from '@/assets/images/placeholderImg.svg';
+
 const { Meta } = Card;
 
 function RecommendPoolCard({
@@ -36,7 +39,20 @@ function RecommendPoolCard({
         item.category === 'video' ? (
           <video controls src={item.fileurl} style={{ height: '156px' }} />
         ) : (
-          <Image alt="image" src={item.fileurl} style={{ height: '156px', objectFit: 'contain' }} />
+          <Image
+            alt="image"
+            src={item.fileurl}
+            style={{ height: '156px', objectFit: 'contain' }}
+            placeholder={
+              <Image
+                preview={false}
+                src={placeholderImg}
+                width={302}
+                height={156}
+                style={{ background: 'white' }}
+              />
+            }
+          />
         )
       }
       actions={[

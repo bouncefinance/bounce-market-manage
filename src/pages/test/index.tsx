@@ -10,6 +10,7 @@ import {
   Modal,
   message,
   Space,
+  Tag,
 } from 'antd';
 import React from 'react';
 import { useRequest } from 'umi';
@@ -20,39 +21,42 @@ const { Search } = Input;
 const { confirm } = Modal;
 
 import placeholderImg from '@/assets/images/placeholderImg.svg';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-
-interface INftItem {
-  artistpoolweight: number;
-  category: string;
-  channel: string;
+import { ExclamationCircleOutlined, StarFilled } from '@ant-design/icons';
+interface IBrandInfo {
+  auditor: string;
+  bandimgurl: string;
+  brandname: string;
+  brandsymbol: string;
   contractaddress: string;
   created_at: string;
-  creator: string;
   description: string;
-  externallink: string;
-  fileurl: string;
+  faildesc: string;
   id: number;
-  itemname: string;
-  itemsymbol: string;
-  likecount: number;
-  litimgurl: string;
-  metadata: string;
-  poolweight: number;
+  imgurl: string;
+  owneraddress: string;
+  ownername: string;
   popularweight: number;
   standard: number;
   status: number;
-  supply: number;
-  tokenid: number;
   updated_at: string;
 }
 
-const getPoolsList = function (
+// get brands weight
+const getRecommendBrands = function () {
+  return request.post('[FGB_V2]/api/v2/main/getpopularbrands', {
+    data: {
+      accountaddress: '',
+    },
+  });
+};
+
+const getBrandsList = function (
   likename: string = '',
   offset: number,
   limit: number = 7,
+  orderfield: 1 | 2 = 1,
 ) {
-  return request.post('/api/bouadmin/main/auth/getpoolsbylikename', {
+  return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
     data: {
       likename,
       limit,
@@ -61,16 +65,11 @@ const getPoolsList = function (
   });
 };
 
-const handleDeleteItem = async function (
-  contractaddress: string,
-  tokenid: number,
-  reload: () => void,
-) {
-  const deleteItem = async (contractaddress: string, tokenid: number) => {
-    const res = await request.post('/api/bouadmin/main/auth/delpoolitem', {
+const handleDeleteBrand = async function (id: number, reload: () => void) {
+  const deleteBrand = async (id: number) => {
+    const res = await request.post('/api/bouadmin/main/auth/delbrand', {
       data: {
-        contractaddress,
-        tokenid,
+        id,
       },
     });
     if (res.code === 1) {
@@ -83,9 +82,9 @@ const handleDeleteItem = async function (
   confirm({
     // title: 'Delete',
     icon: <ExclamationCircleOutlined />,
-    title: 'Do you Want to delete this item?',
+    title: 'Do you Want to delete this brand?',
     onOk() {
-      deleteItem(contractaddress, tokenid).then(() => {
+      deleteBrand(id).then(() => {
         reload();
       });
     },
@@ -93,23 +92,17 @@ const handleDeleteItem = async function (
   });
 };
 
-const handleHideItem = async function (
-  contractaddress: string,
+const handleHideBrand = async function (
   tokenid: number,
   actionType: 'hide' | 'show',
   reload: () => void,
 ) {
   const status = actionType === 'hide' ? 1 : 0;
 
-  const hideItem = async (
-    contractaddress: string,
-    tokenid: number,
-    actionType: 'hide' | 'show',
-  ) => {
-    const res = await request.post('/api/bouadmin/main/auth/updatepoolitem', {
+  const hideBrand = async (id: number, actionType: 'hide' | 'show') => {
+    const res = await request.post('/api/bouadmin/main/auth/updatebrandstatus', {
       data: {
-        contractaddress,
-        tokenid,
+        id,
         status, // status: 1:to hide, 2:to show
       },
     });
@@ -125,9 +118,9 @@ const handleHideItem = async function (
   confirm({
     // title: 'Delete',
     icon: <ExclamationCircleOutlined />,
-    title: `Do you Want to ${actionType} this item?`,
+    title: `Do you Want to ${actionType} this Brand?`,
     onOk() {
-      hideItem(contractaddress, tokenid, actionType).then(() => {
+      hideBrand(tokenid, actionType).then(() => {
         reload();
       });
     },
@@ -136,22 +129,30 @@ const handleHideItem = async function (
 };
 
 const Test: React.FC = () => {
-
   const {
-    // data: itemData,
-    // loading: itemLoading,
-    // pagination: itemPagination,
-    // params: itemParams,
-    tableProps: itemTableProps,
-    run: searchItem,
-    refresh: reloadItem,
+    data: recommendBrands,
+    // loading: recommendBrandsLoading,
+    // refresh: brandRefresh,
+  } = useRequest(() => {
+    return getRecommendBrands();
+  });
+
+  //   console.log('recommendBrands: ', recommendBrands);
+
+  // request brands
+  const {
+    data: brandData,
+    loading: brandLoading,
+    pagination: brandPagination,
+    run: searchBrand,
+    refresh: reloadBrand,
+    tableProps: tableProps,
   } = useRequest(
-    ({ pageSize: limit, current: offset }, searchText) => {
-      return getPoolsList(searchText, (offset - 1) * limit, limit);
-    },
+    ({ pageSize: limit, current: offset }, searchText) =>
+      getBrandsList(searchText, (offset - 1) * limit, limit), // Filter out brand which id = 10 and which id =11
     {
       paginated: true,
-      cacheKey: 'items',
+      cacheKey: 'brands',
       defaultParams: [{ pageSize: 7, current: 1 }],
       formatResult(data: any) {
         return {
@@ -162,29 +163,33 @@ const Test: React.FC = () => {
     },
   );
 
+  // console.log(brandData, '<<<<<<<<<<<<<<<');
+
   return (
     <PageContainer>
       <Space direction={'vertical'} style={{ width: '100%' }}>
         <Search
           placeholder="input search text"
           allowClear
-          onSearch={(value) => searchItem({ current: 1, pageSize: 7 }, value)}
+          onSearch={(value) => {
+            searchBrand({ current: 1, pageSize: 7 }, value);
+          }}
           style={{ width: '75%' }}
           size="middle"
         />
         <Card>
-
-          <Table {...itemTableProps}>
+          <Table {...tableProps}>
             <Column
               title="Image"
-              dataIndex="fileurl"
-              key="fileurl"
+              dataIndex="imgurl"
+              key="imgurl"
               width={110}
-              render={(fileurl, record: INftItem) => {
+              align={'center'}
+              render={(imgurl, record: IBrandInfo) => {
                 console.log('record: ', record);
-                return record?.category === 'image' ? (
+                return (
                   <Image
-                    src={fileurl}
+                    src={imgurl}
                     style={{ objectFit: 'contain' }}
                     width={64}
                     height={64}
@@ -198,32 +203,32 @@ const Test: React.FC = () => {
                       />
                     }
                   />
-                ) : (
-                  <video src={fileurl} width={70} height={70} controls={false} />
                 );
               }}
             />
 
             <Column
               title="Name"
-              dataIndex="itemname"
-              key="itemname"
+              dataIndex="brandname"
+              key="brandname"
+              align={'center'}
               ellipsis={{ showTitle: false }}
-              render={(itemname) => {
+              render={(brandname) => {
                 return (
-                  <Tooltip placement="topLeft" title={itemname}>
-                    {itemname}
+                  <Tooltip placement="topLeft" title={brandname}>
+                    {brandname}
                   </Tooltip>
                 );
               }}
             />
 
-            <Column title="Id" dataIndex="id" key="id" width={110} />
+            <Column title="Id" dataIndex="id" key="id" width={110} align={'center'} />
 
             <Column
               title="Contract Address"
               dataIndex="contractaddress"
               key="contractaddress"
+              align={'center'}
               render={(contractaddress, record) => {
                 return (
                   <Tooltip placement="top" title={<span>{contractaddress}</span>}>
@@ -234,38 +239,65 @@ const Test: React.FC = () => {
             />
 
             <Column
-              title="Hide Creation"
-              key="hide"
-              width={110}
-              render={(record: INftItem) => (
-                <Switch
-                  checked={record.status === 1 ? true : false}
-                  checkedChildren="Hide"
-                  unCheckedChildren="Show"
-                  onChange={(checked: boolean) => {
-                    checked
-                      ? handleHideItem(record.contractaddress, record.tokenid, 'hide', reloadItem)
-                      : handleHideItem(record.contractaddress, record.tokenid, 'show', reloadItem);
-                  }}
-                />
-              )}
+              title="Ownner Name"
+              dataIndex="ownername"
+              key="ownername"
+              align={'center'}
+              render={(ownername, record) => {
+                return (
+                  <Tooltip placement="top" title={<span>{ownername}</span>}>
+                    {ownername ? ownername : '--'}
+                  </Tooltip>
+                );
+              }}
             />
 
             <Column
-              title="Disable"
-              key="disable"
+              title="Ownner Address"
+              dataIndex="owneraddress"
+              key="owneraddress"
+              align={'center'}
+              render={(owneraddress, record) => {
+                return (
+                  <Tooltip placement="top" title={<span>{owneraddress}</span>}>
+                    {`${owneraddress.slice(0, 6)}...${owneraddress.slice(-4)}`}
+                  </Tooltip>
+                );
+              }}
+            />
+
+            <Column
+              title="Delete"
+              key="delete"
               width={110}
-              render={(record: INftItem) => (
-                <Button
+              align={'center'}
+              render={(record: IBrandInfo) => {
+                return recommendBrands?.find((recommendBrand: IBrandInfo) => {
+                  console.log(recommendBrand.id, record.id, recommendBrand.id === record.id);
+                  return recommendBrand.id === record.id;
+                }) ? (
+                  <StarFilled style={{ color: '#f58220', fontSize: 20 }} />
+                ) : (
+                  <Button
                   danger
                   key="list-loadmore-delete"
+                  disabled={
+                    record.id === 10 ||
+                    record.id === 11 ||
+                    recommendBrands?.find((recommendBrand: IBrandInfo) => {
+                      return recommendBrand.id === record.id;
+                    })
+                      ? true
+                      : false
+                  }
                   onClick={() => {
-                    handleDeleteItem(record.contractaddress, record.tokenid, reloadItem);
+                    handleDeleteBrand(record.id, reloadBrand);
                   }}
                 >
                   Delete
                 </Button>
-              )}
+                );
+              }}
             />
           </Table>
         </Card>

@@ -1,15 +1,27 @@
-import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, List, Image, Tag, Input, Space, message, Modal, Button, Tooltip } from 'antd';
+import {
+  Card,
+  Table,
+  Button,
+  Image,
+  Tooltip,
+  Switch,
+  Input,
+  Modal,
+  message,
+  Space,
+  Tag,
+} from 'antd';
 import React from 'react';
 import { useRequest } from 'umi';
 import request from 'umi-request';
 
-import placeholderImg from '@/assets/images/placeholderImg.svg';
-
+const { Column } = Table;
 const { Search } = Input;
 const { confirm } = Modal;
 
+import placeholderImg from '@/assets/images/placeholderImg.svg';
+import { ExclamationCircleOutlined, StarFilled } from '@ant-design/icons';
 interface IBrandInfo {
   auditor: string;
   bandimgurl: string;
@@ -116,8 +128,7 @@ const handleHideBrand = async function (
   });
 };
 
-const index: React.FC = () => {
-
+const Test: React.FC = () => {
   const {
     data: recommendBrands,
     // loading: recommendBrandsLoading,
@@ -126,7 +137,7 @@ const index: React.FC = () => {
     return getRecommendBrands();
   });
 
-//   console.log('recommendBrands: ', recommendBrands);
+  //   console.log('recommendBrands: ', recommendBrands);
 
   // request brands
   const {
@@ -135,6 +146,7 @@ const index: React.FC = () => {
     pagination: brandPagination,
     run: searchBrand,
     refresh: reloadBrand,
+    tableProps: tableProps,
   } = useRequest(
     ({ pageSize: limit, current: offset }, searchText) =>
       getBrandsList(searchText, (offset - 1) * limit, limit), // Filter out brand which id = 10 and which id =11
@@ -165,114 +177,136 @@ const index: React.FC = () => {
           style={{ width: '75%' }}
           size="middle"
         />
-        <Card bordered={false}>
-          <List
-            loading={brandLoading}
-            pagination={{
-              ...(brandPagination as any),
-              onShowSizeChange: brandPagination.onChange,
-              pageSize: 7,
-            }}
-            dataSource={
-              brandData?.list /* .filter((brand) => {
-                  return brand.id !== 10 && brand.id !== 11;
-                }) */
-            }
-            renderItem={(brand: IBrandInfo) => (
-              <List.Item
-                style={{ height: 78 }}
-                actions={[
-                  // <Button
-                  //   key="list-loadmore-hide"
-                  //   disabled={
-                  //     recommendBrands.find((recommendBrand: IBrandInfo) => {
-                  //       return recommendBrand.id === brand.id;
-                  //     })
-                  //       ? true
-                  //       : false
-                  //   }
-                  //   onClick={() => {
-                  //     brand.status === 0
-                  //       ? handleHideBrand(brand.id, 'hide', reloadBrand)
-                  //       : handleHideBrand(brand.id, 'show', reloadBrand);
-                  //   }}
-                  // >
-                  //   {brand.status === 0 ? 'Hide' : 'Show'}
-                  // </Button>,
+        <Card>
+          <Table {...tableProps}>
+            <Column
+              title="Image"
+              dataIndex="imgurl"
+              key="imgurl"
+              width={110}
+              align={'center'}
+              render={(imgurl, record: IBrandInfo) => {
+                console.log('record: ', record);
+                return (
+                  <Image
+                    src={imgurl}
+                    style={{ objectFit: 'contain' }}
+                    width={64}
+                    height={64}
+                    placeholder={
+                      <Image
+                        preview={false}
+                        src={placeholderImg}
+                        width={64}
+                        height={64}
+                        style={{ background: 'white' }}
+                      />
+                    }
+                  />
+                );
+              }}
+            />
+
+            <Column
+              title="Brand Name"
+              dataIndex="brandname"
+              key="brandname"
+              align={'center'}
+              ellipsis={{ showTitle: false }}
+              render={(brandname) => {
+                return (
+                  <Tooltip placement="topLeft" title={brandname}>
+                    {brandname}
+                  </Tooltip>
+                );
+              }}
+            />
+
+            <Column title="Id" dataIndex="id" key="id" width={110} align={'center'} />
+
+            <Column
+              title="Contract Address"
+              dataIndex="contractaddress"
+              key="contractaddress"
+              align={'center'}
+              render={(contractaddress, record) => {
+                return (
+                  <Tooltip placement="top" title={<span>{contractaddress}</span>}>
+                    {`${contractaddress.slice(0, 6)}...${contractaddress.slice(-4)}`}
+                  </Tooltip>
+                );
+              }}
+            />
+
+            <Column
+              title="Ownner Name"
+              dataIndex="ownername"
+              key="ownername"
+              width={130}
+              align={'center'}
+              render={(ownername, record) => {
+                return ownername ? (
+                  <Tooltip placement="top" title={<span>{ownername}</span>}>
+                    {ownername}
+                  </Tooltip>
+                ) : (
+                  '--'
+                );
+              }}
+            />
+
+            <Column
+              title="Ownner Address"
+              dataIndex="owneraddress"
+              key="owneraddress"
+              align={'center'}
+              render={(owneraddress, record) => {
+                return (
+                  <Tooltip placement="top" title={<span>{owneraddress}</span>}>
+                    {`${owneraddress.slice(0, 6)}...${owneraddress.slice(-4)}`}
+                  </Tooltip>
+                );
+              }}
+            />
+
+            <Column
+              title="Delete"
+              key="delete"
+              width={110}
+              align={'center'}
+              render={(record: IBrandInfo) => {
+                return recommendBrands?.find((recommendBrand: IBrandInfo) => {
+                  console.log(recommendBrand.id, record.id, recommendBrand.id === record.id);
+                  return recommendBrand.id === record.id;
+                }) ? (
+                  <StarFilled style={{ color: '#f58220', fontSize: 20 }} />
+                ) : (
                   <Button
                     danger
                     key="list-loadmore-delete"
                     disabled={
-                      brand.id === 10 ||
-                      brand.id === 11 ||
+                      record.id === 10 ||
+                      record.id === 11 ||
                       recommendBrands?.find((recommendBrand: IBrandInfo) => {
-                        return recommendBrand.id === brand.id;
+                        return recommendBrand.id === record.id;
                       })
                         ? true
                         : false
                     }
                     onClick={() => {
-                      handleDeleteBrand(brand.id, reloadBrand);
+                      handleDeleteBrand(record.id, reloadBrand);
                     }}
                   >
                     Delete
-                  </Button>,
-                ]}
-              >
-                <List.Item.Meta
-                  avatar={
-                    <Image
-                      src={brand.imgurl}
-                      width={70}
-                      height={70}
-                      style={{ objectFit: 'contain' }}
-                      placeholder={
-                        <Image
-                          preview={false}
-                          src={placeholderImg}
-                          width={70}
-                          height={70}
-                          style={{ background: 'white' }}
-                        />
-                      }
-                    />
-                  }
-                  title={<span>{brand.brandname}</span>}
-                  description={
-                    <>
-                      <Tag color="default">Id: {brand.id}</Tag>
-                      <Tooltip placement="top" title={<span>{brand.contractaddress}</span>}>
-                        <Tag color="default">
-                          Contract Address:{' '}
-                          {`${brand.contractaddress.slice(0, 6)}...${brand.contractaddress.slice(
-                            -4,
-                          )}`}
-                        </Tag>
-                      </Tooltip>
-                      <Tooltip placement="top" title={<span>{brand.owneraddress}</span>}>
-                        <Tag color="default">
-                          Owner Address:{' '}
-                          {`${brand.owneraddress.slice(0, 6)}...${brand.owneraddress.slice(-4)}`}
-                        </Tag>
-                      </Tooltip>
-                      {brand.status === 1 ? <Tag color="warning">hiden</Tag> : <></>}
-                      {recommendBrands?.find((recommendBrand: IBrandInfo) => {
-                        return recommendBrand.id === brand.id;
-                      }) ? (
-                        <Tag color="warning">Recommended brand</Tag>
-                      ) : (
-                        <></>
-                      )}
-                    </>
-                  }
-                />
-              </List.Item>
-            )}
-          />
+                  </Button>
+                );
+              }}
+            />
+          </Table>
         </Card>
       </Space>
     </PageContainer>
   );
 };
 
-export default index;
+export default Test;

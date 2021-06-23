@@ -135,14 +135,14 @@ const handleHideItem = async function (
   });
 };
 
-const Test: React.FC = () => {
+const index: React.FC = () => {
 
   const {
     // data: itemData,
     // loading: itemLoading,
     // pagination: itemPagination,
     // params: itemParams,
-    tableProps: itemTableProps,
+    tableProps: itemProps,
     run: searchItem,
     refresh: reloadItem,
   } = useRequest(
@@ -174,12 +174,13 @@ const Test: React.FC = () => {
         />
         <Card>
 
-          <Table {...itemTableProps}>
+          <Table {...itemProps}>
             <Column
               title="Image"
               dataIndex="fileurl"
               key="fileurl"
               width={110}
+              align={'center'}
               render={(fileurl, record: INftItem) => {
                 console.log('record: ', record);
                 return record?.category === 'image' ? (
@@ -208,6 +209,7 @@ const Test: React.FC = () => {
               title="Name"
               dataIndex="itemname"
               key="itemname"
+              align={'center'}
               ellipsis={{ showTitle: false }}
               render={(itemname) => {
                 return (
@@ -218,12 +220,14 @@ const Test: React.FC = () => {
               }}
             />
 
-            <Column title="Id" dataIndex="id" key="id" width={110} />
+            <Column title="Id" dataIndex="id" key="id" width={110}
+              align={'center'} />
 
             <Column
               title="Contract Address"
               dataIndex="contractaddress"
               key="contractaddress"
+              align={'center'}
               render={(contractaddress, record) => {
                 return (
                   <Tooltip placement="top" title={<span>{contractaddress}</span>}>
@@ -237,6 +241,7 @@ const Test: React.FC = () => {
               title="Hide Creation"
               key="hide"
               width={110}
+              align={'center'}
               render={(record: INftItem) => (
                 <Switch
                   checked={record.status === 1 ? true : false}
@@ -255,6 +260,7 @@ const Test: React.FC = () => {
               title="Disable"
               key="disable"
               width={110}
+              align={'center'}
               render={(record: INftItem) => (
                 <Button
                   danger
@@ -274,4 +280,4 @@ const Test: React.FC = () => {
   );
 };
 
-export default Test;
+export default index;

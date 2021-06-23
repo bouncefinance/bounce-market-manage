@@ -35,7 +35,7 @@ const routes: MenuDataItem[] = [
     component: './overview',
   },
   {
-    name: 'Landing Page',
+    name: 'landingPage',
     path: '/LandingPage',
     icon: 'Home',
     component: './landingPage',

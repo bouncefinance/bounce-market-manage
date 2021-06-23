@@ -309,7 +309,7 @@ const index: React.FC = () => {
               size="middle"
             />
             <Card>
-              <Table {...itemTableProps}>
+              <Table rowKey="id" {...itemTableProps}>
                 <Column
                   title="Image"
                   dataIndex="fileurl"
@@ -434,7 +434,7 @@ const index: React.FC = () => {
               size="middle"
             />
             <Card>
-              <Table {...brandTableProps}>
+              <Table rowKey="id" {...brandTableProps}>
                 <Column
                   title="Image"
                   dataIndex="imgurl"

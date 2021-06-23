@@ -128,7 +128,7 @@ const index: React.FC = () => {
           size="middle"
         />
         <Card bordered={false}>
-          <Table {...accountTableProps}>
+          <Table rowKey="id" {...accountTableProps}>
             <Column
               title="Avatar"
               dataIndex="imgurl"

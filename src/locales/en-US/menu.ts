@@ -18,7 +18,7 @@ export default {
   'menu.brand': 'Brand',
   'menu.history': 'History',
   'menu.authority': 'Authority',
-  'menu.drops': 'Drops',
+  'menu.drops': 'Drops List',
   'menu.box': 'Box',
   'menu.box.view': 'View',
   'menu.box.create': 'Create',

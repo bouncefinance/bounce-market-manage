@@ -17,7 +17,7 @@ export default {
   'menu.brand': '品牌',
   'menu.history': '操作记录',
   'menu.authority': '权限',
-  'menu.drops': 'Drops',
+  'menu.drops': 'Drops List',
   'menu.test': '测试',
   'menu.test.hhh': '测试',
   'menu.banner.updateTitle': '轮播更新',

@@ -1,27 +1,26 @@
-import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import {
   Card,
-  List,
-  Image,
-  Tag,
-  Input,
-  Space,
-  message,
-  Modal,
+  Table,
   Button,
+  Image,
   Tooltip,
-  Select,
   Switch,
+  Input,
+  Modal,
+  message,
+  Space,
 } from 'antd';
 import React from 'react';
 import { useRequest } from 'umi';
 import request from 'umi-request';
 
-import placeholderImg from '@/assets/images/placeholderImg.svg';
-
+const { Column } = Table;
 const { Search } = Input;
 const { confirm } = Modal;
+
+import placeholderImg from '@/assets/images/placeholderImg.svg';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 interface INftItem {
   artistpoolweight: number;
@@ -52,7 +51,6 @@ const getPoolsList = function (
   likename: string = '',
   offset: number,
   limit: number = 7,
-  orderfield: 1 | 2 = 1,
 ) {
   return request.post('/api/bouadmin/main/auth/getpoolsbylikename', {
     data: {
@@ -137,12 +135,14 @@ const handleHideItem = async function (
   });
 };
 
-const index: React.FC = () => {
-  // requests items
+const Test: React.FC = () => {
+
   const {
-    data: itemData,
-    loading: itemLoading,
-    pagination: itemPagination,
+    // data: itemData,
+    // loading: itemLoading,
+    // pagination: itemPagination,
+    // params: itemParams,
+    tableProps: itemTableProps,
     run: searchItem,
     refresh: reloadItem,
   } = useRequest(
@@ -172,95 +172,106 @@ const index: React.FC = () => {
           style={{ width: '75%' }}
           size="middle"
         />
-        <Card bordered={false}>
-          <List
-            loading={itemLoading}
-            pagination={{
-              ...(itemPagination as any),
-              onShowSizeChange: itemPagination.onChange,
-              pageSize: 7,
-            }}
-            dataSource={itemData?.list}
-            renderItem={(item: INftItem) => (
-              <List.Item
-                style={{ height: 78 }}
-                actions={[
-                  <Switch
-                    checked={item.status === 1 ? true : false}
-                    checkedChildren="Hide"
-                    unCheckedChildren="Show"
-                    onChange={(checked: boolean) => {
-                      checked
-                        ? handleHideItem(item.contractaddress, item.tokenid, 'hide', reloadItem)
-                        : handleHideItem(item.contractaddress, item.tokenid, 'show', reloadItem);
-                    }}
-                  />,
-                  // <Button
-                  //   key="list-loadmore-hide"
-                  //   onClick={() => {
-                  //     item.status === 0
-                  //       ? handleHideItem(item.contractaddress, item.tokenid, 'hide', reloadItem)
-                  //       : handleHideItem(item.contractaddress, item.tokenid, 'show', reloadItem);
-                  //   }}
-                  // >
-                  //   {item.status === 0 ? 'Hide' : 'Show'}
-                  // </Button>,
-                  <Button
-                    danger
-                    key="list-loadmore-delete"
-                    onClick={() => {
-                      handleDeleteItem(item.contractaddress, item.tokenid, reloadItem);
-                    }}
-                  >
-                    Delete
-                  </Button>,
-                ]}
-              >
-                <List.Item.Meta
-                  avatar={
-                    item.category === 'video' ? (
-                      <video src={item.fileurl} width={70} height={70} controls={false}></video>
-                    ) : (
+        <Card>
+
+          <Table {...itemTableProps}>
+            <Column
+              title="Image"
+              dataIndex="fileurl"
+              key="fileurl"
+              width={110}
+              render={(fileurl, record: INftItem) => {
+                console.log('record: ', record);
+                return record?.category === 'image' ? (
+                  <Image
+                    src={fileurl}
+                    style={{ objectFit: 'contain' }}
+                    width={64}
+                    height={64}
+                    placeholder={
                       <Image
-                        src={item.fileurl}
-                        width={70}
-                        height={70}
-                        style={{ objectFit: 'contain' }}
-                        placeholder={
-                          <Image
-                            preview={false}
-                            src={placeholderImg}
-                            width={70}
-                            height={70}
-                            style={{ background: 'white' }}
-                          />
-                        }
+                        preview={false}
+                        src={placeholderImg}
+                        width={64}
+                        height={64}
+                        style={{ background: 'white' }}
                       />
-                    )
-                  }
-                  title={<span>{item.itemname}</span>}
-                  description={
-                    <>
-                      <Tag color="default">Id: {item.id}</Tag>
-                      <Tooltip placement="top" title={<span>{item.contractaddress}</span>}>
-                        <Tag color="default">
-                          Contract Address:{' '}
-                          {`${item.contractaddress.slice(0, 6)}...${item.contractaddress.slice(
-                            -4,
-                          )}`}
-                        </Tag>
-                      </Tooltip>
-                      {/* {item.status === 1 ? <Tag color="warning">Hiden</Tag> : <></>} */}
-                    </>
-                  }
+                    }
+                  />
+                ) : (
+                  <video src={fileurl} width={70} height={70} controls={false} />
+                );
+              }}
+            />
+
+            <Column
+              title="Name"
+              dataIndex="itemname"
+              key="itemname"
+              ellipsis={{ showTitle: false }}
+              render={(itemname) => {
+                return (
+                  <Tooltip placement="topLeft" title={itemname}>
+                    {itemname}
+                  </Tooltip>
+                );
+              }}
+            />
+
+            <Column title="Id" dataIndex="id" key="id" width={110} />
+
+            <Column
+              title="Contract Address"
+              dataIndex="contractaddress"
+              key="contractaddress"
+              render={(contractaddress, record) => {
+                return (
+                  <Tooltip placement="top" title={<span>{contractaddress}</span>}>
+                    {`${contractaddress.slice(0, 6)}...${contractaddress.slice(-4)}`}
+                  </Tooltip>
+                );
+              }}
+            />
+
+            <Column
+              title="Hide Creation"
+              key="hide"
+              width={110}
+              render={(record: INftItem) => (
+                <Switch
+                  checked={record.status === 1 ? true : false}
+                  checkedChildren="Hide"
+                  unCheckedChildren="Show"
+                  onChange={(checked: boolean) => {
+                    checked
+                      ? handleHideItem(record.contractaddress, record.tokenid, 'hide', reloadItem)
+                      : handleHideItem(record.contractaddress, record.tokenid, 'show', reloadItem);
+                  }}
                 />
-              </List.Item>
-            )}
-          />
+              )}
+            />
+
+            <Column
+              title="Disable"
+              key="disable"
+              width={110}
+              render={(record: INftItem) => (
+                <Button
+                  danger
+                  key="list-loadmore-delete"
+                  onClick={() => {
+                    handleDeleteItem(record.contractaddress, record.tokenid, reloadItem);
+                  }}
+                >
+                  Delete
+                </Button>
+              )}
+            />
+          </Table>
         </Card>
       </Space>
     </PageContainer>
   );
 };
 
-export default index;
+export default Test;

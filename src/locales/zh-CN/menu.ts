@@ -14,6 +14,8 @@ export default {
   'menu.account': '账户',
   'menu.brand': '品牌',
   'menu.history': '操作记录',
+  'menu.test': '测试',
+  'menu.test.hhh': '测试',
   'menu.banner.updateTitle': '轮播更新',
   'menu.box': '盲盒',
   'menu.box.view': '管理',

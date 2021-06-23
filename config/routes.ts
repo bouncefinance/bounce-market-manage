@@ -78,20 +78,20 @@ const routes: MenuDataItem[] = [
   //       }
   //     ]
   //   },
-  // {
-  //   name: 'test',
-  //   path: '/test',
-  //   icon: 'BorderInner',
-  //   component: './test',
-  //   routes:[
-  //     {
-  //       name: 'hhh',
-  //       path: 'hhh',
-  //       icon: 'DownSquare',
-  //       component: './test/edit.tsx',
-  //     }
-  //   ]
-  // },
+  {
+    name: 'test',
+    path: '/test',
+    icon: 'BorderInner',
+    component: './test',
+    routes:[
+      {
+        name: 'hhh',
+        path: 'hhh',
+        icon: 'DownSquare',
+        component: './test/edit.tsx',
+      }
+    ]
+  },
   {
     component: './404',
   },

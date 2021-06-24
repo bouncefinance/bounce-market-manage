@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { DownOutlined, ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import {
@@ -20,6 +20,8 @@ import {
 } from 'antd';
 import { useRequest } from 'umi';
 import request from 'umi-request';
+import ImgCropUpload from '@/pages/drops/imgCropUpload';
+import { SketchPicker } from 'react-color'
 
 const { confirm } = Modal;
 const { Option } = Select;
@@ -40,6 +42,22 @@ interface IAccountData {
   imgurl: string;
   created_at: string;
   updated_at: string;
+}
+interface IPoolData {
+  poolid: number;
+  fileurl: string;
+  likecount: number;
+  pooltype: number; // 1: fixed swap, 2: English auction
+  poolweight: number;
+  price: string;
+  state: number;
+  token0: string;
+  token1: string;
+  tokenid: number;
+  username: string;
+  itemname: string;
+  category: string;
+  channel: string;
 }
 
 const getAccountList = function (likename: string = '', offset: number, limit: number = 5) {
@@ -94,6 +112,14 @@ const handleDeleteAccount = async function (id: number, reload: () => void) {
 // }
 
 const index: React.FC = () => {
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [selectedPool, setSelectedPool] = useState<IPoolData[]>();
+  const menuEl = useRef(null);
+
+  useEffect(() => {
+    console.log('menuEl: ', menuEl);
+  }, [menuEl]);
+
   const {
     data: accountData,
     // loading: itemLoading,
@@ -119,30 +145,29 @@ const index: React.FC = () => {
     },
   );
 
-  const menu0 = (
-    <Menu>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-          1st menu item
-        </a>
-      </Menu.Item>
-      <Menu.Item icon={<DownOutlined />} disabled>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-          2nd menu item (disabled)
-        </a>
-      </Menu.Item>
-      <Menu.Item disabled>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-          3rd menu item (disabled)
-        </a>
-      </Menu.Item>
-      <Menu.Item danger>a danger item</Menu.Item>
-    </Menu>
-  );
+  // rowSelection object indicates the need for row selection
+  const rowSelection = {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: IAccountData[]) => {
+      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    },
+    getCheckboxProps: (record: IAccountData) => ({
+      disabled: record.username === 'Disabled User', // Column configuration not to be checked
+      name: record.username,
+    }),
+  };
 
   const menu = (
-    <Menu>
-      <Table rowKey="id" {...accountTableProps } size='small' style={{width: 500}}>
+    <Menu style={{ width: 700 }} ref={menuEl}>
+      <Table
+        rowKey="id"
+        {...accountTableProps}
+        rowSelection={{
+          type: 'radio',
+          ...rowSelection,
+        }}
+        size="middle"
+        // style={{ width: 700 }}
+      >
         <Column
           title="Avatar"
           dataIndex="imgurl"
@@ -205,52 +230,103 @@ const index: React.FC = () => {
     <PageContainer>
       <Space direction={'vertical'} style={{ width: '100%' }}>
         <Input.Group compact>
-          {/* <Select
-          defaultValue="ID"
-          onChange={(value) => {
-            // setSearchType(value);
-          }}
-          style={{ width: 80 }}
-        >
-          <Option value="ID">ID</Option>
-          <Option value="Name">Name</Option>
-        </Select> */}
-
-          <Search
-            allowClear
-            enterButton
-            style={{ width: '82%' }}
-            onSearch={(value) => {
-              searchAccount({ current: 1, pageSize: 5 }, value);
-              console.log('accountData: ', accountData);
-              // setSearchResultList(undefined);
-              // if (value !== '')
-              //   if (searchType === 'Name') {
-              //     setSearchResultList(
-              //       pools.filter((pool) => {
-              //         return pool.itemname.includes(value);
-              //       }),
-              //     );
-              //   } else {
-              //     setSearchResultList(
-              //       pools.filter((pool) => {
-              //         return pool.poolid === parseInt(value);
-              //       }),
-              //     );
-              //   }
-            }}
-            onChange={() => {
-              // setNewPoolItem(undefined);
-            }}
-          />
+          <Dropdown
+            /* visible={dropdownVisible} */
+            overlay={menu}
+            trigger={['click']}
+          >
+            {/* <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+              Hover me <DownOutlined />
+            </a> */}
+            <Search
+              allowClear
+              enterButton
+              style={{ width: '82%' }}
+              onSearch={(value) => {
+                searchAccount({ current: 1, pageSize: 5 }, value);
+                setDropdownVisible(true);
+                console.log('accountData: ', accountData);
+              }}
+              onChange={() => {}}
+            />
+          </Dropdown>
         </Input.Group>
-        <Dropdown visible overlay={menu}>
-            <span></span>
-          {/* <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-            Hover me <DownOutlined />
-          </a> */}
-        </Dropdown>
-        <Card bordered={false}></Card>
+
+        <Card bordered={false}>
+          <Space direction={'vertical'}>
+            <Table title={() => 'Drop NFTs List *'} rowKey="id" dataSource={selectedPool}>
+              <Column
+                title="Image"
+                dataIndex="fileurl"
+                key="fileurl"
+                width={110}
+                align={'center'}
+                render={(fileurl, record: IPoolData) => {
+                  console.log('record: ', record);
+                  return record?.category === 'image' ? (
+                    <Image
+                      src={fileurl}
+                      style={{ objectFit: 'contain' }}
+                      width={64}
+                      height={64}
+                      placeholder={
+                        <Image
+                          preview={false}
+                          src={placeholderImg}
+                          width={64}
+                          height={64}
+                          style={{ background: 'white' }}
+                        />
+                      }
+                    />
+                  ) : (
+                    <video src={fileurl} width={70} height={70} controls={false} />
+                  );
+                }}
+              />
+
+              <Column
+                title="Name"
+                dataIndex="itemname"
+                key="itemname"
+                align={'center'}
+                ellipsis={{ showTitle: false }}
+                render={(itemname) => {
+                  return (
+                    <Tooltip placement="topLeft" title={itemname}>
+                      {itemname}
+                    </Tooltip>
+                  );
+                }}
+              />
+
+              <Column title="Id" dataIndex="id" key="id" width={110} align={'center'} />
+
+              <Column
+                title="Contract Address"
+                dataIndex="contractaddress"
+                key="contractaddress"
+                align={'center'}
+                render={(contractaddress, record) => {
+                  return (
+                    <Tooltip placement="top" title={<span>{contractaddress}</span>}>
+                      {`${contractaddress.slice(0, 6)}...${contractaddress.slice(-4)}`}
+                    </Tooltip>
+                  );
+                }}
+              />
+            </Table>
+
+            <span>upload cover on PC</span>
+            <ImgCropUpload text="+ upload" aspect={4 / 3} />
+
+            <span>upload cover on PC</span>
+            <ImgCropUpload text="+ upload" aspect={4 / 7} />
+
+            <span>background color</span>
+            <SketchPicker />
+          </Space>
+        </Card>
       </Space>
     </PageContainer>
   );

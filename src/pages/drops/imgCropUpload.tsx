@@ -1,32 +1,9 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import {
-  Card,
-  Table,
-  Button,
-  Image,
-  Tooltip,
-  Switch,
-  Input,
-  Modal,
-  message,
-  Space,
-  Tag,
-  Upload,
-} from 'antd';
+import { Image, Upload } from 'antd';
 import React, { useState } from 'react';
-import { useRequest } from 'umi';
-import request from 'umi-request';
 import 'antd/dist/antd.css';
-
-const { Column } = Table;
-const { Search } = Input;
-const { confirm } = Modal;
-
-import placeholderImg from '@/assets/images/placeholderImg.svg';
-import { ExclamationCircleOutlined, StarFilled } from '@ant-design/icons';
 import ImgCrop from 'antd-img-crop';
 
-const Test: React.FC = () => {
+const Test: React.FC<{ text: string; aspect: number }> = ({ text, aspect }) => {
   const [fileList, setFileList] = useState([
     {
       uid: '-1',
@@ -55,9 +32,8 @@ const Test: React.FC = () => {
     imgWindow.document.write(image.outerHTML);
   };
 
-
   return (
-    <ImgCrop rotate aspect={4/3} >
+    <ImgCrop rotate aspect={aspect}>
       <Upload
         action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
         listType="picture-card"
@@ -66,7 +42,7 @@ const Test: React.FC = () => {
         onPreview={onPreview}
         maxCount={1}
       >
-        {fileList.length < 5 && 'Upload PC'}
+        {text}
       </Upload>
     </ImgCrop>
   );

@@ -65,22 +65,29 @@ const routes: MenuDataItem[] = [
   //   component: './brand',
   // },
   {
-    name: 'account',
-    path: '/Account',
-    icon: 'User',
-    component: './account',
-  },
-  {
-    name: 'authority',
-    path: '/Authority',
-    icon: 'Key',
-    component: './authority',
-  },
-  {
-    name: 'history',
-    path: '/History',
-    icon: 'History',
-    component: './history',
+    name: 'Authority',
+    // path: '/authority'
+    icon: 'key',
+    routes: [
+      {
+        name: 'Account',
+        path: 'account',
+        icon: 'User',
+        component: './account',
+      },
+      {
+        name: 'Authority',
+        path: 'authority',
+        icon: 'Key',
+        component: './authority',
+      },
+      {
+        name: 'History',
+        path: 'history',
+        icon: 'History',
+        component: './history',
+      },
+    ],
   },
   // {
   //     name: 'box',

@@ -19,7 +19,7 @@ export const ApolloClientUrl =
 export const APIPrefixUrl =
   APPWORKTYPE === 'onlineOfficial'
     ? 'https://bounce-market.bounce.finance:11001'
-    : 'http://market-test.bounce.finance:11001';
+    : 'https://market-test.bounce.finance';
 
 // export const APIPrefixUrl = 'https://market-test.bounce.finance';
 

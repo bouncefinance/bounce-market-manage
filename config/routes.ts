@@ -71,7 +71,7 @@ const routes: MenuDataItem[] = [
     routes: [
       {
         name: 'User',
-        path: 'user',
+        path: 'account',
         icon: 'User',
         component: './account',
       },

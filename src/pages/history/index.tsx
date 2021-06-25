@@ -23,30 +23,35 @@ const { Search } = Input;
 const { confirm } = Modal;
 const { Column, ColumnGroup } = Table;
 
-const data = [
+interface history {
+  key: string;
+  functionModule: string;
+  operation: string;
+  operator: string;
+  date: string;
+}
+
+const data: history[] = [
   {
     key: '1',
-    firstName: 'John',
-    lastName: 'Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
+    functionModule: 'Account and items - Delete And Hide',
+    operation: 'Hide item, item id: 123',
+    operator: 'Notename(0xb24D...6f8b)',
+    date: Date(),
   },
   {
     key: '2',
-    firstName: 'Jim',
-    lastName: 'Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
+    functionModule: 'Account and items - Delete And Hide',
+    operation: 'Hide item, item id: 123',
+    operator: 'Notename(0xb24D...6f8b)',
+    date: Date(),
   },
   {
     key: '3',
-    firstName: 'Joe',
-    lastName: 'Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
+    functionModule: 'Account and items - Delete And Hide',
+    operation: 'Hide item, item id: 123',
+    operator: 'Notename(0xb24D...6f8b)',
+    date: Date(),
   },
 ];
 
@@ -55,53 +60,11 @@ const index: React.FC = () => {
     <PageContainer>
       <Card bordered={false}>
         <h1>History Page</h1>
-        <Table dataSource={data}>
-          <ColumnGroup title="Name">
-            <Column
-              title="First Name"
-              dataIndex="firstName"
-              key="firstName"
-              filters={[
-                {
-                  text: 'Joe',
-                  value: 'Joe',
-                },
-                {
-                  text: 'Jim',
-                  value: 'Jim',
-                },
-                {
-                  text: 'Submenu',
-                  value: 'Submenu',
-                  children: [
-                    {
-                      text: 'Green',
-                      value: 'Green',
-                    },
-                    {
-                      text: 'Black',
-                      value: 'Black',
-                    },
-                  ],
-                },
-              ]}
-              onFilter={(value, record) => record.firstName.indexOf(value) === 0}
-            />
-            <Column title="Last Name" dataIndex="lastName" key="lastName" />
-          </ColumnGroup>
-          
-          <Column
-            title="Age"
-            dataIndex="age"
-            key="age"
-            sorter={(a, b) => {
-              console.log(a, b);
-              return a.age - b.age;
-            }}
-          />
-
-          <Column title="Address" dataIndex="address" key="address" />
-
+        <Table dataSource={data} rowKey="key">
+          <Column title="Function Module" dataIndex="functionModule" key="functionModule" />
+          <Column title="Operation" dataIndex="operation" key="operation" />
+          <Column title="Operator" dataIndex="operator" key="operator" />
+          <Column title="Date" dataIndex="date" key="date" />
         </Table>
       </Card>
     </PageContainer>

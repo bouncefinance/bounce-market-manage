@@ -29,13 +29,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
   return {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
-    waterMarkProps: {
-      // content: initialState?.token,
-    },
+    waterMarkProps: {},
     footerRender: false,
     onPageChange: () => {
       const { location } = history;
-      // 如果没有登录，重定向到 login
+      // 如果没有登录，重定向到 login 。
       if (!initialState?.token && location.pathname !== LOGIN_PATH) {
         history.push(LOGIN_PATH);
       }

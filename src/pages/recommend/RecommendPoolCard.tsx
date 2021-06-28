@@ -1,7 +1,8 @@
+/* eslint-disable no-nested-ternary */
 import { Image, Skeleton, Card } from 'antd';
 
-import { PlusOutlined, EditOutlined, VerticalAlignBottomOutlined } from '@ant-design/icons';
-import { IpoolItem } from '.';
+import { PlusOutlined, EditOutlined } from '@ant-design/icons';
+import type { IpoolItem } from '.';
 import React from 'react';
 
 import placeholderImg from '@/assets/images/placeholderImg.svg';
@@ -13,7 +14,7 @@ function RecommendPoolCard({
   item,
   index,
   cardType,
-  handleReset,
+  // handleReset,
   handleEdit,
   handleAdd,
 }: {

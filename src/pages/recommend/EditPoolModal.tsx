@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import request from 'umi-request';
 import { RECOMMEND_POOLS_AMOUNT } from '@/tools/const';
 import './index.less';
-import { Typography, message, Modal, Select, Image, Skeleton, Tag, List, Input, Empty } from 'antd';
+import { Typography, message, Modal, Select, Image, Tag, List, Input, Empty } from 'antd';
 
 import { CheckCircleFilled, CloseCircleOutlined } from '@ant-design/icons';
 
-import { IpoolItem } from '.';
+import type { IpoolItem } from '.';
+
 const { Option } = Select;
 const { Search } = Input;
 
@@ -33,9 +34,9 @@ function EditPoolModal({
   const [searchResultList, setSearchResultList] = useState<IpoolItem[]>();
   const [newPoolItem, setNewPoolItem] = useState<IpoolItem | undefined>();
 
-  useEffect(() => {
-    console.log('newPoolItem: ', newPoolItem);
-  }, [newPoolItem]);
+  // useEffect(() => {
+  //   console.log('newPoolItem: ', newPoolItem);
+  // }, [newPoolItem]);
 
   const handleSetPoolWeight = async () => {
     request
@@ -61,9 +62,6 @@ function EditPoolModal({
      * 当前有位置有数据，旧的归零
      */
     if (modalAction === 'add and reset') {
-      console.log('old poolid: ', oldPoolItem?.poolid);
-      console.log('old weight: ', 0);
-      console.log('old standard: ', oldPoolItem?.pooltype === 2 ? 1 : 0);
       request
         .post('/api/bouadmin/main/auth/dealpoolinfo', {
           data: {
@@ -93,7 +91,7 @@ function EditPoolModal({
       } ${clickedCardType}`}
       centered
       visible={poolModalVisible}
-      okButtonProps={{ disabled: newPoolItem ? false : true }}
+      okButtonProps={{ disabled: !newPoolItem }}
       onOk={() => {
         if (newPoolItem) handleSetPoolWeight();
       }}
@@ -126,7 +124,7 @@ function EditPoolModal({
               } else {
                 setSearchResultList(
                   pools.filter((pool) => {
-                    return pool.poolid === parseInt(value);
+                    return pool.poolid === parseInt(value, 10);
                   }),
                 );
               }
@@ -148,15 +146,8 @@ function EditPoolModal({
                 <List.Item
                   key={`${item.poolid}_${item.pooltype}`}
                   onClick={() => {
-                    // if (
-                    //   !oldPoolItem ||
-                    //   (oldPoolItem.poolid === item.poolid && oldPoolItem.pooltype === item.pooltype)
-                    // )
-                    //   setNewPoolItem(undefined);
-                    // else {
-                    //   newPoolItem === item ? setNewPoolItem(undefined) : setNewPoolItem(item);
-                    // }
-                    newPoolItem === item ? setNewPoolItem(undefined) : setNewPoolItem(item);
+                    if (newPoolItem === item) setNewPoolItem(undefined);
+                    else setNewPoolItem(item);
                   }}
                   extra={
                     oldPoolItem &&

@@ -340,7 +340,6 @@ export default function recommend() {
                     item={item}
                     index={index + 3}
                     cardType={'Fast Mover'}
-                    allowReset={false}
                     handleReset={handleResetPool}
                     handleEdit={handleEditPool}
                     handleAdd={handleAddPool}

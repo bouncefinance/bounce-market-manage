@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import request from 'umi-request';
 import { RECOMMEND_BRANDS_AMOUNT } from '@/tools/const';
 import './index.less';
-import { Typography, message, Modal, Select, Image, Skeleton, Tag, List, Input, Empty } from 'antd';
+import { Typography, message, Modal, Select, Image, Tag, List, Input, Empty } from 'antd';
 
-import { CheckCircleFilled, CloseCircleOutlined, StopOutlined } from '@ant-design/icons';
+import { CheckCircleFilled, CloseCircleOutlined } from '@ant-design/icons';
 
 import { IPopularBrand } from '.';
 const { Option } = Select;

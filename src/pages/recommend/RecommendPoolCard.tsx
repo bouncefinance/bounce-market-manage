@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import { Image, Skeleton, Card } from 'antd';
 
-import { PlusOutlined, EditOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, VerticalAlignBottomOutlined } from '@ant-design/icons';
 import type { IpoolItem } from '.';
 import React from 'react';
 
@@ -14,7 +14,7 @@ function RecommendPoolCard({
   item,
   index,
   cardType,
-  // handleReset,
+  handleReset,
   handleEdit,
   handleAdd,
 }: {
@@ -57,16 +57,6 @@ function RecommendPoolCard({
         )
       }
       actions={[
-        // <VerticalAlignBottomOutlined
-        //   style={{
-        //     fontSize: 22,
-        //   }}
-        //   key="reset"
-        //   title="Reset"
-        //   onClick={() => {
-        //     handleReset(item);
-        //   }}
-        // />,
         <EditOutlined
           style={{
             fontSize: 22,
@@ -75,6 +65,16 @@ function RecommendPoolCard({
           title="Edit"
           onClick={() => {
             handleEdit(index, item, 'Fast Mover');
+          }}
+        />,
+        <VerticalAlignBottomOutlined
+          style={{
+            fontSize: 22,
+          }}
+          key="reset"
+          title="Reset"
+          onClick={() => {
+            handleReset(item);
           }}
         />,
       ]}

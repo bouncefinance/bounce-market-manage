@@ -129,13 +129,11 @@ export default function recommend() {
   }: { data: Ipoolweight[]; loading: boolean; refresh: any } = useRequest(() => {
     return getPoolsInfobypage(0, 11);
   });
-  // console.log('recommendPools>>>>>', recommendPoolsLoading, recommendPools);
 
   const { data: pools, loading: poolsLoading }: { data: IpoolItem[]; loading: boolean } =
     useRequest(() => {
       return getPoolLists(0, 1000);
     });
-  // console.log('getPoolLists>>>>>', pools, poolsLoading);
 
   const {
     data: popularBrands,
@@ -148,7 +146,6 @@ export default function recommend() {
   const { data: brands }: { data: IPopularBrand[]; loading: boolean } = useRequest(() => {
     return getBrandsByPage('', 0/* , 500 */);
   });
-  // console.log('getBrandsByPage >>>>>', brands, brandsLoading);
 
   useEffect(() => {
     if ((!recommendPoolsLoading && !recommendPools) || (!poolsLoading && !pools)) {
@@ -181,22 +178,18 @@ export default function recommend() {
     }
   }, [pools, recommendPools, recommendPoolsLoading, poolsLoading]);
 
-  // useEffect(() => {
-  //   console.log('clickedCardIndex: ', clickedCardIndex);
-  // }, [clickedCardIndex]);
+  useEffect(() => {
+    console.log('clickedCardIndex: ', clickedCardIndex);
+  }, [clickedCardIndex]);
 
   const poolResultList = new Array(RECOMMEND_POOLS_AMOUNT)
     .fill(0)
     .map((v, i) => filterPoolList[i] || v)
     .sort((a, b) => (a?.poolweight > b?.poolweight ? -1 : 1));
 
-  // console.log('poolResultList >>>>>', poolResultList);
-
   /* ------------------------------- */
 
   useEffect(() => {
-    // console.log('popularBrandsLoading >>>>>', popularBrandsLoading);
-    // console.log('popularBrands >>>>>', popularBrands);
     if (!popularBrandsLoading && !popularBrands) {
       setResultBrandsLoading(true);
       message.error('Brand API Error !');
@@ -205,10 +198,8 @@ export default function recommend() {
       setRecommendBrandList(popularBrands);
       setResultBrandsLoading(false);
     }
-    // console.log('resultBrandsLoading >>>>>', resultBrandsLoading);
   }, [popularBrands, popularBrandsLoading]);
 
-  // console.log('filterPoolList >>>>>', filterPoolList);
 
   const brandResultList = new Array(RECOMMEND_BRANDS_AMOUNT)
     .fill(0)
@@ -307,6 +298,13 @@ export default function recommend() {
     setBrandModalVisible(true);
   };
 
+  const handleAddBrand = (index: number, cardType: 'Brand') => {
+    clickedCardIndex = index;
+    clickedCardType = cardType;
+    modalAction = 'add';
+    setBrandModalVisible(true);
+  };
+
   return (
     <div className="recommend-box">
       <Tabs defaultActiveKey="1">
@@ -342,6 +340,7 @@ export default function recommend() {
                     item={item}
                     index={index + 3}
                     cardType={'Fast Mover'}
+                    allowReset={false}
                     handleReset={handleResetPool}
                     handleEdit={handleEditPool}
                     handleAdd={handleAddPool}
@@ -365,7 +364,7 @@ export default function recommend() {
                     index={index}
                     handleReset={handleResetBrand}
                     handleEdit={handleEditBrand}
-                    handleAdd={() => {}}
+                    handleAdd={handleAddBrand}
                   />
                 </Col>
               );

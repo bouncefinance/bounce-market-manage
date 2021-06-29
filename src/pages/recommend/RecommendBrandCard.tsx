@@ -1,6 +1,6 @@
 import { Image, Skeleton, Card } from 'antd';
 
-import { PlusOutlined, EditOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, VerticalAlignBottomOutlined } from '@ant-design/icons';
 import { IPopularBrand } from '.';
 import React from 'react';
 
@@ -51,24 +51,24 @@ function RecommendBrandCard({
         />
       }
       actions={[
-        // <VerticalAlignBottomOutlined
-        //   style={{
-        //     fontSize: 22,
-        //   }}
-        //   key="reset"
-        //   title="Reset"
-        //   onClick={() => {
-        //     handleReset(item);
-        //   }}
-        // />,
         <EditOutlined
+        style={{
+          fontSize: 22,
+        }}
+        key="edit"
+        title="Edit"
+        onClick={() => {
+          handleEdit(index, item, 'Fast Mover');
+        }}
+        />,
+        <VerticalAlignBottomOutlined
           style={{
             fontSize: 22,
           }}
-          key="edit"
-          title="Edit"
+          key="reset"
+          title="Reset"
           onClick={() => {
-            handleEdit(index, item, 'Fast Mover');
+            handleReset(item);
           }}
         />,
       ]}

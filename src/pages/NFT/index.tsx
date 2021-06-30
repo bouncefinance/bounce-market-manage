@@ -11,8 +11,9 @@ import {
   message,
   Space,
   Tabs,
+  Select,
 } from 'antd';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import request from 'umi-request';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -21,6 +22,7 @@ const { Column } = Table;
 const { Search } = Input;
 const { confirm } = Modal;
 const { TabPane } = Tabs;
+const { Option } = Select;
 
 import placeholderImg from '@/assets/images/placeholderImg.svg';
 import { CopyOutlined, ExclamationCircleOutlined, StarFilled } from '@ant-design/icons';
@@ -50,13 +52,57 @@ interface INftItem {
   updated_at: string;
 }
 
-const getPoolsList = function (likename: string = '', offset: number, limit: number = 7) {
+const getPoolsListByFilter = function (
+  filterType: 'likestr' | 'creator' | 'tokenid' = 'likestr',
+  searchText: string = '',
+  offset: number,
+  limit: number = 7,
+) {
+  let filter, data;
+  switch (filterType) {
+    case 'likestr':
+      filter = 1;
+      data = {
+        filter,
+        likestr: searchText,
+        limit,
+        offset,
+      };
+      break;
+
+    case 'creator':
+      filter = 2;
+      data = {
+        filter,
+        creator: searchText,
+        limit,
+        offset,
+      };
+      break;
+
+    case 'tokenid':
+      filter = 3;
+      data = {
+        filter,
+        tokenid: parseInt(searchText),
+        limit,
+        offset,
+      };
+      break;
+
+    default:
+      filter = 1;
+      data = {
+        filter,
+        likestr: searchText,
+        limit,
+        offset,
+      };
+      break;
+  }
+
   return request.post('/api/bouadmin/main/auth/getpoolsbylikename', {
-    data: {
-      likename,
-      limit,
-      offset,
-    },
+    data,
   });
 };
 
@@ -162,22 +208,61 @@ const getRecommendBrands = function () {
   });
 };
 
-const getBrandsList = function (
-  likename: string = '',
+const getBrandsListByFilter = (
+  filterType: 'likestr' | 'creator' | 'brandid' = 'likestr',
+  searchText: string = '',
   offset: number,
   limit: number = 7,
-  orderfield: 1 | 2 = 1,
-) {
+) => {
+  let filter, data;
+  switch (filterType) {
+    case 'likestr':
+      filter = 1;
+      data = {
+        filter,
+        likestr: searchText,
+        limit,
+        offset,
+      };
+      break;
+
+    case 'creator':
+      filter = 2;
+      data = {
+        filter,
+        creator: searchText,
+        limit,
+        offset,
+      };
+      break;
+
+    case 'brandid':
+      filter = 3;
+      data = {
+        filter,
+        brandid: parseInt(searchText),
+        limit,
+        offset,
+      };
+      break;
+
+    default:
+      filter = 1;
+      data = {
+        filter,
+        likestr: searchText,
+        limit,
+        offset,
+      };
+      break;
+  }
+
   return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
-    data: {
-      likename,
-      limit,
-      offset,
-    },
+    data,
   });
 };
 
-const handleDeleteBrand = async function (id: number, reload: () => void) {
+const handleDeleteBrand = async (id: number, reload: () => void) => {
   const deleteBrand = async (id: number) => {
     const res = await request.post('/api/bouadmin/main/auth/delbrand', {
       data: {
@@ -204,43 +289,58 @@ const handleDeleteBrand = async function (id: number, reload: () => void) {
   });
 };
 
-const handleHideBrand = async function (
-  tokenid: number,
-  actionType: 'hide' | 'show',
-  reload: () => void,
-) {
-  const status = actionType === 'hide' ? 1 : 0;
+// const handleHideBrand = async function (
+//   tokenid: number,
+//   actionType: 'hide' | 'show',
+//   reload: () => void,
+// ) {
+//   const status = actionType === 'hide' ? 1 : 0;
 
-  const hideBrand = async (id: number, actionType: 'hide' | 'show') => {
-    const res = await request.post('/api/bouadmin/main/auth/updatebrandstatus', {
-      data: {
-        id,
-        status, // status: 1:to hide, 2:to show
-      },
-    });
-    if (res.code === 1) {
-      actionType === 'hide'
-        ? message.success('Hide successfully')
-        : message.success('Show successfully');
-    } else {
-      actionType === 'hide' ? message.error('Failed to hide') : message.error('Failed to show');
-    }
-  };
+//   const hideBrand = async (id: number, actionType: 'hide' | 'show') => {
+//     const res = await request.post('/api/bouadmin/main/auth/updatebrandstatus', {
+//       data: {
+//         id,
+//         status, // status: 1:to hide, 2:to show
+//       },
+//     });
+//     if (res.code === 1) {
+//       actionType === 'hide'
+//         ? message.success('Hide successfully')
+//         : message.success('Show successfully');
+//     } else {
+//       actionType === 'hide' ? message.error('Failed to hide') : message.error('Failed to show');
+//     }
+//   };
 
-  confirm({
-    // title: 'Delete',
-    icon: <ExclamationCircleOutlined />,
-    title: `Do you Want to ${actionType} this Brand?`,
-    onOk() {
-      hideBrand(tokenid, actionType).then(() => {
-        reload();
-      });
-    },
-    onCancel() {},
-  });
-};
+//   confirm({
+//     // title: 'Delete',
+//     icon: <ExclamationCircleOutlined />,
+//     title: `Do you Want to ${actionType} this Brand?`,
+//     onOk() {
+//       hideBrand(tokenid, actionType).then(() => {
+//         reload();
+//       });
+//     },
+//     onCancel() {},
+//   });
+// };
 
 const index: React.FC = () => {
+  const [itemSearchType, setItemSearchType] = useState<'likestr' | 'creator' | 'tokenid'>(
+    'likestr',
+  );
+  const [brandSearchType, setBrandSearchType] = useState<'likestr' | 'creator' | 'brandid'>(
+    'likestr',
+  );
+
+  useEffect(() => {
+    console.log('itemSearchType: ', itemSearchType);
+  }, [itemSearchType]);
+
+  useEffect(() => {
+    console.log('brandSearchType: ', brandSearchType);
+  }, [brandSearchType]);
+
   const {
     // data: itemData,
     // loading: itemLoading,
@@ -251,7 +351,7 @@ const index: React.FC = () => {
     refresh: reloadItem,
   } = useRequest(
     ({ pageSize: limit, current: offset }, searchText) => {
-      return getPoolsList(searchText, (offset - 1) * limit, limit);
+      return getPoolsListByFilter(itemSearchType, searchText, (offset - 1) * limit, limit);
     },
     {
       paginated: true,
@@ -283,7 +383,7 @@ const index: React.FC = () => {
     refresh: reloadBrand,
   } = useRequest(
     ({ pageSize: limit, current: offset }, searchText) =>
-      getBrandsList(searchText, (offset - 1) * limit, limit), // Filter out brand which id = 10 and which id =11
+      getBrandsListByFilter(brandSearchType, searchText, (offset - 1) * limit, limit), // Filter out brand which id = 10 and which id =11
     {
       paginated: true,
       cacheKey: 'brands',
@@ -302,13 +402,25 @@ const index: React.FC = () => {
       <Tabs defaultActiveKey="1">
         <TabPane tab="Item" key="1">
           <Space direction={'vertical'} style={{ width: '100%' }}>
-            <Search
-              placeholder="input search text"
-              allowClear
-              onSearch={(value) => searchItem({ current: 1, pageSize: 7 }, value)}
-              style={{ width: '75%' }}
-              size="middle"
-            />
+            <Input.Group>
+              <Select
+                defaultValue="likestr"
+                onChange={(value) => {
+                  setItemSearchType(value);
+                }}
+              >
+                <Option value="likestr">Item Name</Option>
+                <Option value="creator">Creator Address</Option>
+                <Option value="tokenid">Token ID</Option>
+              </Select>
+              <Search
+                placeholder="input search text"
+                allowClear
+                onSearch={(value) => searchItem({ current: 1, pageSize: 7 }, value || '')}
+                style={{ width: '75%' }}
+                size="middle"
+              />
+            </Input.Group>
             <Card>
               <Table rowKey="id" {...itemTableProps}>
                 <Column
@@ -318,7 +430,6 @@ const index: React.FC = () => {
                   width={110}
                   align={'center'}
                   render={(fileurl, record: INftItem) => {
-                    console.log('record: ', record);
                     return record?.category === 'image' ? (
                       <Image
                         src={fileurl}
@@ -356,7 +467,13 @@ const index: React.FC = () => {
                   }}
                 />
 
-                <Column title="Id" dataIndex="id" key="id" width={110} align={'center'} />
+                <Column
+                  title="Token ID"
+                  dataIndex="tokenid"
+                  key="tokenid"
+                  width={110}
+                  align={'center'}
+                />
 
                 <Column
                   title="Contract Address"
@@ -453,15 +570,27 @@ const index: React.FC = () => {
 
         <TabPane tab="Brand" key="2">
           <Space direction={'vertical'} style={{ width: '100%' }}>
-            <Search
-              placeholder="input search text"
-              allowClear
-              onSearch={(value) => {
-                searchBrand({ current: 1, pageSize: 7 }, value);
-              }}
-              style={{ width: '75%' }}
-              size="middle"
-            />
+            <Input.Group>
+              <Select
+                defaultValue="likestr"
+                onChange={(value) => {
+                  setBrandSearchType(value);
+                }}
+              >
+                <Option value="likestr">Brand Name</Option>
+                <Option value="creator">Creator Address</Option>
+                <Option value="brandid">Brand ID</Option>
+              </Select>
+              <Search
+                placeholder="input search text"
+                allowClear
+                onSearch={(value) => {
+                  searchBrand({ current: 1, pageSize: 7 }, value);
+                }}
+                style={{ width: '75%' }}
+                size="middle"
+              />
+            </Input.Group>
             <Card>
               <Table rowKey="id" {...brandTableProps}>
                 <Column
@@ -471,7 +600,7 @@ const index: React.FC = () => {
                   width={110}
                   align={'center'}
                   render={(imgurl, record: IBrandInfo) => {
-                    console.log('record: ', record);
+                    // console.log('record: ', record);
                     return (
                       <Image
                         src={imgurl}
@@ -538,9 +667,9 @@ const index: React.FC = () => {
                   align={'center'}
                   render={(ownername, record) => {
                     return ownername ? (
-                        <Tooltip placement="top" title={<span>{ownername}</span>}>
-                          {ownername}
-                        </Tooltip>
+                      <Tooltip placement="top" title={<span>{ownername}</span>}>
+                        {ownername}
+                      </Tooltip>
                     ) : (
                       '--'
                     );
@@ -575,7 +704,7 @@ const index: React.FC = () => {
                   align={'center'}
                   render={(record: IBrandInfo) => {
                     return recommendBrands?.find((recommendBrand: IBrandInfo) => {
-                      console.log(recommendBrand.id, record.id, recommendBrand.id === record.id);
+                      // console.log(recommendBrand.id, record.id, recommendBrand.id === record.id);
                       return recommendBrand.id === record.id;
                     }) ? (
                       <StarFilled style={{ color: '#f58220', fontSize: 20 }} />

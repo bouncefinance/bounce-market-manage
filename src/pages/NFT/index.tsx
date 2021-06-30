@@ -15,6 +15,7 @@ import {
 import React from 'react';
 import { useRequest } from 'umi';
 import request from 'umi-request';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 const { Column } = Table;
 const { Search } = Input;
@@ -22,7 +23,7 @@ const { confirm } = Modal;
 const { TabPane } = Tabs;
 
 import placeholderImg from '@/assets/images/placeholderImg.svg';
-import { ExclamationCircleOutlined, StarFilled } from '@ant-design/icons';
+import { CopyOutlined, ExclamationCircleOutlined, StarFilled } from '@ant-design/icons';
 
 interface INftItem {
   artistpoolweight: number;
@@ -364,9 +365,37 @@ const index: React.FC = () => {
                   align={'center'}
                   render={(contractaddress, record) => {
                     return (
-                      <Tooltip placement="top" title={<span>{contractaddress}</span>}>
-                        {`${contractaddress.slice(0, 6)}...${contractaddress.slice(-4)}`}
-                      </Tooltip>
+                      <Space>
+                        <Tooltip placement="top" title={<span>{contractaddress}</span>}>
+                          {`${contractaddress.slice(0, 6)}...${contractaddress.slice(-4)}`}
+                        </Tooltip>
+                        <Tooltip placement="top" title={'Copy'}>
+                          <CopyToClipboard text={contractaddress}>
+                            <CopyOutlined />
+                          </CopyToClipboard>
+                        </Tooltip>
+                      </Space>
+                    );
+                  }}
+                />
+
+                <Column
+                  title="Creator Address"
+                  dataIndex="creator"
+                  key="creator"
+                  align={'center'}
+                  render={(creator, record) => {
+                    return (
+                      <Space>
+                        <Tooltip placement="top" title={<span>{creator}</span>}>
+                          {`${creator.slice(0, 6)}...${creator.slice(-4)}`}
+                        </Tooltip>
+                        <Tooltip placement="top" title={'Copy'}>
+                          <CopyToClipboard text={creator}>
+                            <CopyOutlined />
+                          </CopyToClipboard>
+                        </Tooltip>
+                      </Space>
                     );
                   }}
                 />
@@ -485,26 +514,33 @@ const index: React.FC = () => {
                   dataIndex="contractaddress"
                   key="contractaddress"
                   align={'center'}
-                  render={(contractaddress, record) => {
+                  render={(contractaddress) => {
                     return (
-                      <Tooltip placement="top" title={<span>{contractaddress}</span>}>
-                        {`${contractaddress.slice(0, 6)}...${contractaddress.slice(-4)}`}
-                      </Tooltip>
+                      <Space>
+                        <Tooltip placement="top" title={<span>{contractaddress}</span>}>
+                          {`${contractaddress.slice(0, 6)}...${contractaddress.slice(-4)}`}
+                        </Tooltip>
+                        <Tooltip placement="top" title={'Copy'}>
+                          <CopyToClipboard text={contractaddress}>
+                            <CopyOutlined />
+                          </CopyToClipboard>
+                        </Tooltip>
+                      </Space>
                     );
                   }}
                 />
 
                 <Column
-                  title="Ownner Name"
+                  title="Creator Name"
                   dataIndex="ownername"
                   key="ownername"
                   width={130}
                   align={'center'}
                   render={(ownername, record) => {
                     return ownername ? (
-                      <Tooltip placement="top" title={<span>{ownername}</span>}>
-                        {ownername}
-                      </Tooltip>
+                        <Tooltip placement="top" title={<span>{ownername}</span>}>
+                          {ownername}
+                        </Tooltip>
                     ) : (
                       '--'
                     );
@@ -512,15 +548,22 @@ const index: React.FC = () => {
                 />
 
                 <Column
-                  title="Ownner Address"
+                  title="Creator Address"
                   dataIndex="owneraddress"
                   key="owneraddress"
                   align={'center'}
                   render={(owneraddress, record) => {
                     return (
-                      <Tooltip placement="top" title={<span>{owneraddress}</span>}>
-                        {`${owneraddress.slice(0, 6)}...${owneraddress.slice(-4)}`}
-                      </Tooltip>
+                      <Space>
+                        <Tooltip placement="top" title={<span>{owneraddress}</span>}>
+                          {`${owneraddress.slice(0, 6)}...${owneraddress.slice(-4)}`}
+                        </Tooltip>
+                        <Tooltip placement="top" title={'Copy'}>
+                          <CopyToClipboard text={owneraddress}>
+                            <CopyOutlined />
+                          </CopyToClipboard>
+                        </Tooltip>
+                      </Space>
                     );
                   }}
                 />

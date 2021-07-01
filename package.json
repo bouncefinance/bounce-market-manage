@@ -108,8 +108,6 @@
   },
   "gitHooks": {
     "commit-msg": "fabric verify-commit",
-    "gitHooks": {
-      "pre-commit": "lint-staged"
-    }
+    "pre-commit": "lint-staged"
   }
 }

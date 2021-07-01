@@ -141,15 +141,7 @@ const index: React.FC = () => {
                   width={64}
                   height={64}
                   style={{ objectFit: 'contain' }}
-                  placeholder={
-                    <Image
-                      preview={false}
-                      src={placeholderImg}
-                      width={64}
-                      height={64}
-                      style={{ background: 'white' }}
-                    />
-                  }
+                  fallback={placeholderImg}
                 />
               )}
             />

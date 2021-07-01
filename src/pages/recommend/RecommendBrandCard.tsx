@@ -39,15 +39,7 @@ function RecommendBrandCard({
           alt="image"
           src={item.imgurl}
           style={{ height: '162px', objectFit: 'contain' }}
-          placeholder={
-            <Image
-              preview={false}
-              src={placeholderImg}
-              width={302}
-              height={162}
-              style={{ background: 'white' }}
-            />
-          }
+          fallback={placeholderImg}
         />
       }
       actions={[

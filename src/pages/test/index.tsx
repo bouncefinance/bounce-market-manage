@@ -193,15 +193,7 @@ const Test: React.FC = () => {
                     style={{ objectFit: 'contain' }}
                     width={64}
                     height={64}
-                    placeholder={
-                      <Image
-                        preview={false}
-                        src={placeholderImg}
-                        width={64}
-                        height={64}
-                        style={{ background: 'white' }}
-                      />
-                    }
+                    fallback={placeholderImg}
                   />
                 );
               }}

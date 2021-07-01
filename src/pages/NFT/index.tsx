@@ -436,15 +436,7 @@ const index: React.FC = () => {
                         style={{ objectFit: 'contain' }}
                         width={64}
                         height={64}
-                        placeholder={
-                          <Image
-                            preview={false}
-                            src={placeholderImg}
-                            width={64}
-                            height={64}
-                            style={{ background: 'white' }}
-                          />
-                        }
+                        fallback={placeholderImg}
                       />
                     ) : (
                       <video src={fileurl} width={70} height={70} controls={false} />
@@ -607,15 +599,7 @@ const index: React.FC = () => {
                         style={{ objectFit: 'contain' }}
                         width={64}
                         height={64}
-                        placeholder={
-                          <Image
-                            preview={false}
-                            src={placeholderImg}
-                            width={64}
-                            height={64}
-                            style={{ background: 'white' }}
-                          />
-                        }
+                        fallback={placeholderImg}
                       />
                     );
                   }}

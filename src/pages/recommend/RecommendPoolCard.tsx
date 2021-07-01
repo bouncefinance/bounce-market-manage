@@ -44,15 +44,7 @@ function RecommendPoolCard({
             alt="image"
             src={item.fileurl}
             style={{ height: '156px', objectFit: 'contain' }}
-            placeholder={
-              <Image
-                preview={false}
-                src={placeholderImg}
-                width={302}
-                height={156}
-                style={{ background: 'white' }}
-              />
-            }
+            fallback={placeholderImg}
           />
         )
       }

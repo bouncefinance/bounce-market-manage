@@ -308,21 +308,15 @@ export default function recommend() {
     console.log('poolModalVisible: ', poolModalVisible);
   }, [poolModalVisible]);
 
-  // console.log('filterPoolList: ', filterPoolList);
-
   let poolResultList = new Array(RECOMMEND_POOLS_AMOUNT).fill(0);
   filterPoolList.map((value) => {
     poolResultList[RECOMMEND_POOLS_AMOUNT - value.poolweight] = value;
   });
 
-  // console.log('poolResultList: ', poolResultList);
-
   let brandResultList = new Array(RECOMMEND_BRANDS_AMOUNT).fill(0);
   recommendBrandList.map((value) => {
     brandResultList[RECOMMEND_BRANDS_AMOUNT - Math.floor(value.popularweight / 10000)] = value;
   });
-
-  console.log('brandResultList >>>>>', brandResultList);
 
   useEffect(() => {
     if (!popularBrandsLoading && !popularBrands) {
@@ -357,7 +351,7 @@ export default function recommend() {
     confirm({
       // title: 'Reset',
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you Want to reset this item?',
+      title: 'Do you want to delete this item?',
       onOk() {
         oldPoolItem = item;
         resetPoolWeight();
@@ -407,7 +401,7 @@ export default function recommend() {
     confirm({
       // title: 'Reset',
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you Want to reset this brand?',
+      title: 'Do you want to delete this brand?',
       onOk() {
         oldBrandItem = item;
         resetBrandWeight();

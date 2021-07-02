@@ -28,7 +28,7 @@ function EditBrandModal({
 }) {
   const [newBrandItem, setNewBrandItem] = useState<IPopularBrand | undefined>();
 
-  const handleSetBrandWeight = async () => {
+  const handleSwapBrandWeight = async () => {
     if (!newBrandItem) return;
     request
       .post('/api/bouadmin/main/auth/updateweight', {
@@ -71,7 +71,7 @@ function EditBrandModal({
       visible={brandModalVisible}
       okButtonProps={{ disabled: newBrandItem ? false : true }}
       onOk={() => {
-        if (newBrandItem) handleSetBrandWeight();
+        if (newBrandItem) handleSwapBrandWeight();
       }}
       onCancel={() => setBrandModalVisible(false)}
     >

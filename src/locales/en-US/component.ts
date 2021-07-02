@@ -7,6 +7,7 @@ export default {
   'component.tagSelect.all': 'All',
   'component.table.null': 'Null Data',
   'component.button.del': 'Del',
+  'component.button.edit': 'Edit',
   'component.button.update': 'Update',
   'component.button.add': 'Add',
 };

@@ -84,7 +84,7 @@ const getPoolsListByFilter = function (
       filter = 3;
       data = {
         filter,
-        tokenid: parseInt(searchText),
+        tokenid: searchText === '' ? 0 : parseInt(searchText),
         limit,
         offset,
       };

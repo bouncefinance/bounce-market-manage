@@ -1,301 +1,139 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import {
-  Card,
-  Table,
-  Button,
-  Image,
-  Tooltip,
-  Switch,
-  Input,
-  Modal,
-  message,
-  Space,
-  Tag,
-} from 'antd';
+import { Transfer, Switch, Table, Tag, Radio } from 'antd';
+import difference from 'lodash/difference';
 import React from 'react';
-import { useRequest } from 'umi';
-import request from 'umi-request';
 
-const { Column } = Table;
-const { Search } = Input;
-const { confirm } = Modal;
+// Customize Table Transfer
+const TableTransfer = ({ leftColumns, rightColumns, ...restProps }) => (
+  <Transfer {...restProps} showSelectAll={false}>
+    {({
+      direction,
+      filteredItems,
+      onItemSelect,
+      selectedKeys: listSelectedKeys,
+      disabled: listDisabled,
+    }) => {
+      const columns = direction === 'left' ? leftColumns : rightColumns;
 
-import placeholderImg from '@/assets/images/placeholderImg.svg';
-import { ExclamationCircleOutlined, StarFilled } from '@ant-design/icons';
-interface IBrandInfo {
-  auditor: string;
-  bandimgurl: string;
-  brandname: string;
-  brandsymbol: string;
-  contractaddress: string;
-  created_at: string;
-  description: string;
-  faildesc: string;
-  id: number;
-  imgurl: string;
-  owneraddress: string;
-  ownername: string;
-  popularweight: number;
-  standard: number;
-  status: number;
-  updated_at: string;
+      const rowSelection = {
+        type: 'radio',
+        getCheckboxProps: item => ({ disabled: listDisabled || item.disabled }),
+        onSelect({ key }, selected) {
+          onItemSelect(key, selected);
+        },
+        // onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+        //   console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        // },
+        selectedRowKeys: listSelectedKeys,
+      };
+
+      return (
+        <Table
+          rowSelection={rowSelection}
+          columns={columns}
+          dataSource={filteredItems}
+          size="small"
+          style={{ pointerEvents: listDisabled ? 'none' : null }}
+          onRow={({ key, disabled: itemDisabled }) => ({
+            onClick: () => {
+              if (itemDisabled || listDisabled) return;
+              onItemSelect(key, !listSelectedKeys.includes(key));
+            },
+          })}
+        />
+      );
+    }}
+  </Transfer>
+);
+
+const mockTags = ['cat', 'dog', 'bird'];
+
+const mockData = [];
+for (let i = 0; i < 20; i++) {
+  mockData.push({
+    key: i.toString(),
+    title: `content${i + 1}`,
+    description: `description of content${i + 1}`,
+    disabled: i % 4 === 0,
+    tag: mockTags[i % 3],
+  });
 }
 
-// get brands weight
-const getRecommendBrands = function () {
-  return request.post('[FGB_V2]/api/v2/main/getpopularbrands', {
-    data: {
-      accountaddress: '',
-    },
-  });
-};
+const originTargetKeys = mockData.filter(item => +item.key % 3 > 1).map(item => item.key);
 
-const getBrandsList = function (
-  likename: string = '',
-  offset: number,
-  limit: number = 7,
-  orderfield: 1 | 2 = 1,
-) {
-  return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
-    data: {
-      likename,
-      limit,
-      offset,
-    },
-  });
-};
+const leftTableColumns = [
+  {
+    dataIndex: 'title',
+    title: 'Name',
+  },
+  {
+    dataIndex: 'tag',
+    title: 'Tag',
+    render: tag => <Tag>{tag}</Tag>,
+  },
+  {
+    dataIndex: 'description',
+    title: 'Description',
+  },
+];
+const rightTableColumns = [
+  {
+    dataIndex: 'title',
+    title: 'Name',
+  },
+];
 
-const handleDeleteBrand = async function (id: number, reload: () => void) {
-  const deleteBrand = async (id: number) => {
-    const res = await request.post('/api/bouadmin/main/auth/delbrand', {
-      data: {
-        id,
-      },
-    });
-    if (res.code === 1) {
-      message.success('Deleted successfully');
-    } else {
-      message.error('Delete failed');
-    }
+class Index extends React.Component {
+  state = {
+    targetKeys: originTargetKeys,
+    disabled: false,
+    showSearch: false,
   };
 
-  confirm({
-    // title: 'Delete',
-    icon: <ExclamationCircleOutlined />,
-    title: 'Do you Want to delete this brand?',
-    onOk() {
-      deleteBrand(id).then(() => {
-        reload();
-      });
-    },
-    onCancel() {},
-  });
-};
-
-const handleHideBrand = async function (
-  tokenid: number,
-  actionType: 'hide' | 'show',
-  reload: () => void,
-) {
-  const status = actionType === 'hide' ? 1 : 0;
-
-  const hideBrand = async (id: number, actionType: 'hide' | 'show') => {
-    const res = await request.post('/api/bouadmin/main/auth/updatebrandstatus', {
-      data: {
-        id,
-        status, // status: 1:to hide, 2:to show
-      },
-    });
-    if (res.code === 1) {
-      actionType === 'hide'
-        ? message.success('Hide successfully')
-        : message.success('Show successfully');
-    } else {
-      actionType === 'hide' ? message.error('Failed to hide') : message.error('Failed to show');
-    }
+  onChange = nextTargetKeys => {
+    this.setState({ targetKeys: nextTargetKeys });
   };
 
-  confirm({
-    // title: 'Delete',
-    icon: <ExclamationCircleOutlined />,
-    title: `Do you Want to ${actionType} this Brand?`,
-    onOk() {
-      hideBrand(tokenid, actionType).then(() => {
-        reload();
-      });
-    },
-    onCancel() {},
-  });
-};
+  triggerDisable = disabled => {
+    this.setState({ disabled });
+  };
 
-const Test: React.FC = () => {
-  const {
-    data: recommendBrands,
-    // loading: recommendBrandsLoading,
-    // refresh: brandRefresh,
-  } = useRequest(() => {
-    return getRecommendBrands();
-  });
+  triggerShowSearch = showSearch => {
+    this.setState({ showSearch });
+  };
 
-  //   console.log('recommendBrands: ', recommendBrands);
-
-  // request brands
-  const {
-    data: brandData,
-    loading: brandLoading,
-    pagination: brandPagination,
-    run: searchBrand,
-    refresh: reloadBrand,
-    tableProps: tableProps,
-  } = useRequest(
-    ({ pageSize: limit, current: offset }, searchText) =>
-      getBrandsList(searchText, (offset - 1) * limit, limit), // Filter out brand which id = 10 and which id =11
-    {
-      paginated: true,
-      cacheKey: 'brands',
-      defaultParams: [{ pageSize: 7, current: 1 }],
-      formatResult(data: any) {
-        return {
-          list: data.data,
-          total: data.total,
-        };
-      },
-    },
-  );
-
-  // console.log(brandData, '<<<<<<<<<<<<<<<');
-
-  return (
-    <PageContainer>
-      <Space direction={'vertical'} style={{ width: '100%' }}>
-        <Search
-          placeholder="input search text"
-          allowClear
-          onSearch={(value) => {
-            searchBrand({ current: 1, pageSize: 7 }, value);
-          }}
-          style={{ width: '75%' }}
-          size="middle"
+  render() {
+    const { targetKeys, disabled, showSearch } = this.state;
+    return (
+      <>
+        <TableTransfer
+          dataSource={mockData}
+          targetKeys={targetKeys}
+          disabled={disabled}
+          showSearch={showSearch}
+          onChange={this.onChange}
+          filterOption={(inputValue, item) =>
+            item.title.indexOf(inputValue) !== -1 || item.tag.indexOf(inputValue) !== -1
+          }
+          leftColumns={leftTableColumns}
+          rightColumns={rightTableColumns}
         />
-        <Card>
-          <Table {...tableProps}>
-            <Column
-              title="Image"
-              dataIndex="imgurl"
-              key="imgurl"
-              width={110}
-              align={'center'}
-              render={(imgurl, record: IBrandInfo) => {
-                console.log('record: ', record);
-                return (
-                  <Image
-                    src={imgurl}
-                    style={{ objectFit: 'contain' }}
-                    width={64}
-                    height={64}
-                    fallback={placeholderImg}
-                  />
-                );
-              }}
-            />
+        <Switch
+          unCheckedChildren="disabled"
+          checkedChildren="disabled"
+          checked={disabled}
+          onChange={this.triggerDisable}
+          style={{ marginTop: 16 }}
+        />
+        <Switch
+          unCheckedChildren="showSearch"
+          checkedChildren="showSearch"
+          checked={showSearch}
+          onChange={this.triggerShowSearch}
+          style={{ marginTop: 16 }}
+        />
+      </>
+    );
+  }
+}
 
-            <Column
-              title="Name"
-              dataIndex="brandname"
-              key="brandname"
-              align={'center'}
-              ellipsis={{ showTitle: false }}
-              render={(brandname) => {
-                return (
-                  <Tooltip placement="topLeft" title={brandname}>
-                    {brandname}
-                  </Tooltip>
-                );
-              }}
-            />
-
-            <Column title="Id" dataIndex="id" key="id" width={110} align={'center'} />
-
-            <Column
-              title="Contract Address"
-              dataIndex="contractaddress"
-              key="contractaddress"
-              align={'center'}
-              render={(contractaddress, record) => {
-                return (
-                  <Tooltip placement="top" title={<span>{contractaddress}</span>}>
-                    {`${contractaddress.slice(0, 6)}...${contractaddress.slice(-4)}`}
-                  </Tooltip>
-                );
-              }}
-            />
-
-            <Column
-              title="Ownner Name"
-              dataIndex="ownername"
-              key="ownername"
-              align={'center'}
-              render={(ownername, record) => {
-                return (
-                  <Tooltip placement="top" title={<span>{ownername}</span>}>
-                    {ownername ? ownername : '--'}
-                  </Tooltip>
-                );
-              }}
-            />
-
-            <Column
-              title="Ownner Address"
-              dataIndex="owneraddress"
-              key="owneraddress"
-              align={'center'}
-              render={(owneraddress, record) => {
-                return (
-                  <Tooltip placement="top" title={<span>{owneraddress}</span>}>
-                    {`${owneraddress.slice(0, 6)}...${owneraddress.slice(-4)}`}
-                  </Tooltip>
-                );
-              }}
-            />
-
-            <Column
-              title="Delete"
-              key="delete"
-              width={110}
-              align={'center'}
-              render={(record: IBrandInfo) => {
-                return recommendBrands?.find((recommendBrand: IBrandInfo) => {
-                  console.log(recommendBrand.id, record.id, recommendBrand.id === record.id);
-                  return recommendBrand.id === record.id;
-                }) ? (
-                  <StarFilled style={{ color: '#f58220', fontSize: 20 }} />
-                ) : (
-                  <Button
-                  danger
-                  key="list-loadmore-delete"
-                  disabled={
-                    record.id === 10 ||
-                    record.id === 11 ||
-                    recommendBrands?.find((recommendBrand: IBrandInfo) => {
-                      return recommendBrand.id === record.id;
-                    })
-                      ? true
-                      : false
-                  }
-                  onClick={() => {
-                    handleDeleteBrand(record.id, reloadBrand);
-                  }}
-                >
-                  Delete
-                </Button>
-                );
-              }}
-            />
-          </Table>
-        </Card>
-      </Space>
-    </PageContainer>
-  );
-};
-
-export default Test;
+export default Index

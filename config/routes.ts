@@ -60,7 +60,7 @@ const routes: MenuDataItem[] = [
   },
   {
     name: 'Authority',
-    // path: '/authority'
+    path: '/authority',
     icon: 'key',
     routes: [
       {

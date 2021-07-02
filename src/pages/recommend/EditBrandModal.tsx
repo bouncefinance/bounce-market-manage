@@ -112,13 +112,13 @@ function EditBrandModal({
             if (value !== '')
               if (searchType === 'Name') {
                 setSearchResultList(
-                  brands.filter((brand) => {
+                  brands?.filter((brand) => {
                     return brand.brandname.includes(value);
                   }),
                 );
               } else {
                 setSearchResultList(
-                  brands.filter((brand) => {
+                  brands?.filter((brand) => {
                     return brand.id === parseInt(value);
                   }),
                 );
@@ -150,7 +150,7 @@ function EditBrandModal({
                     newBrandItem === item ? setNewBrandItem(undefined) : setNewBrandItem(item);
                   }}
                   extra={
-                    oldBrandItem && oldBrandItem.id === item.id ? (
+                    oldBrandItem && oldBrandItem.id === item.id && Math.floor(item.popularweight / 10000) > 0 ? (
                       <Tag
                         color="error"
                         style={{ fontSize: 16, marginTop: 60 }}

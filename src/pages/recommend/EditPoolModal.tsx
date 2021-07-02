@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import request from 'umi-request';
 import { RECOMMEND_POOLS_AMOUNT } from '@/tools/const';
 import './index.less';
@@ -34,6 +34,9 @@ function EditPoolModal({
   const [searchResultList, setSearchResultList] = useState<IpoolItem[]>();
   const [newPoolItem, setNewPoolItem] = useState<IpoolItem | undefined>();
 
+  // console.log('in EditPoolModal');
+  // console.log('modalAction: ', modalAction);
+  // console.log('oldPoolItem: ', oldPoolItem);
   // useEffect(() => {
   //   console.log('newPoolItem: ', newPoolItem);
   // }, [newPoolItem]);

@@ -1,251 +1,120 @@
 import React from 'react';
-import { DownOutlined, ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
-import {
-  Modal,
-  Table,
-  Tag,
-  Space,
-  Switch,
-  Select,
-  Avatar,
-  Image,
-  Tooltip,
-  Button,
-  Card,
-  message,
-  Input,
-  Menu,
-  Dropdown,
-} from 'antd';
-import { useRequest } from 'umi';
-import request from 'umi-request';
+import ProTable, { ProColumns } from '@ant-design/pro-table';
+import { EditFilled, PlusOutlined } from '@ant-design/icons';
+import { Button, Space, Tooltip, Typography } from 'antd';
+import { getDrops } from '@/services/drops';
+import { DropsState, IDropsResponse } from '@/services/drops/types';
+import { Image } from 'antd';
+import moment from 'moment';
+import { useState } from 'react';
+import { Link } from 'umi';
 
-const { confirm } = Modal;
-const { Option } = Select;
-const { Search } = Input;
+const tabs = [
+  {
+    tab: 'Coming soon',
+    key: 1,
+  },
+  {
+    tab: 'Live',
+    key: 2,
+  },
+  {
+    tab: 'Previous',
+    key: 3,
+  },
+];
+const columns: ProColumns<IDropsResponse>[] = [
+  {
+    dataIndex: 'id',
+    title: 'ID',
+    width: 60,
+  },
+  {
+    dataIndex: 'coverimgurl',
+    title: 'Cover',
+    render: (src: any) => <Image width={40} preview={false} src={src} />,
+  },
+  {
+    dataIndex: 'title',
+    title: 'Title',
+    width: 100,
+  },
+  {
+    dataIndex: 'accountaddress',
+    title: 'Artist Account',
+    render: (text: any) => (
+      <Typography.Paragraph style={{ margin: 0 }} copyable={{ text }}>
+        <Tooltip title={text}>{text.replace(/^(.{6}).*(.{4})$/, '$1...$2')}</Tooltip>
+      </Typography.Paragraph>
+    ),
+  },
 
-const { Column, ColumnGroup } = Table;
-
-import placeholderImg from '@/assets/images/placeholderImg.svg';
-interface IAccountData {
-  id: number;
-  bounceid: number;
-  email: string;
-  bandimgurl: string;
-  accountaddress: string;
-  username: string;
-  fullnam: string;
-  bio: string;
-  imgurl: string;
-  created_at: string;
-  updated_at: string;
-}
-
-const getAccountList = function (likename: string = '', offset: number, limit: number = 5) {
-  return request.post('/api/bouadmin/main/auth/getaccountsbylikename', {
-    data: {
-      likename,
-      limit,
-      offset,
+  {
+    dataIndex: 'nfts',
+    title: 'Items',
+  },
+  {
+    dataIndex: 'dropdate',
+    title: 'Drop Date',
+    render: (ts: any) => moment(ts).format('YYYY-MM-DD hh:mm'),
+  },
+  {
+    dataIndex: 'operact',
+    width: 100,
+    render(_, item) {
+      return (
+        <Space>
+          <Button icon={<EditFilled />} />
+          <Button danger>Delete</Button>
+        </Space>
+      );
     },
-  });
-};
-
-const handleDeleteAccount = async function (id: number, reload: () => void) {
-  const deleteAccount = async (id: number) => {
-    const res = await request.post('/api/bouadmin/main/auth/delaccount', {
-      data: {
-        id,
-      },
-    });
-    if (res.code === 1) {
-      message.success('Deleted successfully');
-    } else {
-      message.error('Delete failed');
-    }
-  };
-
-  confirm({
-    // title: 'Delete',
-    icon: <ExclamationCircleOutlined />,
-    title: 'Do you Want to delete this item?',
-    onOk() {
-      deleteAccount(id).then(() => {
-        reload();
-      });
-    },
-    onCancel() {},
-  });
-};
-
-// function showPromiseConfirm(value: string) {
-//   confirm({
-//     title: `Do you want to ${value} these items?`,
-//     icon: <ExclamationCircleOutlined />,
-//     content: 'When clicked the OK button, this dialog will be closed after 1 second',
-//     onOk() {
-//       return new Promise((resolve, reject) => {
-//         setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-//       }).catch(() => console.log('Oops errors!'));
-//     },
-//     onCancel() {},
-//   });
-// }
-
-const index: React.FC = () => {
-  const {
-    data: accountData,
-    // loading: itemLoading,
-    // pagination: itemPagination,
-    // params: itemParams,
-    tableProps: accountTableProps,
-    run: searchAccount,
-    refresh: reloadAccount,
-  } = useRequest(
-    ({ pageSize: limit, current: offset }, searchText) => {
-      return getAccountList(searchText, (offset - 1) * limit, limit);
-    },
-    {
-      paginated: true,
-      cacheKey: 'accounts',
-      defaultParams: [{ pageSize: 5, current: 1 }],
-      formatResult(data: any) {
-        return {
-          list: data.data,
-          total: data.total,
-        };
-      },
-    },
-  );
-
-  const menu0 = (
-    <Menu>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-          1st menu item
-        </a>
-      </Menu.Item>
-      <Menu.Item icon={<DownOutlined />} disabled>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-          2nd menu item (disabled)
-        </a>
-      </Menu.Item>
-      <Menu.Item disabled>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-          3rd menu item (disabled)
-        </a>
-      </Menu.Item>
-      <Menu.Item danger>a danger item</Menu.Item>
-    </Menu>
-  );
-
-  const menu = (
-    <Menu>
-      <Table rowKey="id" {...accountTableProps } size='small' style={{width: 500}}>
-        <Column
-          title="Avatar"
-          dataIndex="imgurl"
-          key="imgurl"
-          width={110}
-          align={'center'}
-          render={(imgurl) => (
-            <Image
-              src={imgurl}
-              width={64}
-              height={64}
-              style={{ objectFit: 'contain' }}
-              fallback={placeholderImg}
-            />
-          )}
-        />
-
-        <Column
-          title="User name"
-          dataIndex="username"
-          key="username"
-          align={'center'}
-          ellipsis={{ showTitle: false }}
-          render={(username) =>
-            username ? (
-              <Tooltip placement="topLeft" title={username}>
-                <span>{username}</span>
-              </Tooltip>
-            ) : (
-              '--'
-            )
-          }
-        />
-
-        <Column
-          title="Address"
-          dataIndex="accountaddress"
-          key="accountaddress"
-          width={120}
-          align={'center'}
-          render={(accountaddress) => (
-            <Tooltip placement="topLeft" title={accountaddress}>
-              <span>{`${accountaddress.slice(0, 6)}...${accountaddress.slice(-4)}`}</span>
-            </Tooltip>
-          )}
-        />
-      </Table>
-    </Menu>
-  );
-
+  }, 
+];
+const DropsPage: React.FC = () => {
+  const [state, setState] = useState<DropsState>(1);
   return (
-    <PageContainer>
-      <Space direction={'vertical'} style={{ width: '100%' }}>
-        <Input.Group compact>
-          {/* <Select
-          defaultValue="ID"
-          onChange={(value) => {
-            // setSearchType(value);
-          }}
-          style={{ width: 80 }}
-        >
-          <Option value="ID">ID</Option>
-          <Option value="Name">Name</Option>
-        </Select> */}
-
-          <Search
-            allowClear
-            enterButton
-            style={{ width: '82%' }}
-            onSearch={(value) => {
-              searchAccount({ current: 1, pageSize: 5 }, value);
-              console.log('accountData: ', accountData);
-              // setSearchResultList(undefined);
-              // if (value !== '')
-              //   if (searchType === 'Name') {
-              //     setSearchResultList(
-              //       pools.filter((pool) => {
-              //         return pool.itemname.includes(value);
-              //       }),
-              //     );
-              //   } else {
-              //     setSearchResultList(
-              //       pools.filter((pool) => {
-              //         return pool.poolid === parseInt(value);
-              //       }),
-              //     );
-              //   }
-            }}
-            onChange={() => {
-              // setNewPoolItem(undefined);
-            }}
-          />
-        </Input.Group>
-        <Dropdown visible overlay={menu}>
-            <span></span>
-          {/* <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-            Hover me <DownOutlined />
-          </a> */}
-        </Dropdown>
-        <Card bordered={false}></Card>
-      </Space>
+    <PageContainer
+      onTabChange={(key: any) => {
+        setState(Number(key) as DropsState);
+      }}
+      tabList={tabs}
+    >
+      <ProTable
+        rowKey="id"
+        search={false}
+        columns={columns}
+        params={{ state }}
+        request={async ({ pageSize: limit, current: offset, ...rest }) => {
+          const { data, total } = await getDrops({
+            offset,
+            limit,
+            ...rest,
+          });
+          return {
+            success: true,
+            total,
+            data,
+          };
+        }}
+        options={{
+          search: {
+            style: { width: 300 },
+            name: 'accountaddress',
+            placeholder: 'Input address',
+          },
+        }}
+        toolBarRender={() => [
+          <Link to="/drops/edit">
+            <Button key="button" icon={<PlusOutlined />} type="primary">
+              Add
+            </Button>
+          </Link>,
+        ]}
+      ></ProTable>
     </PageContainer>
   );
 };
 
-export default index;
+export default DropsPage;

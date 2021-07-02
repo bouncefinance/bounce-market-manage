@@ -61,6 +61,7 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
   }
   const reset = () => {
     form.resetFields()
+    setImageUrl('')
   }
   const handleOk = () => {
     form.submit()
@@ -98,19 +99,20 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
         ]}>
           <Input allowClear placeholder="Input note name" />
         </Form.Item>
-        <Form.Item name="userImageUrl" label="avatar" rules={[
-          () => ({
-            validator (role, value) {
-              if (!imageUrl) {
-                return Promise.reject('avatar not empty')
-              }
-              return Promise.resolve()
-            },
-          }),
+        <Form.Item name="userImageUrl" label="Avatar" rules={[
+          { required: true, message: 'avatar not empty' },
+          // () => ({
+          //   validator (role, value) {
+          //     if (!imageUrl) {
+          //       return Promise.reject('avatar not empty')
+          //     }
+          //     return Promise.resolve()
+          //   },
+          // }),
         ]}>
           <div className={[styles.avatarUploader, 'flex flex-center-y'].join(' ')}>
             <Upload
-              name="avatar"
+              name="Avatar"
               listType="picture-card"
               showUploadList={false}
               beforeUpload={onBeforeUpload}

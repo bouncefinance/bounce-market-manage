@@ -1,6 +1,6 @@
 import { Image, Skeleton, Card } from 'antd';
 
-import { PlusOutlined, EditOutlined, VerticalAlignBottomOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, VerticalAlignBottomOutlined, SwapOutlined, DeleteOutlined } from '@ant-design/icons';
 import { IPopularBrand } from '.';
 import React from 'react';
 
@@ -15,6 +15,7 @@ function RecommendBrandCard({
   handleReset,
   handleEdit,
   handleAdd,
+  setModalActionType,
 }: {
   loading: boolean;
   item: IPopularBrand | 0;
@@ -22,6 +23,7 @@ function RecommendBrandCard({
   handleReset: any;
   handleEdit: any;
   handleAdd: any;
+  setModalActionType: any;
 }) {
   return loading ? (
     <Card style={{ height: 360 }}>
@@ -43,22 +45,34 @@ function RecommendBrandCard({
         />
       }
       actions={[
-        <EditOutlined
-        style={{
-          fontSize: 22,
-        }}
-        key="edit"
-        title="Edit"
-        onClick={() => {
-          handleEdit(index, item, 'Fast Mover');
-        }}
-        />,
-        <VerticalAlignBottomOutlined
+        <SwapOutlined
           style={{
             fontSize: 22,
           }}
-          key="reset"
-          title="Reset"
+          key="swap"
+          title="Swap"
+          onClick={() => {
+            setModalActionType('swap brand');
+            handleEdit(index, item, 'Brand');
+          }}
+        />,
+        <EditOutlined
+          style={{
+            fontSize: 22,
+          }}
+          key="edit"
+          title="Edit"
+          onClick={() => {
+            setModalActionType('edit brand');
+            handleEdit(index, item, 'Brand');
+          }}
+        />,
+        <DeleteOutlined
+          style={{
+            fontSize: 22,
+          }}
+          key="delete"
+          title="Delete"
           onClick={() => {
             handleReset(item);
           }}
@@ -79,13 +93,14 @@ function RecommendBrandCard({
     <Card
       hoverable
       style={{
-        height: 360,
+        height: 390,
         border: '2px dashed',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
       }}
       onClick={() => {
+        setModalActionType('add brand');
         handleAdd(index, 'Fast Mover');
       }}
     >

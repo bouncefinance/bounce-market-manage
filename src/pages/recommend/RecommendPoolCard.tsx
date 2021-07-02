@@ -1,7 +1,13 @@
 /* eslint-disable no-nested-ternary */
 import { Image, Skeleton, Card } from 'antd';
 
-import { PlusOutlined, EditOutlined, VerticalAlignBottomOutlined } from '@ant-design/icons';
+import {
+  PlusOutlined,
+  EditOutlined,
+  VerticalAlignBottomOutlined,
+  DeleteOutlined,
+  SwapOutlined,
+} from '@ant-design/icons';
 import type { IpoolItem } from '.';
 import React from 'react';
 
@@ -17,14 +23,16 @@ function RecommendPoolCard({
   handleReset,
   handleEdit,
   handleAdd,
+  setModalActionType,
 }: {
   loading: boolean;
   item: IpoolItem | 0;
   index: number;
-  cardType: string;
+  cardType: 'Banner' | 'Fast Mover' | 'Brand';
   handleReset: any;
   handleEdit: any;
   handleAdd: any;
+  setModalActionType: any;
 }) {
   return loading ? (
     <Card style={{ height: 360 }}>
@@ -49,6 +57,17 @@ function RecommendPoolCard({
         )
       }
       actions={[
+        <SwapOutlined
+          style={{
+            fontSize: 22,
+          }}
+          key="swap"
+          title="Swap"
+          onClick={() => {
+            setModalActionType(cardType === 'Banner' ? 'swap banner' : 'swap fast mover');
+            handleEdit(index, item, cardType);
+          }}
+        />,
         <EditOutlined
           style={{
             fontSize: 22,
@@ -56,10 +75,11 @@ function RecommendPoolCard({
           key="edit"
           title="Edit"
           onClick={() => {
-            handleEdit(index, item, 'Fast Mover');
+            setModalActionType('edit item');
+            handleEdit(index, item, cardType);
           }}
         />,
-        <VerticalAlignBottomOutlined
+        <DeleteOutlined
           style={{
             fontSize: 22,
           }}
@@ -93,7 +113,8 @@ function RecommendPoolCard({
         alignItems: 'center',
       }}
       onClick={() => {
-        handleAdd(index, 'Fast Mover');
+        setModalActionType('add item');
+        handleAdd(index, cardType);
       }}
     >
       <PlusOutlined

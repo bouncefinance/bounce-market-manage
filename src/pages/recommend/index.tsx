@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import request from 'umi-request';
 import { RECOMMEND_POOLS_AMOUNT, RECOMMEND_BRANDS_AMOUNT } from '@/tools/const';
-import './index.less';
+// import './index.less';
 import { Tabs, message, Modal, Row, Col, Divider } from 'antd';
 
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 import { useRequest } from 'umi';
-import EditPoolModal from './EditPoolModal';
 import RecommendPoolCard from './RecommendPoolCard';
 import RecommendBrandCard from './RecommendBrandCard';
+import EditPoolModal from './EditPoolModal';
 import EditBrandModal from './EditBrandModal';
+import SwapPoolModal from './SwapPoolModal';
+import SwapBrandModal from './SwapBrandModal';
 
 const { TabPane } = Tabs;
 const { confirm } = Modal;
@@ -79,30 +81,30 @@ const getPoolsInfobypage = function (offset: number, limit: number) {
 };
 
 // get brands weight
-// const getPopularBrands = function () {
-//   return request.post('[FGB_V2]/api/v2/main/getpopularbrands', {
-//     data: {
-//       accountaddress: '',
-//     },
-//   });
-// };
 const getPopularBrands = function () {
-  return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
+  return request.post('[FGB_V2]/api/v2/main/getpopularbrands', {
     data: {
-      likename: '',
-      offset: 0,
-      limit: RECOMMEND_BRANDS_AMOUNT, // 单页显示数量
+      accountaddress: '',
     },
   });
 };
+// const getPopularBrands = function () {
+//   return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
+//     data: {
+//       likename: '',
+//       offset: 0,
+//       limit: RECOMMEND_BRANDS_AMOUNT, // 单页显示数量
+//     },
+//   });
+// };
 
-const getBrandsByPage = function (likename: string = '', offset: number/* , limit: number */) {
+const getBrandsByPage = function (likestr: string = '', offset: number, limit: number = 500) {
   // return request.post('[FGB_V2]/api/v2/main/getbrandsbypage', {
   return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
     data: {
-      likename: likename,
+      likestr: likestr,
       offset: offset,
-      // limit: limit, // 单页显示数量
+      limit: limit, // 单页显示数量
     },
   });
 };
@@ -116,11 +118,21 @@ let clickedCardType: 'Banner' | 'Fast Mover' | 'Brand';
 
 export default function recommend() {
   const [poolModalVisible, setPoolModalVisible] = useState(false);
-  const [filterPoolList, setFilterPoolList] = useState<Array<IpoolItem>>([]);
-  const [recommendBrandList, setRecommendBrandList] = useState<Array<IPopularBrand>>([]);
+  const [filterPoolList, setFilterPoolList] = useState<IpoolItem[]>([]);
+  const [recommendBrandList, setRecommendBrandList] = useState<IPopularBrand[]>([]);
   const [brandModalVisible, setBrandModalVisible] = useState(false);
   const [resultPoolsLoading, setResultPoolsLoading] = useState(true);
   const [resultBrandsLoading, setResultBrandsLoading] = useState(true);
+  const [modalDataSource, setModalDataSource] = useState<IpoolItem[] | IPopularBrand[]>([]);
+  const [modalActionType, setModalActionType] = useState<
+    | 'edit item'
+    | 'swap banner'
+    | 'swap fast mover'
+    | 'edit brand'
+    | 'swap brand'
+    | 'add item'
+    | 'add brand'
+  >();
 
   const {
     data: recommendPools,
@@ -144,7 +156,7 @@ export default function recommend() {
   });
 
   const { data: brands }: { data: IPopularBrand[]; loading: boolean } = useRequest(() => {
-    return getBrandsByPage('', 0/* , 500 */);
+    return getBrandsByPage('', 0 /* , 500 */);
   });
 
   useEffect(() => {
@@ -179,15 +191,144 @@ export default function recommend() {
   }, [pools, recommendPools, recommendPoolsLoading, poolsLoading]);
 
   useEffect(() => {
+    console.log('modalActionType: ', modalActionType);
+  }, [modalActionType]);
+
+  useEffect(() => {
+    switch (modalActionType) {
+      case 'edit item':
+        console.log('in edit item');
+        setModalDataSource(
+          pools?.filter((pool) => {
+            return !filterPoolList.find((filterPool) => {
+              return pool.poolid === filterPool.poolid && pool.pooltype === filterPool.pooltype;
+            });
+          }),
+        );
+        break;
+
+      case 'add item':
+        console.log('in add item');
+        setModalDataSource(
+          pools?.filter((pool) => {
+            return !filterPoolList.find((filterPool) => {
+              return pool.poolid === filterPool.poolid && pool.pooltype === filterPool.pooltype;
+            });
+          }),
+        );
+        break;
+
+      case 'swap banner':
+        console.log('in swap banner');
+        console.log(filterPoolList);
+        setModalDataSource(
+          filterPoolList.filter((pool) => {
+            return pool.poolweight >= 9;
+          }),
+        );
+        break;
+
+      case 'swap fast mover':
+        console.log('in swap fast mover');
+        console.log(filterPoolList);
+        setModalDataSource(
+          filterPoolList.filter((pool) => {
+            return pool.poolweight <= 8 && pool.poolweight > 0;
+          }),
+        );
+        break;
+
+      case 'edit brand':
+        console.log('in edit brand');
+        console.log('brands: ', brands);
+        setModalDataSource(
+          brands
+            ?.filter((brand) => {
+              // Filter out brands that have been recommended
+              return (
+                !recommendBrandList.find((recommendBrand) => {
+                  return recommendBrand.id === brand.id;
+                }) &&
+                brand.id !== 10 &&
+                brand.id !== 11
+              );
+            })
+            .sort((a, b) => {
+              return a.popularweight > b.popularweight ? 1 : -1;
+            }),
+        );
+        break;
+
+      case 'add brand':
+        console.log('in add brand');
+        console.log('brands: ', brands);
+        setModalDataSource(
+          brands
+            ?.filter((brand) => {
+              // Filter out brands that have been recommended
+              return (
+                !recommendBrandList.find((recommendBrand) => {
+                  return recommendBrand.id === brand.id;
+                }) &&
+                brand.id !== 10 &&
+                brand.id !== 11
+              );
+            })
+            .sort((a, b) => {
+              return a.popularweight > b.popularweight ? 1 : -1;
+            }),
+        );
+        break;
+
+      case 'swap brand':
+        console.log('in swap brand');
+        setModalDataSource(
+          brandResultList?.filter((brand) => {
+            return brand.id !== 10 && brand.id !== 11;
+          }),
+        );
+        break;
+
+      default:
+        break;
+    }
+  }, [modalActionType]);
+
+  useEffect(() => {
+    console.log('modalDataSource: ', modalDataSource);
+  }, [modalDataSource]);
+
+  useEffect(() => {
     console.log('clickedCardIndex: ', clickedCardIndex);
   }, [clickedCardIndex]);
 
-  const poolResultList = new Array(RECOMMEND_POOLS_AMOUNT)
-    .fill(0)
-    .map((v, i) => filterPoolList[i] || v)
-    .sort((a, b) => (a?.poolweight > b?.poolweight ? -1 : 1));
+  useEffect(() => {
+    console.log('poolModalVisible: ', poolModalVisible);
+  }, [poolModalVisible]);
 
-  /* ------------------------------- */
+  // console.log('filterPoolList: ', filterPoolList);
+
+  // const poolResultList = new Array(RECOMMEND_POOLS_AMOUNT)
+  //   .fill(0)
+  //   .map((value, index) => filterPoolList[index] || value)
+  //   .sort((a, b) => (a?.poolweight > b?.poolweight ? -1 : 1));
+  let poolResultList = new Array(RECOMMEND_POOLS_AMOUNT).fill(0);
+  filterPoolList.map((value) => {
+    poolResultList[RECOMMEND_POOLS_AMOUNT - value.poolweight] = value;
+  });
+
+  // console.log('poolResultList: ', poolResultList);
+
+  // const brandResultList = new Array(RECOMMEND_BRANDS_AMOUNT)
+  //   .fill(0)
+  //   .map((zero, index) => recommendBrandList[index] || zero)
+  //   .sort((a, b) => (a?.popularweight > b?.popularweight ? -1 : 1));
+  let brandResultList = new Array(RECOMMEND_BRANDS_AMOUNT).fill(0);
+  recommendBrandList.map((value) => {
+    brandResultList[RECOMMEND_BRANDS_AMOUNT - Math.floor(value.popularweight / 10000)] = value;
+  });
+
+  console.log('brandResultList >>>>>', brandResultList);
 
   useEffect(() => {
     if (!popularBrandsLoading && !popularBrands) {
@@ -199,14 +340,6 @@ export default function recommend() {
       setResultBrandsLoading(false);
     }
   }, [popularBrands, popularBrandsLoading]);
-
-
-  const brandResultList = new Array(RECOMMEND_BRANDS_AMOUNT)
-    .fill(0)
-    .map((zero, index) => recommendBrandList[index] || zero)
-    .sort((a, b) => (a?.popularweight > b?.popularweight ? -1 : 1));
-
-  // console.log('brandResultList >>>>>', brandResultList);
 
   const resetPoolWeight = async () => {
     if (!oldPoolItem) return;
@@ -323,6 +456,7 @@ export default function recommend() {
                     handleReset={handleResetPool}
                     handleEdit={handleEditPool}
                     handleAdd={handleAddPool}
+                    setModalActionType={setModalActionType}
                   />
                 </Col>
               );
@@ -343,6 +477,7 @@ export default function recommend() {
                     handleReset={handleResetPool}
                     handleEdit={handleEditPool}
                     handleAdd={handleAddPool}
+                    setModalActionType={setModalActionType}
                   />
                 </Col>
               );
@@ -364,6 +499,7 @@ export default function recommend() {
                     handleReset={handleResetBrand}
                     handleEdit={handleEditBrand}
                     handleAdd={handleAddBrand}
+                    setModalActionType={setModalActionType}
                   />
                 </Col>
               );
@@ -372,40 +508,61 @@ export default function recommend() {
         </TabPane>
       </Tabs>
 
-      <EditPoolModal
-        pools={pools?.filter((pool) => {
-          return !filterPoolList.find((filterPool) => {
-            return pool.poolid === filterPool.poolid && pool.pooltype === filterPool.pooltype;
-          });
-        })}
-        clickedCardIndex={clickedCardIndex}
-        clickedCardType={clickedCardType}
-        modalAction={modalAction}
-        oldPoolItem={oldPoolItem}
-        poolModalVisible={poolModalVisible}
-        setPoolModalVisible={setPoolModalVisible}
-        refresh={poolRefresh}
-      />
+      {(modalActionType === 'edit item' || modalActionType === 'add item') && (
+        <EditPoolModal
+          pools={pools?.filter((pool) => {
+            return !filterPoolList.find((filterPool) => {
+              return pool.poolid === filterPool.poolid && pool.pooltype === filterPool.pooltype;
+            });
+          })}
+          clickedCardIndex={clickedCardIndex}
+          clickedCardType={clickedCardType}
+          modalAction={modalAction}
+          oldPoolItem={oldPoolItem}
+          poolModalVisible={poolModalVisible}
+          setPoolModalVisible={setPoolModalVisible}
+          refresh={poolRefresh}
+        />
+      )}
 
-      <EditBrandModal
-        brands={brands?.filter((brand) => {
-          return (
-            // Filter out brands that have been recommended
-            !recommendBrandList.find((recommendBrand) => {
-              return recommendBrand.id === brand.id;
-            }) &&
-            brand.id !== 10 &&
-            brand.id !== 11
-          );
-        })}
-        clickedCardIndex={clickedCardIndex}
-        clickedCardType={clickedCardType}
-        modalAction={modalAction}
-        oldBrandItem={oldBrandItem}
-        brandModalVisible={brandModalVisible}
-        setBrandModalVisible={setBrandModalVisible}
-        refresh={brandRefresh}
-      />
+      {(modalActionType === 'edit brand' || modalActionType === 'add brand') && (
+        <EditBrandModal
+          brands={modalDataSource as IPopularBrand[]}
+          clickedCardIndex={clickedCardIndex}
+          clickedCardType={clickedCardType}
+          modalAction={modalAction}
+          oldBrandItem={oldBrandItem}
+          brandModalVisible={brandModalVisible}
+          setBrandModalVisible={setBrandModalVisible}
+          refresh={brandRefresh}
+        />
+      )}
+
+      {(modalActionType === 'swap banner' || modalActionType === 'swap fast mover') && (
+        <SwapPoolModal
+          recommendPools={modalDataSource as IpoolItem[]}
+          clickedCardIndex={clickedCardIndex}
+          clickedCardType={clickedCardType}
+          modalAction={modalAction}
+          oldPoolItem={oldPoolItem}
+          poolModalVisible={poolModalVisible}
+          setPoolModalVisible={setPoolModalVisible}
+          refresh={poolRefresh}
+        />
+      )}
+
+      {modalActionType === 'swap brand' && (
+        <SwapBrandModal
+          brands={modalDataSource as IPopularBrand[]}
+          clickedCardIndex={clickedCardIndex}
+          clickedCardType={clickedCardType}
+          modalAction={modalAction}
+          oldBrandItem={oldBrandItem}
+          brandModalVisible={brandModalVisible}
+          setBrandModalVisible={setBrandModalVisible}
+          refresh={brandRefresh}
+        />
+      )}
     </div>
   );
 }

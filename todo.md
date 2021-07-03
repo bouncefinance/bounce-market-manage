@@ -1,6 +1,7 @@
 - less 开启热更新
 - commit的时候自动调用格式化并校验代码规范
 - 权限  authority 
+  - label 加width [√]
   - Type [√]
     二级联动选项  [×]
   - /api/bouadmin/main/auth/getoperatorlist       [√]
@@ -16,5 +17,6 @@
     (注：编辑的时候才用这个接口，暂时没有需要编辑页面)
   - 中文   [×]
     (注：大部分完成中文化)
+  - 复制    [×]
 - 上传接口有问题
   后台暂时有问题；暂时用用户端的地址 代码 src\pages\Authority\components\Top.tsx 36行待修改

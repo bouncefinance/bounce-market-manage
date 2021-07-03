@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Form, Input, Image } from 'antd';
+import { Button, Card, Form, Input, Image, DatePicker } from 'antd';
 import ImageUploader from '@/components/ImageUploader';
 import { useState } from 'react';
 import styles from './index.less';
@@ -46,16 +46,28 @@ const DropEdit: React.FC = () => {
             )}
           </Form.Item>
           <Form.Item name="bgcolor" label="Background Color">
-            <ColorPicker />
+            <ColorPicker value="#000" />
           </Form.Item>
-          <Form.Item name="title" label="Title">
+          <Form.Item
+            name="title"
+            label="Title"
+            rules={[{ required: true, message: 'Title cannot be empty' }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="descript" label="Description">
+          <Form.Item
+            name="descript"
+            label="Description"
+            rules={[{ required: true, message: 'Description cannot be empty' }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="dropdate" label="Drop Date">
-            <Input />
+          <Form.Item
+            name="dropdate"
+            label="Drop Date"
+            rules={[{ required: true, message: 'Drop date cannot be empty' }]}
+          >
+            <DatePicker showTime />
           </Form.Item>
           <Form.Item label="Social Link">
             <Form.Item name="instagram">

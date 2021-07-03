@@ -4,22 +4,30 @@ import { SketchPicker } from 'react-color';
 import Styles from './index.less';
 
 interface ColorPickerProps {
-  onChange: (color: string) => void;
+  onChange?: (color: string) => void;
   value?: string;
 }
 
-const ColorPicker: React.FC<ColorPickerProps> = ({ onChange, value }) => {
+const ColorPicker: React.FC<ColorPickerProps> = ({ onChange, value = '#000' }) => {
   const handleChange = (color: any) => {
-    onChange?.(typeof color === 'string' ? color : color.hex);
+    onChange?.(color?.hex || color);
   };
   return (
     <div>
-      <Tooltip trigger="click" title={<SketchPicker color={value} onChange={handleChange} />}>
+      <Tooltip
+        trigger="click"
+        overlayStyle={{ maxWidth: 300 }}
+        title={
+          <div style={{ color: '#000' }}>
+            <SketchPicker width="250px" color={value} onChange={handleChange} />
+          </div>
+        }
+      >
         <div className={Styles['color-preview-box']}>
           <div style={{ backgroundColor: value }} />
         </div>
       </Tooltip>
-      <Button type="link" onClick={() => handleChange(value || '#000')}>
+      <Button type="link" onClick={() => handleChange('#000')}>
         重置
       </Button>
     </div>

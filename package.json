@@ -50,7 +50,7 @@
     "@ant-design/icons": "^4.5.0",
     "@ant-design/pro-descriptions": "^1.6.8",
     "@ant-design/pro-form": "^1.18.3",
-    "@ant-design/pro-layout": "^6.15.3",
+    "@ant-design/pro-layout": "^6.21.0",
     "@ant-design/pro-table": "^2.30.8",
     "@types/react-copy-to-clipboard": "^5.0.0",
     "@umijs/route-utils": "^1.0.36",

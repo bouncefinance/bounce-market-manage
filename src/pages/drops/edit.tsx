@@ -9,13 +9,50 @@ import { IAddDropParams } from '@/services/drops/types';
 import { addOneDrop } from '@/services/drops';
 import { getMetaMskAccount, myweb3 } from '@/tools/conenct';
 import AddNftModal from './AddNftModal';
+import { useRequest } from 'umi';
 
 const { confirm } = Modal;
 const { Option } = Select;
 
+const getAccountList = function (filter: '' = , likename: string = '', offset: number, limit: number = 5) {
+  return request.post('/api/bouadmin/main/auth/getaccountsbylikename', {
+    data: {
+      filter,
+      likename,
+      limit,
+      offset,
+    },
+  });
+};
+
 const DropEdit: React.FC = () => {
   const [coverImage, setCoverImage] = useState<any>(null);
   const [accountAddress, setAccountAddress] = useState('');
+
+  const {
+    data: accountData,
+    // loading: itemLoading,
+    // pagination: itemPagination,
+    // params: itemParams,
+    tableProps: accountTableProps,
+    run: searchAccount,
+    refresh: reloadAccount,
+  } = useRequest(
+    ({ pageSize: limit, current: offset }, searchText) => {
+      return getAccountList(searchText, (offset - 1) * limit, limit);
+    },
+    {
+      paginated: true,
+      cacheKey: 'accounts',
+      defaultParams: [{ pageSize: 5, current: 1 }],
+      formatResult(data: any) {
+        return {
+          list: data.data,
+          total: data.total,
+        };
+      },
+    },
+  );
 
   const handleEdit = (data: any) => {
     console.log(data);
@@ -40,6 +77,8 @@ const DropEdit: React.FC = () => {
       } else message.error('Add failed');
     });
   };
+
+  
 
   return (
     <PageContainer>

@@ -100,13 +100,12 @@ const getPopularBrands = function () {
   });
 };
 
-const getBrandsByPage = function (likestr: string = '', offset: number, limit: number = 500) {
-  // return request.post('[FGB_V2]/api/v2/main/getbrandsbypage', {
+const getBrandsByPage = function (likestr: string = '', offset: number) {
   return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
     data: {
       likestr: likestr,
       offset: offset,
-      limit: limit, // 单页显示数量
+      // limit: limit, 单页显示数量
     },
   });
 };

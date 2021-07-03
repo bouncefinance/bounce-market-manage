@@ -1,5 +1,11 @@
 import { Apis, post, ToOffset } from '../index';
-import { IDropsRequest, IDropsResponse } from './types';
+import {
+  IDropsRequest,
+  IDropsResponse,
+  IAddDropParams,
+  IGetPoolsParams,
+  IGetPoolsResponse,
+} from './types';
 
 export const getDrops = ({
   accountaddress = '',
@@ -14,5 +20,78 @@ export const getDrops = ({
     limit,
     state,
     accountaddress,
+  });
+};
+
+export const deleteOneDrop = (dropsid: number) => {
+  return post(Apis.deleteonedrops, { dropsid });
+};
+
+export const addOneDrop = ({
+  accountaddress,
+  website,
+  twitter,
+  Instagram,
+  title,
+  description,
+  bgcolor,
+  coverimgurl,
+  poolids,
+  ordernum,
+  dropdate,
+}: IAddDropParams) => {
+  return post(Apis.addaccountdrops, {
+    accountaddress,
+    website,
+    twitter,
+    Instagram,
+    title,
+    description,
+    bgcolor,
+    coverimgurl,
+    poolids,
+    ordernum,
+    dropdate,
+  });
+};
+
+// fileter:1:likestr,2:creatoraddress,3:tokenid
+export const getPoolsByLikestr = ({ filter = 1, likestr, limit, offset = 0 }: IGetPoolsParams) => {
+  return post<IGetPoolsResponse[]>(Apis.getpoolsbylikename, {
+    filter,
+    likestr,
+    limit,
+    offset,
+  });
+};
+
+export const getPoolsByCreatorAddress = ({
+  filter = 2,
+  creator = '0x26604A35B97D395a9711D839E89b44EFcc549B21',
+  limit = 7,
+  offset = 0,
+}: IGetPoolsParams) => {
+  return post(Apis.getpoolsbylikename, {
+    filter,
+    creator,
+    limit,
+    offset,
+  });
+};
+
+export const getPoolsByTokenId = ({ filter = 3, tokenid, limit, offset = 0 }: IGetPoolsParams) => {
+  return post(Apis.getpoolsbylikename, {
+    filter,
+    tokenid,
+    limit,
+    offset,
+  });
+};
+
+export const getAllAccounts = ({ filter = 1, offset = 0, likestr = '' }: IGetPoolsParams) => {
+  return post(Apis.getpoolsbylikename, {
+    filter,
+    offset,
+    likestr,
   });
 };

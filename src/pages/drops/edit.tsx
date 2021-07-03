@@ -1,20 +1,65 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Form, Input, Image, DatePicker } from 'antd';
+import { Button, Card, Form, Input, Image, DatePicker, Modal, message, Select } from 'antd';
 import ImageUploader from '@/components/ImageUploader';
 import { useState } from 'react';
 import styles from './index.less';
 import ColorPicker from '@/components/ColorPicker';
+import { IAddDropParams } from '@/services/drops/types';
+import { addOneDrop } from '@/services/drops';
+import { getMetaMskAccount, myweb3 } from '@/tools/conenct';
+import AddNftModal from './AddNftModal';
+
+const { confirm } = Modal;
+const { Option } = Select;
 
 const DropEdit: React.FC = () => {
   const [coverImage, setCoverImage] = useState<any>(null);
-  const handleEdit = (data) => {
+  const [accountAddress, setAccountAddress] = useState('');
+
+  const handleEdit = (data: any) => {
     console.log(data);
+    if (!accountAddress) return;
+    const params: IAddDropParams = {
+      accountaddress: accountAddress,
+      website: data.website,
+      twitter: data.twitter,
+      Instagram: data.Instagram,
+      title: data.title,
+      description: data.description,
+      bgcolor: data.bgcolor,
+      coverimgurl: data.bgcolor,
+      poolids: [1, 2, 3],
+      ordernum: [1, 2, 3],
+      dropdate: data.dropdate.unix(),
+    };
+    console.log('params: ', params);
+    addOneDrop(params).then((res) => {
+      if (res.code === 1) {
+        message.success('Added Successfully');
+      } else message.error('Add failed');
+    });
   };
+
   return (
     <PageContainer>
       <Card>
         <Form labelCol={{ span: 6 }} wrapperCol={{ span: 14 }} onFinish={handleEdit}>
+          <Form.Item name="cover" label="Cover">
+            <Select
+              showSearch
+              style={{ width: 200 }}
+              placeholder="Search to Select"
+              optionFilterProp="children"
+            >
+              <Option value="1">Not Identified</Option>
+              <Option value="2">Closed</Option>
+              <Option value="3">Communicated</Option>
+              <Option value="4">Identified</Option>
+              <Option value="5">Resolved</Option>
+              <Option value="6">Cancelled</Option>
+            </Select>
+          </Form.Item>
           <Form.Item name="cover" label="Cover">
             <ImageUploader
               maxCount={1}
@@ -56,7 +101,7 @@ const DropEdit: React.FC = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            name="descript"
+            name="description"
             label="Description"
             rules={[{ required: true, message: 'Description cannot be empty' }]}
           >
@@ -86,6 +131,7 @@ const DropEdit: React.FC = () => {
             </Button>
           </Form.Item>
         </Form>
+        <AddNftModal />
       </Card>
     </PageContainer>
   );

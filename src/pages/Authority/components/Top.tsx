@@ -83,7 +83,18 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
       <Button onClick={onAdd}>{intl.formatMessage({ id: 'component.button.add' })}</Button>
     </div>
     <Modal confirmLoading={formLoading} maskClosable={false} title="Add Administrator" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-      <Form initialValues={{ opRole: AuthorityRoleEnum.super }} form={form} onFinish={onFinish}>
+      <Form labelCol={{ span: 5 }} initialValues={{ opRole: AuthorityRoleEnum.super }} form={form} onFinish={onFinish}>
+        <Form.Item name="opRole" label="Role" rules={[
+          { required: true, message: 'role not empty' }
+        ]}>
+          <Select loading={loading} style={{ width: 220 }}>
+            {[
+              { value: AuthorityRoleEnum.super, label: 'Super administrator', key: 1 },
+              { value: AuthorityRoleEnum.dropList, label: 'Drops administrator', key: 2 },
+              { value: AuthorityRoleEnum.basis, label: 'Basis administrator', key: 3 },
+            ].map(({ value, label, key }) => <Option key={key} value={value}>{label}</Option>)}
+          </Select>
+        </Form.Item>
         <Form.Item name="address" label="Address" rules={[
           { required: true, message: 'address not empty' }
         ]}>
@@ -101,14 +112,6 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
         </Form.Item>
         <Form.Item name="userImageUrl" label="Avatar" rules={[
           { required: true, message: 'avatar not empty' },
-          // () => ({
-          //   validator (role, value) {
-          //     if (!imageUrl) {
-          //       return Promise.reject('avatar not empty')
-          //     }
-          //     return Promise.resolve()
-          //   },
-          // }),
         ]}>
           <div className={[styles.avatarUploader, 'flex flex-center-y'].join(' ')}>
             <Upload
@@ -125,17 +128,6 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
               <p className={styles.tips}>300x300 Recommended</p>
             </div>
           </div>
-        </Form.Item>
-        <Form.Item name="opRole" label="Role" rules={[
-          { required: true, message: 'role not empty' }
-        ]}>
-          <Select loading={loading} style={{ width: 220 }}>
-            {[
-              { value: AuthorityRoleEnum.super, label: 'Super administrator', key: 1 },
-              { value: AuthorityRoleEnum.dropList, label: 'Drops administrator', key: 2 },
-              { value: AuthorityRoleEnum.basis, label: 'Basis administrator', key: 3 },
-            ].map(({ value, label, key }) => <Option key={key} value={value}>{label}</Option>)}
-          </Select>
         </Form.Item>
       </Form>
 

@@ -14,8 +14,8 @@ export type GlobalHeaderRightProps = {
 /**
  * 退出登录，并且将当前的 url 保存
  */
-const loginOut = async () => {
-  await outLogin();
+const loginOut = () => {
+  outLogin();
   const { query = {}, pathname } = history.location;
   const { redirect } = query;
   // Note: There may be security issues, please note

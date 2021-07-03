@@ -19,6 +19,7 @@ export default {
   'menu.Authority.User': '用户',
   'menu.Authority.History': '操作记录',
   'menu.Drops': 'Drops List',
+  'menu.DropsEdit':"Drops Edit",
   'menu.test': '测试',
   'menu.test.hhh': '测试',
   'menu.banner.updateTitle': '轮播更新',
@@ -26,4 +27,5 @@ export default {
   'menu.box.view': '管理',
   'menu.box.create': '创建',
   'menu.login': 'Connect Wallet',
+  'menu.LandingPage': 'LandingPage'
 };

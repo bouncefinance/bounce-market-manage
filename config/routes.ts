@@ -53,6 +53,12 @@ const routes: MenuDataItem[] = [
     component: './drops',
   },
   {
+    name: 'DropsEdit',
+    path: '/drops/edit',
+    hideInMenu: true,
+    component: './drops/edit',
+  },
+  {
     name: 'NFT',
     path: '/nft',
     icon: 'icon-cube',

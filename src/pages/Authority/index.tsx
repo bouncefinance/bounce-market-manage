@@ -1,156 +1,85 @@
-import React from 'react';
-import { ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Modal, Table, Tag, Space, Switch, Select, Avatar, Image, Tooltip, Button, Card } from 'antd';
+import { Table, Avatar, Image, Card } from 'antd';
 import { useRequest } from 'umi';
-import request from 'umi-request';
-
-const { confirm } = Modal;
-const { Option } = Select;
-
-const { Column, ColumnGroup } = Table;
-
-interface IAccountData {
-  key: string;
-  avator: string;
-  userName: string;
-  age: number;
-  address: string;
-  Email: string;
-  creation: number;
-}
-
-const data = [
-  {
-    key: '1',
-    avator: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-    userName: 'John',
-    age: 32,
-    address: '0x26604A35B97D395a9711D839E89b44EFcc549B21',
-    Email: '12345@gmail.com',
-    creation: 10,
-  },
-  {
-    key: '2',
-    avator: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-    userName: 'Jim',
-    age: 42,
-    address: '0x26604A35B97D395a9711D839E89b44EFcc549B21',
-    Email: '12345@gmail.com',
-    creation: 10,
-  },
-  {
-    key: '3',
-    avator: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-    userName: 'Joe',
-    age: 32,
-    address: '0x26604A35B97D395a9711D839E89b44EFcc549B21',
-    Email: '12345@gmail.com',
-    creation: 10,
-  },
-];
-
-function showPromiseConfirm(value: string) {
-  confirm({
-    title: `Do you want to ${value} these items?`,
-    icon: <ExclamationCircleOutlined />,
-    content: 'When clicked the OK button, this dialog will be closed after 1 second',
-    onOk() {
-      return new Promise((resolve, reject) => {
-        setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-      }).catch(() => console.log('Oops errors!'));
-    },
-    onCancel() {},
-  });
-}
+import { defaultAuthorityPageParams, getAuthorityList, getAuthorityListFormatResult } from './actions/getAuthorityList';
+import { ImgErrorUrl } from '@/tools/const';
+import AuthorityTopView from './components/Top';
+import AuthorityRowEditNoteName from './components/editNotName';
+import AuthorityRoleView from './components/AuthorityRole';
+import AuthorityActionView from './components/AuthorityAction';
+import { IAuthorityItem } from './actions/apiType';
 
 const index: React.FC = () => {
+  const [userId] = useState('');
+  const { tableProps, run, refresh, params } = useRequest((props) => getAuthorityList({ ...props, userId }, ''), {
+    paginated: true,
+    defaultParams: [defaultAuthorityPageParams],
+    refreshDeps: [userId],
+    formatResult: getAuthorityListFormatResult,
+    cacheKey: 'authorityList',
+  })
   return (
     <PageContainer>
       <Card bordered={false}>
-        <Table dataSource={data}>
-          <Column
-            title="Avatar"
-            dataIndex="avator"
-            key="avator"
-            render={(avator) => (
-              <Avatar
-                shape="square"
-                size={64}
-                //   src={<Image src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-                src={<Image src={avator} />}
-              />
-            )}
-          />
-        
-          <Column title="User name" dataIndex="userName" key="userName" />
-        
-          <Column
-            title="Address"
-            dataIndex="address"
-            key="address"
-            render={(address) => (
-              <Tooltip placement="topLeft" title={address}>
-                <span>{`${address.slice(0, 6)}...${address.slice(-4)}`}</span>
-              </Tooltip>
-            )}
-          />
-        
-          <Column title="Email" dataIndex="Email" key="Email" />
-        
-          <Column title="Creation" dataIndex="creation" key="creation" />
-        
-          <Column
-            title="Identity"
-            dataIndex="Identity"
-            key="Identity"
-            render={() => (
-              <Select
-                defaultValue="User"
-                style={{ width: 120 }}
-                onChange={(value) => {
-                  console.log(value);
-                }}
-              >
-                <Option value="User">User</Option>
-                <Option value="Administor">Administor</Option>
-              </Select>
-            )}
-          />
-        
-          <Column
-            title="Hide Creation"
-            key="hide"
-            render={() => (
-              <Switch
-                loading={false}
-                defaultChecked={false}
-                checkedChildren="hiden"
-                unCheckedChildren="show"
-                onChange={(checked: boolean, event: Event) => {
-                  // console.log("event: ", event)
-                }}
-              />
-            )}
-          />
-        
-          <Column
-            title="Disable"
-            key="disable"
-            render={() => (
-              <Switch
-                loading={false}
-                defaultChecked={false}
-                checkedChildren="disable"
-                unCheckedChildren="active"
-                onChange={(checked: boolean) => {}}
-              />
-            )}
-          />
-        </Table>
+        <AuthorityTopView run={refresh} onSearch={(value: string) => run(defaultAuthorityPageParams, value || '')} />
+        <Table {...tableProps} columns={columns(() => {
+          run({ ...params, ...defaultAuthorityPageParams })
+        })} rowKey="id" />
       </Card>
     </PageContainer>
   );
 };
 
 export default index;
+
+type columns = Array<{
+  title: string;
+  dataIndex: string;
+  key: string;
+  render?: (value: string, record: IAuthorityItem) => JSX.Element;
+}>
+const columns: (run: () => void) => columns = (run) => {
+  return [
+    {
+      title: "Avatar",
+      dataIndex: "userImageUrl",
+      key: "userImageUrl",
+      render: (url, record) => <Avatar
+        shape="square"
+        size={64}
+        src={<Image src={url} fallback={ImgErrorUrl} />}
+      />
+    },
+    {
+      title: 'User Name',
+      dataIndex: 'username',
+      key: 'username',
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
+    },
+    {
+      title: 'Type',
+      dataIndex: 'opRole',
+      key: 'opRole',
+      render: (value, record) => <AuthorityRoleView id={record.id} value={value} />
+    },
+    {
+      title: 'Note name',
+      dataIndex: 'notename',
+      key: 'notename',
+      render: (value, record) => <AuthorityRowEditNoteName id={record.id} value={value} />
+    },
+    {
+      title: 'Action',
+      dataIndex: 'id',
+      key: 'id',
+      render: (id, record) => <AuthorityActionView id={id as unknown as number} address={record.address} run={() => {
+        run && run()
+      }} />
+    },
+  ]
+}

@@ -82,3 +82,50 @@ export interface IGetAccountsParams {
   identity?: number;
   likestr?: number;
 }
+
+export interface IAccountsResponse {
+  accountaddress: string;
+  bandimgurl: string;
+  bio: string;
+  bounceid: number;
+  created_at: string;
+  display: number;
+  email: string;
+  facebook: string;
+  fullnam: string;
+  id: number;
+  identity: number;
+  imgurl: string;
+  instagram: string;
+  state: number;
+  top_weight: number;
+  twitter: string;
+  updated_at: string;
+  username: string;
+  website: string;
+}
+
+export interface INftResponse {
+  artistpoolweight: number;
+  category: string;
+  channel: string;
+  contractaddress: string;
+  created_at: string;
+  creator: string;
+  description: string;
+  externallink: string;
+  fileurl: string;
+  id: number;
+  itemname: string;
+  itemsymbol: string;
+  likecount: number;
+  litimgurl: string;
+  metadata: string;
+  poolweight: number;
+  popularweight: number;
+  standard: number;
+  status: number;
+  supply: number;
+  tokenid: number;
+  username: string;
+}

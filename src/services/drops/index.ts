@@ -65,12 +65,12 @@ export const getPoolsByLikestr = ({ filter = 1, likestr, limit, offset = 0 }: IG
   });
 };
 
-export const getPoolsByCreatorAddress = ({
-  filter = 2,
-  creator = '0x26604A35B97D395a9711D839E89b44EFcc549B21',
-  limit = 7,
-  offset = 0,
-}: IGetPoolsParams) => {
+export const getPoolsByCreatorAddress = (
+  filter: number = 2,
+  creator: string = '0x26604A35B97D395a9711D839E89b44EFcc549B21',
+  limit: number = 7,
+  offset: number = 0,
+) => {
   return post(Apis.getpoolsbylikename, {
     filter,
     creator,

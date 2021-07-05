@@ -25,6 +25,7 @@ import { IAddDropParams, IAccountsResponse, INftResponse } from '@/services/drop
 import { addOneDrop } from '@/services/drops';
 import { useRequest } from 'umi';
 import request from 'umi-request';
+import { FormInstance } from 'antd/lib/form';
 
 import AddNftTable from '@/pages/drops/AddNftTable';
 import OperateNftTable from '@/pages/drops/OperateNftTable';
@@ -33,7 +34,7 @@ import placeholderImg from '@/assets/images/placeholderImg.svg';
 
 const { confirm } = Modal;
 const { Option } = Select;
-const { Column, ColumnGroup } = Table;
+const { Column } = Table;
 const { Search } = Input;
 
 const getAccountList = function (
@@ -63,18 +64,6 @@ const DropEdit: React.FC = () => {
   const [addNftModalVisible, setAddNftModalVisible] = useState(false);
   const [selectedRowKeysIn1Page, setSelectedRowKeysIn1Page] = useState<number[]>([]);
   const [selectedNftList, setSelectedNftList] = useState<INftResponse[]>([]);
-
-  useEffect(() => {
-    console.log('dropdownVisible: ', dropdownVisible);
-  }, [dropdownVisible]);
-
-  useEffect(() => {
-    console.log('selectedNftList: ', selectedNftList);
-  }, [selectedNftList]);
-
-  useEffect(() => {
-    console.log('selectedRowKeys: ', selectedRowKeysIn1Page);
-  }, [selectedRowKeysIn1Page]);
 
   const {
     data: accountData,
@@ -109,8 +98,8 @@ const DropEdit: React.FC = () => {
     },
   };
 
-  
   const menuEl = useRef(null);
+  const formRef = useRef<FormInstance>(null);
 
   const menu = (
     <Menu ref={menuEl}>
@@ -185,7 +174,7 @@ const DropEdit: React.FC = () => {
       title: data.title,
       description: data.description,
       bgcolor: data.bgcolor,
-      coverimgurl: data.bgcolor,
+      coverimgurl: data.cover.url,
       poolids: selectedNftList.map((nft) => {
         return nft.id;
       }),
@@ -202,19 +191,21 @@ const DropEdit: React.FC = () => {
     });
   };
 
+  const handleReset = () => {
+    setSelectedNftList([]);
+    setCoverImage(null);
+    setselectedAccount(undefined);
+    setSelectedRowKeysIn1Page([]);
+    formRef.current!.resetFields();
+  };
+
   const selectedAccountData = [selectedAccount];
-
-  const inputEl = useRef(null);
-
-  console.log('inputEl: ', inputEl);
-  console.log('menuEl: ', menuEl);
 
   return (
     <PageContainer>
       <Space direction={'vertical'} style={{ width: '100%' }}>
         <Input.Group compact>
           <Search
-            ref={inputEl}
             allowClear
             enterButton
             style={{ width: '82%' }}
@@ -235,7 +226,7 @@ const DropEdit: React.FC = () => {
         </Dropdown>
       </Space>
       <Card>
-        <Form labelCol={{ span: 6 }} wrapperCol={{ span: 14 }} onFinish={handleEdit}>
+        <Form ref={formRef} labelCol={{ span: 6 }} wrapperCol={{ span: 14 }} onFinish={handleEdit}>
           <Form.Item name="Account" label="Account">
             {selectedAccount ? (
               <List
@@ -341,14 +332,24 @@ const DropEdit: React.FC = () => {
               />
             </Space>
           </Form.Item>
-          <Form.Item style={{ textAlign: 'right' }}>
+          <Form.Item wrapperCol={{ offset: 7, span: 8 }} style={{ textAlign: 'right' }}>
             <Button type="primary" htmlType="submit">
               Submit
             </Button>
+            <Button
+              htmlType="submit"
+              style={{ margin: '0 8px' }}
+              onClick={() => {
+                handleReset();
+              }}
+            >
+              Reset
+            </Button>
           </Form.Item>
         </Form>
+
         <Modal
-          title="Basic Modal"
+          title="Select NFTs"
           visible={addNftModalVisible}
           width={800}
           bodyStyle={{ padding: 20 }}

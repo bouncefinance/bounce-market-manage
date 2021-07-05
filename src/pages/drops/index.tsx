@@ -104,7 +104,9 @@ const DropsPage: React.FC = () => {
       render(_, item) {
         return (
           <Space>
-            <Button icon={<EditFilled />} />
+            <Link to="/drops/edit">
+              <Button icon={<EditFilled />} />
+            </Link>
             <Button
               danger
               onClick={() => {

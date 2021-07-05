@@ -9,7 +9,6 @@ import {
   DatePicker,
   Modal,
   message,
-  Select,
   Menu,
   Table,
   Space,
@@ -23,7 +22,7 @@ import styles from './index.less';
 import ColorPicker from '@/components/ColorPicker';
 import { IAddDropParams, IAccountsResponse, INftResponse } from '@/services/drops/types';
 import { addOneDrop } from '@/services/drops';
-import { useRequest } from 'umi';
+import { useRequest, history  } from 'umi';
 import request from 'umi-request';
 import { FormInstance } from 'antd/lib/form';
 
@@ -32,8 +31,6 @@ import OperateNftTable from '@/pages/drops/OperateNftTable';
 
 import placeholderImg from '@/assets/images/placeholderImg.svg';
 
-const { confirm } = Modal;
-const { Option } = Select;
 const { Column } = Table;
 const { Search } = Input;
 
@@ -65,6 +62,8 @@ const DropEdit: React.FC = () => {
   const [selectedRowKeysIn1Page, setSelectedRowKeysIn1Page] = useState<number[]>([]);
   const [selectedNftList, setSelectedNftList] = useState<INftResponse[]>([]);
 
+  console.log("history: ", history )
+
   useEffect(() => {
     setSelectedNftList([]);
   }, [selectedAccount]);
@@ -76,7 +75,7 @@ const DropEdit: React.FC = () => {
     // params: itemParams,
     tableProps: accountTableProps,
     run: searchAccount,
-    refresh: reloadAccount,
+    // refresh: reloadAccount,
   } = useRequest(
     ({ pageSize: limit, current: offset }, filter, searchText) => {
       return getAccountList(filter, (offset - 1) * limit, limit, searchText);

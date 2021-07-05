@@ -48,7 +48,7 @@ const DropsPage: React.FC = () => {
     confirm({
       icon: <ExclamationCircleOutlined />,
       title: 'Do you want to delete this item?',
-      onOk () {
+      onOk() {
         deleteOneDrop(dropsid).then((res) => {
           if (res.code === 1) {
             message.success('Delete Success');
@@ -92,15 +92,17 @@ const DropsPage: React.FC = () => {
     {
       dataIndex: 'dropdate',
       title: 'Drop Date',
-      render: (ts: any) => moment(ts).format('YYYY-MM-DD hh:mm'),
+      render: (ts: any) => {
+        return moment(ts * 1000).format('YYYY-MM-DD hh:mm');
+      },
     },
     {
       dataIndex: 'operact',
       width: 100,
-      render (_, item) {
+      render(_, item) {
         return (
           <Space>
-            <Link to="/drops/edit">
+            <Link to={`/drops/edit/?id=${item.id}`}>
               <Button icon={<EditFilled />} />
             </Link>
             <Button

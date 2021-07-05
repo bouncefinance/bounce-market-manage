@@ -55,6 +55,34 @@ export const addOneDrop = ({
   });
 };
 
+export const updateOneDrop = ({
+  accountaddress,
+  website,
+  twitter,
+  Instagram,
+  title,
+  description,
+  bgcolor,
+  coverimgurl,
+  poolids,
+  ordernum,
+  dropdate,
+}: IAddDropParams) => {
+  return post(Apis.updatedrops, {
+    accountaddress,
+    website,
+    twitter,
+    Instagram,
+    title,
+    description,
+    bgcolor,
+    coverimgurl,
+    poolids,
+    ordernum,
+    dropdate,
+  });
+};
+
 // fileter:1:likestr,2:creatoraddress,3:tokenid
 export const getPoolsByLikestr = ({ filter = 1, likestr, limit, offset = 0 }: IGetPoolsParams) => {
   return post<IGetPoolsResponse[]>(Apis.getpoolsbylikename, {
@@ -102,3 +130,4 @@ export const getAllAccounts = ({ filter = 1, offset = 0, likestr = '' }: IGetPoo
 //     likestr,
 //   });
 // };
+

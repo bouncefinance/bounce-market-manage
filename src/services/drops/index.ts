@@ -95,3 +95,10 @@ export const getAllAccounts = ({ filter = 1, offset = 0, likestr = '' }: IGetPoo
     likestr,
   });
 };
+// export const getAccountsByLikeName = ({ filter = 1, offset = 0, likestr = '' }: IGetPoolsParams) => {
+//   return post(Apis.getaccountsbylikename, {
+//     filter,
+//     offset,
+//     likestr,
+//   });
+// };

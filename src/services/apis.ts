@@ -9,7 +9,7 @@ export const Apis = {
   // getaccountsbylikename: '/api/bouadmin/main/auth/getaccountsbylikename',
   deleteonedrops: '/api/bouadmin/main/auth/deleteonedrops', // 删除一条drop
   addaccountdrops: '/api/bouadmin/main/auth/addaccountdrops', // 新增一条drop
-  getpoolsbylikename: '/api/bouadmin/main/auth/getpoolsbylikename', // 查询一个账户地址下的pools，fileter: 1:likestr, 2:creatoraddress, 3:tokenid
+  getauctionpoolsbyaccount: '/api/bouadmin/main/auth/getauctionpoolsbyaccount', // 查询一个账户地址下的pools
   getaccountsbylikename: '/api/bouadmin/main/auth/getaccountsbylikename', // 查询用户信息
 };
 

@@ -19,7 +19,11 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ onChange, value = '#000' }) =
         overlayStyle={{ maxWidth: 300 }}
         title={
           <div style={{ color: '#000' }}>
-            <SketchPicker width="250px" color={value} onChange={handleChange} />
+            <SketchPicker
+              width="250px"
+              color={value}
+              onChange={handleChange}
+            />
           </div>
         }
       >

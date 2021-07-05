@@ -246,9 +246,6 @@ const index: React.FC = () => {
         </Input.Group>
         <Dropdown visible overlay={menu}>
             <span></span>
-          {/* <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-            Hover me <DownOutlined />
-          </a> */}
         </Dropdown>
         <Card bordered={false}></Card>
       </Space>

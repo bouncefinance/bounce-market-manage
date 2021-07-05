@@ -28,6 +28,11 @@ const routes: MenuDataItem[] = [
   //   icon: 'Edit',
   //   component: './deleteAndHide',
   // },
+
+  {
+    path: '/',
+    redirect: './overview',
+  },
   {
     name: 'Overview',
     path: '/overview',

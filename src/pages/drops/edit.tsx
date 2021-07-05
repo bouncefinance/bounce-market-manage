@@ -22,7 +22,7 @@ import styles from './index.less';
 import ColorPicker from '@/components/ColorPicker';
 import { IAddDropParams, IAccountsResponse, INftResponse } from '@/services/drops/types';
 import { addOneDrop } from '@/services/drops';
-import { useRequest, history  } from 'umi';
+import { useRequest, history } from 'umi';
 import request from 'umi-request';
 import { FormInstance } from 'antd/lib/form';
 
@@ -54,6 +54,8 @@ const getAccountList = function (
   });
 };
 
+console.log('history: ', history);
+
 const DropEdit: React.FC = () => {
   const [coverImage, setCoverImage] = useState<any>(null);
   const [selectedAccount, setSelectedAccount] = useState<IAccountsResponse>();
@@ -61,8 +63,6 @@ const DropEdit: React.FC = () => {
   const [addNftModalVisible, setAddNftModalVisible] = useState(false);
   const [selectedRowKeysIn1Page, setSelectedRowKeysIn1Page] = useState<number[]>([]);
   const [selectedNftList, setSelectedNftList] = useState<INftResponse[]>([]);
-
-  console.log("history: ", history )
 
   useEffect(() => {
     setSelectedNftList([]);
@@ -181,17 +181,19 @@ const DropEdit: React.FC = () => {
       poolids: selectedNftList.map((nft) => {
         return nft.id;
       }),
-      ordernum: selectedNftList.map((value, index) => {
+      ordernum: new Array(selectedNftList.length).fill(0).map((_, index) => {
         return index;
       }),
       dropdate: data.dropdate.unix(),
     };
-    console.log('params: ', params);
+
     addOneDrop(params).then((res) => {
       if (res.code === 1) {
         message.success('Added Successfully');
       } else message.error('Add failed');
     });
+
+    history.push('/drops')
   };
 
   const handleReset = () => {

@@ -7,6 +7,7 @@ import { RcFile } from 'antd/lib/upload';
 import request from 'umi-request';
 import { AuthorityRoleEnum } from '../actions/apiType';
 import addAuthority, { IAddAuthorityParams } from '../actions/addAuthority';
+import { Apis } from '@/services';
 const { Option } = Select
 const { Search } = Input
 
@@ -33,7 +34,7 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
     const formData = new FormData()
     formData.append('filename', file)
     setLoading(true)
-    const result = await request.post('https://market-test.bounce.finance/api/v2/main/auth/fileupload', {
+    const result = await request.post(Apis.fileupload, {
       data: formData
     })
     setLoading(false)

@@ -62,7 +62,7 @@ const routes: MenuDataItem[] = [
     name: 'NFT',
     path: '/nft',
     icon: 'icon-cube',
-    component: './NFT',
+    component: './nft',
   },
   {
     name: 'Authority',

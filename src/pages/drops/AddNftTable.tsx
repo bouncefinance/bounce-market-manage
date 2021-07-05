@@ -4,31 +4,30 @@ import { useRequest } from 'umi';
 import request from 'umi-request';
 import { Apis } from '@/services';
 import { INftResponse } from '@/services/drops/types';
-import {
-  ArrowDownOutlined,
-  ArrowUpOutlined,
-  CaretDownOutlined,
-  CaretUpOutlined,
-  DeleteOutlined,
-} from '@ant-design/icons';
 
-const getPoolsByCreatorAddress = (
-  filter: number = 2,
-  creator: string = '0x26604A35B97D395a9711D839E89b44EFcc549B21',
-  offset: number = 0,
-  limit: number = 7,
-) => {
-  return request.post(Apis.getpoolsbylikename, {
-    data: { filter, creator, offset, limit },
+import placeholderImg from '@/assets/images/placeholderImg.svg';
+
+const getPoolsByCreatorAddress = (userAddress: string, offset: number = 0, limit: number = 7) => {
+  return request.post(Apis.getauctionpoolsbyaccount, {
+    data: { userAddress, offset, limit },
   });
 };
 
-const AddNftTable: React.FC<{
+interface IAddNftTableProps {
+  userAddress: string;
   selectedNftList: INftResponse[];
   setSelectedNftList: any;
   selectedRowKeys: number[];
   setSelectedRowKeys: any;
-}> = ({ selectedNftList, setSelectedNftList, selectedRowKeys, setSelectedRowKeys }) => {
+}
+
+const AddNftTable: React.FC<IAddNftTableProps> = ({
+  userAddress,
+  selectedNftList,
+  setSelectedNftList,
+  selectedRowKeys,
+  setSelectedRowKeys,
+}) => {
   useEffect(() => {
     console.log('selectedNftList: ', selectedNftList);
   }, [selectedNftList]);
@@ -55,18 +54,14 @@ const AddNftTable: React.FC<{
     selectedRowKeys: selectedRowKeys,
   };
 
-  const {
-    tableProps: nftTableProps,
-    run: searchNft,
-    refresh: reloadNft,
-  } = useRequest(
-    ({ pageSize: limit, current: offset }, filter, creator) => {
-      return getPoolsByCreatorAddress(filter, creator, (offset - 1) * limit, limit);
+  const { tableProps: nftTableProps } = useRequest(
+    ({ pageSize: limit, current: offset }, userAddress) => {
+      console.log('userAddress: ', userAddress);
+      return getPoolsByCreatorAddress(userAddress, (offset - 1) * limit, limit);
     },
     {
       paginated: true,
-      // cacheKey: 'accounts',
-      defaultParams: [{ pageSize: 5, current: 1 }],
+      defaultParams: [{ pageSize: 5, current: 1 }, userAddress],
       formatResult(data: any) {
         return {
           list: data.data,
@@ -85,8 +80,16 @@ const AddNftTable: React.FC<{
     {
       dataIndex: 'fileurl',
       title: 'Cover',
+      width: 80,
       render: (src: any) => (
-        <Image height={60} style={{ objectFit: 'contain' }} preview={false} src={src} />
+        <Image
+          height={60}
+          width={60}
+          style={{ objectFit: 'contain' }}
+          preview={false}
+          src={src}
+          fallback={placeholderImg}
+        />
       ),
     },
     {

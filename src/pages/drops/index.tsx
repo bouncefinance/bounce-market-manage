@@ -22,10 +22,6 @@ interface ActionType {
 
 const tabs = [
   {
-    tab: 'All',
-    key: 0,
-  },
-  {
     tab: 'Coming soon',
     key: 1,
   },

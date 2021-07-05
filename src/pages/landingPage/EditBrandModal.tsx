@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import request from 'umi-request';
 import { RECOMMEND_BRANDS_AMOUNT } from '@/tools/const';
 import './index.less';
-import { Typography, message, Modal, Select, Image, Skeleton, Tag, List, Input, Empty } from 'antd';
+import { Typography, message, Modal, Select, Image, Tag, List, Input, Empty } from 'antd';
 
-import { CheckCircleFilled, CloseCircleOutlined, StopOutlined } from '@ant-design/icons';
+import { CheckCircleFilled, CloseCircleOutlined } from '@ant-design/icons';
 
 import { IPopularBrand } from '.';
 const { Option } = Select;
@@ -112,13 +112,13 @@ function EditBrandModal({
             if (value !== '')
               if (searchType === 'Name') {
                 setSearchResultList(
-                  brands.filter((brand) => {
+                  brands?.filter((brand) => {
                     return brand.brandname.includes(value);
                   }),
                 );
               } else {
                 setSearchResultList(
-                  brands.filter((brand) => {
+                  brands?.filter((brand) => {
                     return brand.id === parseInt(value);
                   }),
                 );
@@ -150,7 +150,7 @@ function EditBrandModal({
                     newBrandItem === item ? setNewBrandItem(undefined) : setNewBrandItem(item);
                   }}
                   extra={
-                    oldBrandItem && oldBrandItem.id === item.id ? (
+                    oldBrandItem && oldBrandItem.id === item.id && Math.floor(item.popularweight / 10000) > 0 ? (
                       <Tag
                         color="error"
                         style={{ fontSize: 16, marginTop: 60 }}

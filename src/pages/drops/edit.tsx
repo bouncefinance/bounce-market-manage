@@ -59,11 +59,15 @@ const getAccountList = function (
 
 const DropEdit: React.FC = () => {
   const [coverImage, setCoverImage] = useState<any>(null);
-  const [selectedAccount, setselectedAccount] = useState<IAccountsResponse>();
+  const [selectedAccount, setSelectedAccount] = useState<IAccountsResponse>();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [addNftModalVisible, setAddNftModalVisible] = useState(false);
   const [selectedRowKeysIn1Page, setSelectedRowKeysIn1Page] = useState<number[]>([]);
   const [selectedNftList, setSelectedNftList] = useState<INftResponse[]>([]);
+
+  useEffect(() => {
+    setSelectedNftList([]);
+  }, [selectedAccount]);
 
   const {
     data: accountData,
@@ -92,7 +96,7 @@ const DropEdit: React.FC = () => {
 
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-      setselectedAccount(selectedRows[0]);
+      setSelectedAccount({ ...selectedRows[0] });
       setDropdownVisible(false);
       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
     },
@@ -194,12 +198,10 @@ const DropEdit: React.FC = () => {
   const handleReset = () => {
     setSelectedNftList([]);
     setCoverImage(null);
-    setselectedAccount(undefined);
+    setSelectedAccount(undefined);
     setSelectedRowKeysIn1Page([]);
     formRef.current!.resetFields();
   };
-
-  const selectedAccountData = [selectedAccount];
 
   return (
     <PageContainer>
@@ -214,11 +216,10 @@ const DropEdit: React.FC = () => {
               setDropdownVisible(true);
               console.log('accountData: ', accountData);
             }}
-            onChange={() => {}}
-            onBlur={(event) => {
-              console.log('event: ', event);
-              // setAddNftModalVisible(false);
-            }}
+            // onChange={() => {}}
+            // onBlur={() => {
+            //   setDropdownVisible(false);
+            // }}
           />
         </Input.Group>
         <Dropdown visible={dropdownVisible} overlay={menu}>
@@ -231,7 +232,7 @@ const DropEdit: React.FC = () => {
             {selectedAccount ? (
               <List
                 itemLayout="horizontal"
-                dataSource={selectedAccountData}
+                dataSource={[selectedAccount]}
                 renderItem={(item) => (
                   <List.Item key={item?.id}>
                     <List.Item.Meta
@@ -349,10 +350,11 @@ const DropEdit: React.FC = () => {
         </Form>
 
         <Modal
+          destroyOnClose
           title="Select NFTs"
-          visible={addNftModalVisible}
           width={800}
           bodyStyle={{ padding: 20 }}
+          visible={addNftModalVisible}
           onOk={() => {
             console.log('ok');
             setAddNftModalVisible(false);
@@ -363,6 +365,7 @@ const DropEdit: React.FC = () => {
           }}
         >
           <AddNftTable
+            userAddress={selectedAccount?.accountaddress || ''}
             selectedNftList={selectedNftList}
             setSelectedNftList={setSelectedNftList}
             selectedRowKeys={selectedRowKeysIn1Page}

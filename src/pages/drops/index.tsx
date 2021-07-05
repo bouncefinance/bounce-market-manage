@@ -52,7 +52,7 @@ const DropsPage: React.FC = () => {
     confirm({
       icon: <ExclamationCircleOutlined />,
       title: 'Do you want to delete this item?',
-      onOk() {
+      onOk () {
         deleteOneDrop(dropsid).then((res) => {
           if (res.code === 1) {
             message.success('Delete Success');
@@ -101,7 +101,7 @@ const DropsPage: React.FC = () => {
     {
       dataIndex: 'operact',
       width: 100,
-      render(_, item) {
+      render (_, item) {
         return (
           <Space>
             <Link to="/drops/edit">

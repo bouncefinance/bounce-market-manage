@@ -9,20 +9,21 @@ import AuthorityRowEditNoteName from './components/editNotName';
 import AuthorityRoleView from './components/AuthorityRole';
 import AuthorityActionView from './components/AuthorityAction';
 import { IAuthorityItem } from './actions/apiType';
+import { AddressCopyView } from '@/components/Address';
 
 const index: React.FC = () => {
-  const [userId] = useState('');
-  const { tableProps, run, refresh, params } = useRequest((props) => getAuthorityList({ ...props, userId }, ''), {
+  const [searchValue, setSearchValue] = useState('');
+  const { tableProps, run, refresh, params } = useRequest((props) => getAuthorityList({ ...props }, searchValue), {
     paginated: true,
     defaultParams: [defaultAuthorityPageParams],
-    refreshDeps: [userId],
+    refreshDeps: [searchValue],
     formatResult: getAuthorityListFormatResult,
     cacheKey: 'authorityList',
   })
   return (
     <PageContainer>
       <Card bordered={false}>
-        <AuthorityTopView run={refresh} onSearch={(value: string) => run(defaultAuthorityPageParams, value || '')} />
+        <AuthorityTopView run={refresh} onSearch={setSearchValue} />
         <Table {...tableProps} columns={columns(() => {
           run({ ...params, ...defaultAuthorityPageParams })
         })} rowKey="id" />
@@ -60,6 +61,7 @@ const columns: (run: () => void) => columns = (run) => {
       title: 'Address',
       dataIndex: 'address',
       key: 'address',
+      render: (address) => <AddressCopyView address={address} />
     },
     {
       title: 'Type',

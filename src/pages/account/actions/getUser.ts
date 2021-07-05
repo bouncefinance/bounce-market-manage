@@ -20,7 +20,8 @@ export const getUserList: (parma: IUserListParma, search: string) => Promise<IRe
   }: IUserListParma, search: string) => {
   return request.post('/api/bouadmin/main/auth/getaccountsbylikename', {
     data: {
-      likestr: search, limit, offset: ToOffset(offset, limit), identity: role
+      likestr: search, limit, offset: ToOffset(offset, limit),
+      ...(role ? { identity: role } : {})
     }
   })
 }

@@ -22,6 +22,7 @@ const UserTopView: React.FC<{
       </div>
       <Select placeholder="select user identity" onChange={onRoleChange} style={{ width: 220 }}>
         {[
+          { value: '', label: 'All', key: 0 },
           { value: UserRoleEnum.Normal, label: 'Normal', key: 1 },
           { value: UserRoleEnum.Verified, label: 'Verified', key: 2 },
         ].map(({ value, label, key }) => <Option key={key} value={value}>{label}</Option>)}

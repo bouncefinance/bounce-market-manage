@@ -112,7 +112,7 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
           <Input allowClear placeholder="Input note name" />
         </Form.Item>
         <Form.Item name="userImageUrl" label="Avatar" rules={[
-          { required: true, message: 'avatar not empty' },
+          // { required: true, message: 'avatar not empty' },
         ]}>
           <div className={[styles.avatarUploader, 'flex flex-center-y'].join(' ')}>
             <Upload

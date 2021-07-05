@@ -21,7 +21,7 @@ export const getAuthorityList: (parma: IAuthorityListParma, address: string) => 
   }: IAuthorityListParma, address: string) => {
   return request.post('/api/bouadmin/main/auth/getoperatorlist', {
     data: {
-      address, limit, offset: ToOffset(offset, limit), userId
+      inputinfo: address, limit, offset: ToOffset(offset, limit), userId
     }
   })
 }

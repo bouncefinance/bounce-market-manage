@@ -74,7 +74,7 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
     <div className={["flex flex-space-x", styles.topHandle].join(' ')}>
       <div style={{ width: '500px' }}>
         <Search
-          placeholder="Input Address"
+          placeholder="Input Address or Name"
           allowClear
           onSearch={onSearch}
           size="middle"

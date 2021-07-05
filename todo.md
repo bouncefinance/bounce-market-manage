@@ -18,13 +18,13 @@
     (注：编辑的时候才用这个接口，暂时没有需要编辑页面)
   - 中文   [×]
     (注：大部分完成中文化)
-  - 复制    [×]
+  - 复制    [√]
 - 用户 User
   - LIST    getaccountsbylikename    [√]
       Creation 后台暂无字段  [×]
   - 设置身份                       [√]
   - identity select 加all功能      [√]
-  - 复制功能    [×]
+  - 复制功能    [√]
 - 上传接口有问题
   后台暂时有问题；暂时用用户端的地址 代码 src\pages\Authority\components\Top.tsx 36行待修改
 - 面包屑有问题  顶级点击是空白页面   [×]

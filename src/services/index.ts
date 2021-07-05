@@ -2,6 +2,7 @@ import { ApiServiceUrl, Apis } from './apis';
 import UMIRequest from 'umi-request';
 import { history } from 'umi';
 import { IResponse } from './types';
+import { IsPre } from '@/tools/const';
 
 /**
  * 用于处理分页Offset偏移量计算
@@ -20,7 +21,7 @@ export const ToOffset = (page: number = 1, pageSize: number): number => {
  * @param params
  * @returns UMIRequest
  */
-export function get<TDataType>(url: string, params?: object) {
+export function get<TDataType> (url: string, params?: object) {
   return UMIRequest<IResponse<TDataType>>(url, {
     params,
     method: 'get',
@@ -32,7 +33,7 @@ export function get<TDataType>(url: string, params?: object) {
  * @param params
  * @returns UMIRequest
  */
-export function post<TDataType>(url: string, params?: object) {
+export function post<TDataType> (url: string, params?: object) {
   return UMIRequest<IResponse<TDataType>>(url, {
     method: 'post',
     data: params,
@@ -40,7 +41,7 @@ export function post<TDataType>(url: string, params?: object) {
 }
 // Request 拦截
 UMIRequest.interceptors.request.use((url, options) => {
-  const serviceUrl = /localhost/.test(location.hostname) ? ApiServiceUrl.DEV : ApiServiceUrl.PRO;
+  const serviceUrl = IsPre ? ApiServiceUrl.DEV : ApiServiceUrl.PRO;
   return {
     url: serviceUrl + url,
     options,

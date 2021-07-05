@@ -1,10 +1,10 @@
-const IsPre = process.env.REACT_APP_ENV === 'pre';
+export const IsPre = /localhost/.test(location.hostname) || /stage/.test(location.hostname)
 
 export const WEB3ProvideUrl = 'https://mainnet.infura.io/v3/0b500c5f885b43a4ab192e8048f6fa8';
-export const APIPrefixUrl = IsPre
-  ? 'https://bounce-market.bounce.finance:11001'
-  : 'http://market-test.bounce.finance:11001';
-const FGB_V2_URL = IsPre
+export const APIPrefixUrl = !IsPre
+  ? 'https://bounce-market.bounce.finance'
+  : 'https://market-test.bounce.finance';
+const FGB_V2_URL = !IsPre
   ? 'https://bounce-market.bounce.finance'
   : 'https://market-test.bounce.finance';
 

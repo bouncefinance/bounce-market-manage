@@ -8,6 +8,7 @@ import { IUserItem, UserCreationEnum, UserCreationType, UserDisableType, UserDis
 import { defaultUserPageParams, getUserList, getUserListFormatResult } from './actions/getUser';
 import UserTopView from './components/top';
 import { updateUserCreation, updateUserDisplay } from './actions/updateUser';
+import { AddressCopyView } from '@/components/Address';
 
 const index: React.FC = () => {
   const [role, setRole] = useState<UserRoleType>();
@@ -60,6 +61,7 @@ const columns: (run: () => void) => columns = (run) => {
       title: 'Address',
       dataIndex: 'accountaddress',
       key: 'accountaddress',
+      render: (address) => <AddressCopyView address={address} />
     },
     {
       title: 'Email',

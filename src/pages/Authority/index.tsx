@@ -9,6 +9,7 @@ import AuthorityRowEditNoteName from './components/editNotName';
 import AuthorityRoleView from './components/AuthorityRole';
 import AuthorityActionView from './components/AuthorityAction';
 import { IAuthorityItem } from './actions/apiType';
+import { AddressCopyView } from '@/components/Address';
 
 const index: React.FC = () => {
   const [searchValue, setSearchValue] = useState('');
@@ -60,6 +61,7 @@ const columns: (run: () => void) => columns = (run) => {
       title: 'Address',
       dataIndex: 'address',
       key: 'address',
+      render: (address) => <AddressCopyView address={address} />
     },
     {
       title: 'Type',

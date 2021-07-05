@@ -11,18 +11,18 @@ import AuthorityActionView from './components/AuthorityAction';
 import { IAuthorityItem } from './actions/apiType';
 
 const index: React.FC = () => {
-  const [userId] = useState('');
-  const { tableProps, run, refresh, params } = useRequest((props) => getAuthorityList({ ...props, userId }, ''), {
+  const [searchValue, setSearchValue] = useState('');
+  const { tableProps, run, refresh, params } = useRequest((props) => getAuthorityList({ ...props }, searchValue), {
     paginated: true,
     defaultParams: [defaultAuthorityPageParams],
-    refreshDeps: [userId],
+    refreshDeps: [searchValue],
     formatResult: getAuthorityListFormatResult,
     cacheKey: 'authorityList',
   })
   return (
     <PageContainer>
       <Card bordered={false}>
-        <AuthorityTopView run={refresh} onSearch={(value: string) => run(defaultAuthorityPageParams, value || '')} />
+        <AuthorityTopView run={refresh} onSearch={setSearchValue} />
         <Table {...tableProps} columns={columns(() => {
           run({ ...params, ...defaultAuthorityPageParams })
         })} rowKey="id" />

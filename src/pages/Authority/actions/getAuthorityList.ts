@@ -1,3 +1,4 @@
+import { ToOffset } from '@/services';
 import request from 'umi-request';
 import { IAuthorityItem } from './apiType';
 
@@ -20,7 +21,7 @@ export const getAuthorityList: (parma: IAuthorityListParma, address: string) => 
   }: IAuthorityListParma, address: string) => {
   return request.post('/api/bouadmin/main/auth/getoperatorlist', {
     data: {
-      address, limit, offset: limit * (offset - 1), userId
+      address, limit, offset: ToOffset(offset, limit), userId
     }
   })
 }

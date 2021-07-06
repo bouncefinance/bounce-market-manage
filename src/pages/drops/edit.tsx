@@ -198,7 +198,7 @@ const DropEdit: React.FC = () => {
   );
 
   const handleEdit = (data: any) => {
-    // console.log(data);
+    console.log("data.dropdate.unix()", data.dropdate.unix());
     if (!selectedAccount) return;
     const params: IAddDropParams = {
       accountaddress: selectedAccount.accountaddress,
@@ -327,7 +327,20 @@ const DropEdit: React.FC = () => {
               </div>
             )}
           </Form.Item>
-          <Form.Item name="bgcolor" label="Background Color">
+          <Form.Item
+            name="bgcolor"
+            label="Background Color"
+            // rules={[
+            //   ({ getFieldValue }) => ({
+            //     validator(_, value) {
+            //       if (!value || !getFieldValue('cover')) {
+            //         return Promise.resolve();
+            //       }
+            //       return Promise.reject(new Error('Back'));
+            //     },
+            //   }),
+            // ]}
+          >
             <ColorPicker value="#000" />
           </Form.Item>
           <Form.Item

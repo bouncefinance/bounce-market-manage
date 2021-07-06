@@ -18,5 +18,8 @@
 - 上传接口有问题后台暂时有问题；暂时用用户端的地址 代码 src\pages\Authority\components\Top.tsx 36 行待修改
 - 面包屑有问题 顶级点击是空白页面 [×]
 - 登陆 404 [×]
-- 把router account抽出来不要放二级页面
-- test
+- 把 router account 抽出来不要放二级页面[√]
+
+原型地址
+
+https://www.figma.com/file/zKkEMj1l7gup2iWsWUqjsw/fangible%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86?node-id=84%3A119

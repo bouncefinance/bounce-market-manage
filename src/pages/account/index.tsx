@@ -91,9 +91,9 @@ const columns: (run: () => void) => columns = (run) => {
         const intl = useIntl()
         const onChange = (checked: boolean) => {
           confirm({
-            title: intl.formatMessage({ id: checked ? 'pages.account.hideCreationButton' : 'pages.account.showCreationButton' }),
+            title: intl.formatMessage({ id: 'pages.account.hideCreationButton' }, { v: intl.formatMessage({ id: checked ? 'g.hide' : 'g.show' }) }),
             icon: <ExclamationCircleOutlined />,
-            content: intl.formatMessage({ id: checked ? 'pages.account.hideCreation' : 'pages.account.showCreation' }),
+            content: intl.formatMessage({ id: 'pages.account.hideCreation' }, { v: intl.formatMessage({ id: checked ? 'g.hide' : 'g.show' }) }),
             onOk: async () => {
               setLoading(true)
               const state: UserCreationType = checked ? UserCreationEnum.Disable : UserCreationEnum.Normal
@@ -126,9 +126,9 @@ const columns: (run: () => void) => columns = (run) => {
         const intl = useIntl()
         const onChange = (checked: boolean) => {
           confirm({
-            title: intl.formatMessage({ id: checked ? 'pages.account.DisableButton' : 'pages.account.enableButton' }),
+            title: intl.formatMessage({ id: 'pages.account.disableButton' }, { v: intl.formatMessage({ id: checked ? 'g.disable' : 'g.enable' }) }),
             icon: <ExclamationCircleOutlined />,
-            content: intl.formatMessage({ id: checked ? 'pages.account.Disable' : 'pages.account.Enable' }),
+            content: intl.formatMessage({ id: 'pages.account.Disable' }, { v: intl.formatMessage({ id: checked ? 'g.disable' : 'g.enable' }) }),
             onOk: async (checked: boolean) => {
               setLoading(true)
               const display: UserDisableType = checked ? UserDisableEnum.Normal : UserDisableEnum.Disable

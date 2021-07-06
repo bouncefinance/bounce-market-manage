@@ -90,13 +90,9 @@ export default {
   'pages.nft.handile.hasBanned': '已拒绝',
   'pages.recommend.index.Pools': '池子',
   'pages.recommend.index.Brands': '品牌',
-  'pages.account.hideCreationButton': '隐藏创作',
-  'pages.account.showCreationButton': '展示创作',
-  'pages.account.DisableButton': '禁用操作',
-  'pages.account.enableButton': '恢复操作',
-  'pages.account.hideCreation': '你确定要在Fangible上隐藏这个用户的所有创作吗?',
-  'pages.account.showCreation': '你确定要在Fangible上显示这个用户的所有创作吗?',
-  'pages.account.Disable': '您确定要禁用该用户在Fangible上的操作吗?',
-  'pages.account.Enable': '您确定要恢复该用户在Fangible上的操作吗?',
-  // 'pages.recommend.index.Banner': '轮播',
+  'pages.account.hideCreationButton': '{v}创作',
+  'pages.account.disableButton': '{v}操作',
+  'pages.account.hideCreation': '你确定要在Fangible上{v}这个用户的所有创作吗?',
+  'pages.account.Disable': '你确定要{v}该用户在Fangible上的操作吗?',
+
 };

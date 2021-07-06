@@ -21,10 +21,11 @@ import { useState } from 'react';
 import styles from './index.less';
 import ColorPicker from '@/components/ColorPicker';
 import { IAddDropParams, IAccountsResponse, INftResponse } from '@/services/drops/types';
-import { addOneDrop } from '@/services/drops';
+import { addOneDrop, getAccountByAddress, getVerfiedUsersList } from '@/services/drops';
 import { useRequest, history } from 'umi';
 import request from 'umi-request';
 import { FormInstance } from 'antd/lib/form';
+import moment from 'moment';
 
 import AddNftTable from '@/pages/drops/AddNftTable';
 import OperateNftTable from '@/pages/drops/OperateNftTable';
@@ -34,27 +35,28 @@ import placeholderImg from '@/assets/images/placeholderImg.svg';
 const { Column } = Table;
 const { Search } = Input;
 
-const getAccountList = function (
-  filter: 1 | 2 | 3 = 1,
-  offset: number,
-  limit: number = 5,
-  // likename?: string,
-  accountaddress?: string,
-  // tokenid?: number,
-) {
-  return request.post('/api/bouadmin/main/auth/getaccountsbylikename', {
-    data: {
-      filter,
-      limit,
-      offset,
-      // likename,
-      accountaddress,
-      // tokenid,
-    },
-  });
-};
-
 console.log('history: ', history);
+
+function range(start, end) {
+  const result = [];
+  for (let i = start; i < end; i++) {
+    result.push(i);
+  }
+  return result;
+}
+
+const disabledDate = (currentDate: any) => currentDate && currentDate < moment().subtract(1, 'day');
+const disabledTime = (date: any) => {
+  const hours = moment().hours();
+  const minutes = moment().minutes();
+  const seconds = moment().seconds();
+  // 当日只能选择当前时间之后的时间点
+  return {
+    disabledHours: () => range(0, 24).splice(0, hours),
+    disabledMinutes: () => range(0, 60).splice(0, minutes + 1),
+    disabledSeconds: () => range(0, 60).splice(0, seconds + 1),
+  };
+};
 
 const DropEdit: React.FC = () => {
   const [coverImage, setCoverImage] = useState<any>(null);
@@ -68,22 +70,18 @@ const DropEdit: React.FC = () => {
     setSelectedNftList([]);
   }, [selectedAccount]);
 
-  const {
-    data: accountData,
-    // loading: itemLoading,
-    // pagination: itemPagination,
-    // params: itemParams,
-    tableProps: accountTableProps,
-    run: searchAccount,
-    // refresh: reloadAccount,
-  } = useRequest(
-    ({ pageSize: limit, current: offset }, filter, searchText) => {
-      return getAccountList(filter, (offset - 1) * limit, limit, searchText);
+  const { tableProps: accountTableProps, run: searchAccount } = useRequest(
+    ({ pageSize: limit, current: offset }, accountaddress) => {
+      return getAccountByAddress({
+        offset: (offset - 1) * limit,
+        limit,
+        accountaddress,
+      });
     },
     {
+      manual: true,
       paginated: true,
       cacheKey: 'accounts',
-      defaultParams: [{ pageSize: 5, current: 1 }],
       formatResult(data: any) {
         return {
           list: data.data,
@@ -99,6 +97,9 @@ const DropEdit: React.FC = () => {
       setDropdownVisible(false);
       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
     },
+    getCheckboxProps: (record: IAccountsResponse) => ({
+      disabled: record.identity === 1,
+    }),
   };
 
   const menuEl = useRef(null);
@@ -124,6 +125,7 @@ const DropEdit: React.FC = () => {
           align={'center'}
           render={(imgurl) => (
             <Image
+              preview={false}
               src={imgurl}
               width={64}
               height={64}
@@ -193,7 +195,7 @@ const DropEdit: React.FC = () => {
       } else message.error('Add failed');
     });
 
-    history.push('/drops')
+    history.push('/drops');
   };
 
   const handleReset = () => {
@@ -213,11 +215,13 @@ const DropEdit: React.FC = () => {
             enterButton
             style={{ width: '82%' }}
             onSearch={(value) => {
-              searchAccount({ current: 1, pageSize: 5 }, 2, value);
+              if (value === '') {
+                setDropdownVisible(false);
+                return;
+              }
+              searchAccount({ current: 1, pageSize: 5 }, value);
               setDropdownVisible(true);
-              console.log('accountData: ', accountData);
             }}
-            // onChange={() => {}}
             // onBlur={() => {
             //   setDropdownVisible(false);
             // }}
@@ -300,7 +304,12 @@ const DropEdit: React.FC = () => {
             label="Drop Date"
             rules={[{ required: true, message: 'Drop date cannot be empty' }]}
           >
-            <DatePicker showTime />
+            <DatePicker
+              showTime
+              showNow={false}
+              disabledDate={disabledDate}
+              disabledTime={disabledTime}
+            />
           </Form.Item>
           <Form.Item label="Social Link">
             <Form.Item name="instagram">
@@ -335,9 +344,6 @@ const DropEdit: React.FC = () => {
             </Space>
           </Form.Item>
           <Form.Item wrapperCol={{ offset: 7, span: 8 }} style={{ textAlign: 'right' }}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
             <Button
               htmlType="submit"
               style={{ margin: '0 8px' }}
@@ -346,6 +352,9 @@ const DropEdit: React.FC = () => {
               }}
             >
               Reset
+            </Button>
+            <Button type="primary" htmlType="submit">
+              Create
             </Button>
           </Form.Item>
         </Form>

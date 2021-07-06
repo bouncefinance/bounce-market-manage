@@ -75,7 +75,7 @@ export interface IDropsResponse {
 }
 
 export interface IGetAccountsParams {
-  filter: string;
+  filter?: number;
   offset?: number;
   limit?: number;
   accountaddress?: DropsState;

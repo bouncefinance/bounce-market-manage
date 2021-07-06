@@ -59,6 +59,27 @@ const DropsPage: React.FC = () => {
     });
   };
 
+  const handleCloseDrop = (dropsid: number) => {
+    confirm({
+      title: <span style={{fontSize: 14}}>{'Close Drop'}</span>,
+      // icon: <ExclamationCircleOutlined />,
+      content: (
+        <>
+          <span style={{fontSize: 20}}>{'Confirm that you want to close this Drop？'}</span>
+          <span style={{ fontSize: 20, color: 'red' }}>{'This operation cannot withdraw.'}</span>
+        </>
+      ),
+      onOk() {
+        deleteOneDrop(dropsid).then((res) => {
+          if (res.code === 1) {
+            message.success('Delete Success');
+            ref?.current?.reload();
+          }
+        });
+      },
+    });
+  };
+
   const columns: ProColumns<IDropsResponse>[] = [
     {
       dataIndex: 'id',
@@ -102,6 +123,14 @@ const DropsPage: React.FC = () => {
       render(_, item) {
         return (
           <Space>
+            <Button
+              danger
+              onClick={() => {
+                handleCloseDrop(item.id);
+              }}
+            >
+              Close Drop
+            </Button>
             <Link to={`/drops/edit/?id=${item.id}`}>
               <Button icon={<EditFilled />} />
             </Link>

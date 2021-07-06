@@ -21,9 +21,8 @@ import { useState } from 'react';
 import styles from './index.less';
 import ColorPicker from '@/components/ColorPicker';
 import { IAddDropParams, IAccountsResponse, INftResponse } from '@/services/drops/types';
-import { addOneDrop, getAccountByAddress, getVerfiedUsersList } from '@/services/drops';
+import { addOneDrop, getAccountByAddress, getonedropsdetail } from '@/services/drops';
 import { useRequest, history } from 'umi';
-import request from 'umi-request';
 import { FormInstance } from 'antd/lib/form';
 import moment from 'moment';
 
@@ -35,9 +34,10 @@ import placeholderImg from '@/assets/images/placeholderImg.svg';
 const { Column } = Table;
 const { Search } = Input;
 
-console.log('history: ', history);
+// console.log('history.location.query: ', history.location.query?.id);
+const targetDropId = history.location.query?.id;
 
-function range(start, end) {
+function range(start: any, end: any) {
   const result = [];
   for (let i = start; i < end; i++) {
     result.push(i);
@@ -46,7 +46,7 @@ function range(start, end) {
 }
 
 const disabledDate = (currentDate: any) => currentDate && currentDate < moment().subtract(1, 'day');
-const disabledTime = (date: any) => {
+const disabledTime = () => {
   const hours = moment().hours();
   const minutes = moment().minutes();
   const seconds = moment().seconds();
@@ -70,6 +70,7 @@ const DropEdit: React.FC = () => {
     setSelectedNftList([]);
   }, [selectedAccount]);
 
+  // getAccountByAddress
   const { tableProps: accountTableProps, run: searchAccount } = useRequest(
     ({ pageSize: limit, current: offset }, accountaddress) => {
       return getAccountByAddress({
@@ -91,11 +92,20 @@ const DropEdit: React.FC = () => {
     },
   );
 
+  // getonedropsdetail = ({ offset, limit, dropsid, poolstate }: IGetDropDetailParams) => {
+  //   return post<IDropDetailResponse[]>(Apis.getonedropsdetail, {
+  //     offset,
+  //     limit,
+  //     dropsid,
+  //     poolstate,
+  //   });
+  // };
+
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
       setSelectedAccount({ ...selectedRows[0] });
       setDropdownVisible(false);
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
+      // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
     },
     getCheckboxProps: (record: IAccountsResponse) => ({
       disabled: record.identity === 1,
@@ -169,7 +179,7 @@ const DropEdit: React.FC = () => {
   );
 
   const handleEdit = (data: any) => {
-    console.log(data);
+    // console.log(data);
     if (!selectedAccount) return;
     const params: IAddDropParams = {
       accountaddress: selectedAccount.accountaddress,
@@ -198,42 +208,58 @@ const DropEdit: React.FC = () => {
     history.push('/drops');
   };
 
+  const [form] = Form.useForm();
+
   const handleReset = () => {
     setSelectedNftList([]);
     setCoverImage(null);
     setSelectedAccount(undefined);
     setSelectedRowKeysIn1Page([]);
-    formRef.current!.resetFields();
+    form.resetFields();
+    // formRef.current!.resetFields();
+  };
+
+  const onFill = () => {
+    form.setFieldsValue({
+      note: 'Hello world!',
+      gender: 'male',
+    });
   };
 
   return (
     <PageContainer>
-      <Space direction={'vertical'} style={{ width: '100%' }}>
-        <Input.Group compact>
-          <Search
-            allowClear
-            enterButton
-            style={{ width: '82%' }}
-            onSearch={(value) => {
-              if (value === '') {
-                setDropdownVisible(false);
-                return;
-              }
-              searchAccount({ current: 1, pageSize: 5 }, value);
-              setDropdownVisible(true);
-            }}
-            // onBlur={() => {
-            //   setDropdownVisible(false);
-            // }}
-          />
-        </Input.Group>
-        <Dropdown visible={dropdownVisible} overlay={menu}>
-          <span></span>
-        </Dropdown>
-      </Space>
       <Card>
-        <Form ref={formRef} labelCol={{ span: 6 }} wrapperCol={{ span: 14 }} onFinish={handleEdit}>
+        <Form
+          form={form}
+          /* ref={formRef} */ labelCol={{ span: 6 }}
+          wrapperCol={{ span: 14 }}
+          onFinish={handleEdit}
+        >
           <Form.Item name="Account" label="Account">
+            {!targetDropId && (
+              <>
+                <Input.Group compact>
+                  <Search
+                    placeholder={'Input Address'}
+                    allowClear
+                    enterButton
+                    style={{ width: '82%' }}
+                    onSearch={(value) => {
+                      if (value === '') {
+                        setDropdownVisible(false);
+                        return;
+                      }
+                      searchAccount({ current: 1, pageSize: 5 }, value);
+                      setDropdownVisible(true);
+                    }}
+                    // onBlur={() => {setDropdownVisible(false);}}
+                  />
+                </Input.Group>
+                <Dropdown visible={dropdownVisible} overlay={menu}>
+                  <span></span>
+                </Dropdown>
+              </>
+            )}
             {selectedAccount ? (
               <List
                 itemLayout="horizontal"
@@ -366,11 +392,9 @@ const DropEdit: React.FC = () => {
           bodyStyle={{ padding: 20 }}
           visible={addNftModalVisible}
           onOk={() => {
-            console.log('ok');
             setAddNftModalVisible(false);
           }}
           onCancel={() => {
-            console.log('cancel');
             setAddNftModalVisible(false);
           }}
         >

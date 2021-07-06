@@ -7,7 +7,18 @@ import {
   IGetPoolsResponse,
   IGetAccountsParams,
   IAccountsResponse,
+  IGetDropDetailParams,
+  IDropDetailResponse,
 } from './types';
+
+export const getonedropsdetail = ({ offset, limit, dropsid, poolstate }: IGetDropDetailParams) => {
+  return post<IDropDetailResponse[]>(Apis.getonedropsdetail, {
+    offset,
+    limit,
+    dropsid,
+    poolstate,
+  });
+};
 
 export const getDrops = ({
   accountaddress = '',

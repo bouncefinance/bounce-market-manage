@@ -70,29 +70,22 @@ const routes: MenuDataItem[] = [
     component: './nft',
   },
   {
-    name: 'Authority',
-    path: '/authority',
-    icon: 'key',
-    routes: [
-      {
-        name: 'User',
-        path: 'account',
-        icon: 'User',
-        component: './account',
-      },
-      {
-        name: 'Administor',
-        path: 'administor',
-        icon: 'Key',
-        component: './authority',
-      },
-      {
-        name: 'History',
-        path: 'history',
-        icon: 'History',
-        component: './history',
-      },
-    ],
+    name: 'User',
+    path: 'account',
+    icon: 'User',
+    component: './account',
+  },
+  {
+    name: 'Administor',
+    path: 'administor',
+    icon: 'Key',
+    component: './authority',
+  },
+  {
+    name: 'History',
+    path: 'history',
+    icon: 'History',
+    component: './history',
   },
   // {
   //     name: 'box',

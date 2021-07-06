@@ -4,11 +4,13 @@ import { Table, Avatar, Image, Card, Switch, message } from 'antd';
 import { useRequest } from 'umi';
 import { ImgErrorUrl } from '@/tools/const';
 import UserRoleView from './components/userRole';
-import { IUserItem, UserCreationEnum, UserCreationType, UserDisableType, UserDisableEnum, UserRoleType } from './actions/apiType';
+import { IUserItem, UserCreationEnum, UserCreationType, UserDisableType, UserDisableEnum, UserRoleType, UserRoleEnum } from './actions/apiType';
 import { defaultUserPageParams, getUserList, getUserListFormatResult } from './actions/getUser';
 import UserTopView from './components/top';
 import { updateUserCreation, updateUserDisplay } from './actions/updateUser';
 import { AddressCopyView } from '@/components/Address';
+import { VerifyIcon } from '@/components/verify';
+import styles from './index.less'
 
 const index: React.FC = () => {
   const [role, setRole] = useState<UserRoleType>();
@@ -46,11 +48,14 @@ const columns: (run: () => void) => columns = (run) => {
       title: "Avatar",
       dataIndex: "imgurl",
       key: "imgurl",
-      render: (url, record) => <Avatar
-        shape="square"
-        size={64}
-        src={<Image src={url} fallback={ImgErrorUrl} />}
-      />
+      render: (url, record) => <div className={styles.avatar}>
+        <Avatar
+          shape="square"
+          size={64}
+          src={<Image src={url} fallback={ImgErrorUrl} />}
+        />
+        {record.identity === UserRoleEnum.Verified && <VerifyIcon className={styles.verify} />}
+      </div>
     },
     {
       title: 'User Name',

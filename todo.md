@@ -18,4 +18,5 @@
 - 上传接口有问题后台暂时有问题；暂时用用户端的地址 代码 src\pages\Authority\components\Top.tsx 36 行待修改
 - 面包屑有问题 顶级点击是空白页面 [×]
 - 登陆 404 [×]
+- 把router account抽出来不要放二级页面
 - test

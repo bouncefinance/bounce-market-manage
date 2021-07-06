@@ -1,5 +1,6 @@
 - less 开启热更新
-- commit 的时候自动调用格式化并校验代码规范
+- commit 的时候自动调用格式化并校验代码规范 [√] 部分电脑不可以 [×]
+- vscode 的 eslint 应该跟随项目配置 [√] 部分电脑不可以 [×]
 - 权限 authority
   - label 加 width [√]
   - Type [√] 二级联动选项 [×]

@@ -3,7 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import ProTable, { ProColumns } from '@ant-design/pro-table';
 import { EditFilled, ExclamationCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, message, Space, Tooltip, Typography, Image, Modal } from 'antd';
-import { getDrops, deleteOneDrop } from '@/services/drops';
+import { getDrops, deleteOneDrop, closeOneDrop } from '@/services/drops';
 import { DropsState, IDropsResponse } from '@/services/drops/types';
 import moment from 'moment';
 import { useState } from 'react';
@@ -51,7 +51,7 @@ const DropsPage: React.FC = () => {
       onOk() {
         deleteOneDrop(dropsid).then((res) => {
           if (res.code === 1) {
-            message.success('Delete Success');
+            message.success('Deleted Successfully');
             ref?.current?.reload();
           }
         });
@@ -59,20 +59,20 @@ const DropsPage: React.FC = () => {
     });
   };
 
-  const handleCloseDrop = (dropsid: number) => {
+  const handleCloseDrop = (dropId: number) => {
     confirm({
-      title: <span style={{fontSize: 14}}>{'Close Drop'}</span>,
+      title: <span style={{ fontSize: 14 }}>{'Close Drop'}</span>,
       // icon: <ExclamationCircleOutlined />,
       content: (
         <>
-          <span style={{fontSize: 20}}>{'Confirm that you want to close this Drop？'}</span>
+          <span style={{ fontSize: 20 }}>{'Confirm that you want to close this Drop？'}</span>
           <span style={{ fontSize: 20, color: 'red' }}>{'This operation cannot withdraw.'}</span>
         </>
       ),
       onOk() {
-        deleteOneDrop(dropsid).then((res) => {
+        closeOneDrop(dropId).then((res) => {
           if (res.code === 1) {
-            message.success('Delete Success');
+            message.success('Closed Successfully');
             ref?.current?.reload();
           }
         });
@@ -123,17 +123,20 @@ const DropsPage: React.FC = () => {
       render(_, item) {
         return (
           <Space>
-            <Button
-              danger
-              onClick={() => {
-                handleCloseDrop(item.id);
-              }}
-            >
-              Close Drop
-            </Button>
-            <Link to={`/drops/edit/?id=${item.id}`}>
+            {state === 2 && (
+              <Button
+                danger
+                onClick={() => {
+                  console.log(item.id)
+                  handleCloseDrop(item.id);
+                }}
+              >
+                Close Drop
+              </Button>
+            )}
+            {/* <Link to={`/drops/edit/?id=${item.id}`}>
               <Button icon={<EditFilled />} />
-            </Link>
+            </Link> */}
             <Button
               danger
               onClick={() => {

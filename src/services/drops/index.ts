@@ -40,6 +40,10 @@ export const deleteOneDrop = (dropsid: number) => {
   return post(Apis.deleteonedrops, { dropsid });
 };
 
+export const closeOneDrop = (id: number) => {
+  return post(Apis.updatedropsstate, { id, state: 3 });
+};
+
 export const addOneDrop = ({
   accountaddress,
   website,

@@ -12,12 +12,27 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons';
 
-const AddNftTable: React.FC<{
+import { ImgErrorUrl } from '@/tools/const';
+
+interface IOperateNftTableProps {
   selectedNftList: INftResponse[];
+  setTempSelectedNftList: any;
   setSelectedNftList: any;
-  selectedRowKeys: number[];
-  setSelectedRowKeys: any;
-}> = ({ selectedNftList, setSelectedNftList, selectedRowKeys, setSelectedRowKeys }) => {
+  selectedKeys: number[];
+  setSelectedKeys: any;
+  tempSelectedKeys: number[];
+  setTempSelectedKeys: any;
+}
+
+const AddNftTable: React.FC<IOperateNftTableProps> = ({
+  selectedNftList,
+  setTempSelectedNftList,
+  setSelectedNftList,
+  selectedKeys,
+  setSelectedKeys,
+  tempSelectedKeys,
+  setTempSelectedKeys,
+}) => {
   const moveUp = (originIndex: number, targetIndex: number) => {
     let tempList = [...selectedNftList];
     const tempNft = tempList[originIndex];
@@ -37,13 +52,29 @@ const AddNftTable: React.FC<{
   };
 
   const remove = (record: INftResponse) => {
-    console.log('selectedNftList: ', selectedNftList);
-    // console.log('selectedNftList.splice(originIndex, 1): ', selectedNftList.splice(originIndex, 1));
-    setSelectedNftList(
-      selectedNftList.filter((nft) => {
-        return nft !== record;
-      }),
-    );
+    // console.log('selectedNftList: ', selectedNftList);
+    // console.log('index: ', selectedNftList.indexOf(record));
+    // console.log('selectedKeys: ', selectedKeys);
+    // console.log(
+    //   'selectedKeys[selectedNftList.indexOf(record)]: ',
+    //   selectedKeys[selectedNftList.indexOf(record)],
+    // );
+
+    const targetKeyIndex = selectedNftList.indexOf(record);
+    // console.log('targetKeyIndex: ', targetKeyIndex);
+    const resulKeysList = selectedKeys.filter((key) => {
+      return key !== selectedKeys[targetKeyIndex];
+    });
+    // console.log('resulKeysList: ', resulKeysList);
+
+    setSelectedKeys(resulKeysList);
+    setTempSelectedKeys(resulKeysList);
+
+    const resultNftList = selectedNftList.filter((nft) => {
+      return nft !== record;
+    });
+    setSelectedNftList(resultNftList);
+    setTempSelectedNftList(resultNftList);
   };
 
   const columns = [
@@ -57,7 +88,13 @@ const AddNftTable: React.FC<{
       title: 'Cover',
       width: 70,
       render: (src: any) => (
-        <Image height={60} style={{ objectFit: 'contain' }} preview={false} src={src} />
+        <Image
+          height={60}
+          style={{ objectFit: 'contain' }}
+          preview={false}
+          src={src}
+          fallback={ImgErrorUrl}
+        />
       ),
     },
     {
@@ -114,8 +151,8 @@ const AddNftTable: React.FC<{
             size="small"
             onClick={() => {
               remove(record);
-              setSelectedRowKeys(
-                selectedRowKeys.filter((key) => {
+              setSelectedKeys(
+                selectedKeys.filter((key) => {
                   return key !== record.id;
                 }),
               );

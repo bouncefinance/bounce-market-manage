@@ -114,7 +114,7 @@ const DropsPage: React.FC = () => {
       dataIndex: 'dropdate',
       title: 'Drop Date',
       render: (ts: any) => {
-        return moment(ts * 1000).format('YYYY-MM-DD hh:mm');
+        return moment(ts * 1000).format('YYYY-MM-DD HH:mm');
       },
     },
     {

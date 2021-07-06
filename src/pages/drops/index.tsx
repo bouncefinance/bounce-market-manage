@@ -123,17 +123,17 @@ const DropsPage: React.FC = () => {
       render(_, item) {
         return (
           <Space>
-            <Button
+            {/* <Button
               danger
               onClick={() => {
                 handleCloseDrop(item.id);
               }}
             >
               Close Drop
-            </Button>
-            <Link to={`/drops/edit/?id=${item.id}`}>
+            </Button> */}
+            {/* <Link to={`/drops/edit/?id=${item.id}`}>
               <Button icon={<EditFilled />} />
-            </Link>
+            </Link> */}
             <Button
               danger
               onClick={() => {

@@ -30,6 +30,7 @@ import AddNftTable from '@/pages/drops/AddNftTable';
 import OperateNftTable from '@/pages/drops/OperateNftTable';
 
 import placeholderImg from '@/assets/images/placeholderImg.svg';
+import { ImgErrorUrl } from '@/tools/const';
 
 const { Column } = Table;
 const { Search } = Input;
@@ -63,8 +64,26 @@ const DropEdit: React.FC = () => {
   const [selectedAccount, setSelectedAccount] = useState<IAccountsResponse>();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [addNftModalVisible, setAddNftModalVisible] = useState(false);
-  const [selectedRowKeysIn1Page, setSelectedRowKeysIn1Page] = useState<number[]>([]);
+  const [tempSelectedKeys, setTempSelectedKeys] = useState<number[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState<number[]>([]);
+  const [tempSelectedNftList, setTempSelectedNftList] = useState<INftResponse[]>([]);
   const [selectedNftList, setSelectedNftList] = useState<INftResponse[]>([]);
+
+  useEffect(() => {
+    console.log("tempSelectedKeys: ", tempSelectedKeys)
+  }, [tempSelectedKeys])
+ 
+  useEffect(() => {
+    console.log("selectedKeys: ", selectedKeys)
+  }, [selectedKeys])
+ 
+  // useEffect(() => {
+  //   console.log("tempSelectedNftList: ", tempSelectedNftList)
+  // }, [tempSelectedNftList])
+  
+  // useEffect(() => {
+  //   console.log("selectedNftList: ", selectedNftList)
+  // }, [selectedNftList])
 
   useEffect(() => {
     setSelectedNftList([]);
@@ -140,7 +159,7 @@ const DropEdit: React.FC = () => {
               width={64}
               height={64}
               style={{ objectFit: 'contain' }}
-              fallback={placeholderImg}
+              fallback={ImgErrorUrl}
             />
           )}
         />
@@ -214,7 +233,7 @@ const DropEdit: React.FC = () => {
     setSelectedNftList([]);
     setCoverImage(null);
     setSelectedAccount(undefined);
-    setSelectedRowKeysIn1Page([]);
+    setSelectedKeys([]);
     form.resetFields();
     // formRef.current!.resetFields();
   };
@@ -235,7 +254,7 @@ const DropEdit: React.FC = () => {
           wrapperCol={{ span: 14 }}
           onFinish={handleEdit}
         >
-          <Form.Item name="Account" label="Account">
+          <Form.Item label="Account">
             {!targetDropId && (
               <>
                 <Input.Group compact>
@@ -363,9 +382,12 @@ const DropEdit: React.FC = () => {
               </Button>
               <OperateNftTable
                 selectedNftList={selectedNftList}
+                setTempSelectedNftList={setTempSelectedNftList}
                 setSelectedNftList={setSelectedNftList}
-                selectedRowKeys={selectedRowKeysIn1Page}
-                setSelectedRowKeys={setSelectedRowKeysIn1Page}
+                selectedKeys={selectedKeys}
+                setSelectedKeys={setSelectedKeys}
+                tempSelectedKeys={tempSelectedKeys}
+                setTempSelectedKeys={setTempSelectedKeys}
               />
             </Space>
           </Form.Item>
@@ -393,17 +415,25 @@ const DropEdit: React.FC = () => {
           visible={addNftModalVisible}
           onOk={() => {
             setAddNftModalVisible(false);
+            setSelectedNftList(tempSelectedNftList)
+            setSelectedKeys(tempSelectedKeys)
+            // setTempSelectedKeys([])
+            // setTempSelectedNftList([])
           }}
           onCancel={() => {
             setAddNftModalVisible(false);
+            setTempSelectedNftList(selectedNftList)
+            setTempSelectedKeys(selectedKeys)
           }}
         >
           <AddNftTable
             userAddress={selectedAccount?.accountaddress || ''}
-            selectedNftList={selectedNftList}
-            setSelectedNftList={setSelectedNftList}
-            selectedRowKeys={selectedRowKeysIn1Page}
-            setSelectedRowKeys={setSelectedRowKeysIn1Page}
+            tempSelectedNftList={tempSelectedNftList}
+            setTempSelectedNftList={setTempSelectedNftList}
+            tempSelectedKeys={tempSelectedKeys}
+            setTempSelectedKeys={setTempSelectedKeys}
+            selectedKeys={selectedKeys}
+            // setSelectedKeys={setSelectedKeys}
           />
         </Modal>
       </Card>

@@ -6,6 +6,7 @@ import { Apis } from '@/services';
 import { INftResponse } from '@/services/drops/types';
 
 import placeholderImg from '@/assets/images/placeholderImg.svg';
+import { ImgErrorUrl } from '@/tools/const';
 
 const getPoolsByCreatorAddress = (userAddress: string, offset: number = 0, limit: number = 7) => {
   return request.post(Apis.getauctionpoolsbyaccount, {
@@ -15,43 +16,50 @@ const getPoolsByCreatorAddress = (userAddress: string, offset: number = 0, limit
 
 interface IAddNftTableProps {
   userAddress: string;
-  selectedNftList: INftResponse[];
-  setSelectedNftList: any;
-  selectedRowKeys: number[];
-  setSelectedRowKeys: any;
+  tempSelectedNftList: INftResponse[];
+  setTempSelectedNftList: any;
+  tempSelectedKeys: number[];
+  setTempSelectedKeys: any;
+  selectedKeys: any;
 }
 
 const AddNftTable: React.FC<IAddNftTableProps> = ({
   userAddress,
-  selectedNftList,
-  setSelectedNftList,
-  selectedRowKeys,
-  setSelectedRowKeys,
+  tempSelectedNftList,
+  setTempSelectedNftList,
+  tempSelectedKeys,
+  setTempSelectedKeys,
+  selectedKeys,
 }) => {
-  useEffect(() => {
-    console.log('selectedNftList: ', selectedNftList);
-  }, [selectedNftList]);
+  // useEffect(() => {
+  //   console.log('selectedNftList: ', selectedNftList);
+  // }, [selectedNftList]);
+
+  // useEffect(() => {
+  //   console.log("selectedRowKeys >>>>> ", selectedKeys)
+  // }, [selectedKeys])
 
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: INftResponse[]) => {
-      setSelectedRowKeys(selectedRowKeys);
-      // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+      setTempSelectedKeys(selectedRowKeys);
+      // console.log('temp', `selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
     onSelect: (record: INftResponse, selected: boolean) => {
-      // console.log('record: ', record);
-      // console.log('selected: ', selected);
+      console.log('record: ', record);
+      console.log('selected: ', selected);
       if (selected) {
-        setSelectedNftList(selectedNftList.concat(record));
+        setTempSelectedNftList(tempSelectedNftList.concat(record));
       } else {
-        setSelectedNftList(
-          selectedNftList.filter((nft) => {
+        setTempSelectedNftList(
+          tempSelectedNftList.filter((nft) => {
             return nft.id !== record.id || nft.standard !== record.standard;
           }),
         );
       }
     },
+    preserveSelectedRowKeys: true,
     hideSelectAll: true,
-    selectedRowKeys: selectedRowKeys,
+    selectedRowKeys: tempSelectedKeys,
   };
 
   const { tableProps: nftTableProps } = useRequest(
@@ -88,7 +96,7 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
           style={{ objectFit: 'contain' }}
           preview={false}
           src={src}
-          fallback={placeholderImg}
+          fallback={ImgErrorUrl}
         />
       ),
     },

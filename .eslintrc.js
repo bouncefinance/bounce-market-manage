@@ -6,6 +6,6 @@ module.exports = {
     REACT_APP_ENV: true,
   },
   rules: {
-    "no-nested-ternary": 'none',
-  }
+    'no-nested-ternary': 1,
+  },
 };

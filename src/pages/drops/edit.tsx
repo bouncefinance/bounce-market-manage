@@ -70,17 +70,17 @@ const DropEdit: React.FC = () => {
   const [selectedNftList, setSelectedNftList] = useState<INftResponse[]>([]);
 
   useEffect(() => {
-    console.log("tempSelectedKeys: ", tempSelectedKeys)
-  }, [tempSelectedKeys])
- 
+    console.log('tempSelectedKeys: ', tempSelectedKeys);
+  }, [tempSelectedKeys]);
+
   useEffect(() => {
-    console.log("selectedKeys: ", selectedKeys)
-  }, [selectedKeys])
- 
+    console.log('selectedKeys: ', selectedKeys);
+  }, [selectedKeys]);
+
   // useEffect(() => {
   //   console.log("tempSelectedNftList: ", tempSelectedNftList)
   // }, [tempSelectedNftList])
-  
+
   // useEffect(() => {
   //   console.log("selectedNftList: ", selectedNftList)
   // }, [selectedNftList])
@@ -350,6 +350,7 @@ const DropEdit: React.FC = () => {
             rules={[{ required: true, message: 'Drop date cannot be empty' }]}
           >
             <DatePicker
+              format={'YYYY-MM-DD HH:mm'}
               showTime
               showNow={false}
               disabledDate={disabledDate}
@@ -415,15 +416,15 @@ const DropEdit: React.FC = () => {
           visible={addNftModalVisible}
           onOk={() => {
             setAddNftModalVisible(false);
-            setSelectedNftList(tempSelectedNftList)
-            setSelectedKeys(tempSelectedKeys)
+            setSelectedNftList(tempSelectedNftList);
+            setSelectedKeys(tempSelectedKeys);
             // setTempSelectedKeys([])
             // setTempSelectedNftList([])
           }}
           onCancel={() => {
             setAddNftModalVisible(false);
-            setTempSelectedNftList(selectedNftList)
-            setTempSelectedKeys(selectedKeys)
+            setTempSelectedNftList(selectedNftList);
+            setTempSelectedKeys(selectedKeys);
           }}
         >
           <AddNftTable

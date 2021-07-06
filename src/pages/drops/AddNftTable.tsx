@@ -50,7 +50,7 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
         );
       }
     },
-
+    hideSelectAll: true,
     selectedRowKeys: selectedRowKeys,
   };
 

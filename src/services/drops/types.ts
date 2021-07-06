@@ -75,7 +75,7 @@ export interface IDropsResponse {
 }
 
 export interface IGetAccountsParams {
-  filter: string;
+  filter?: number;
   offset?: number;
   limit?: number;
   accountaddress?: DropsState;
@@ -83,6 +83,35 @@ export interface IGetAccountsParams {
   likestr?: number;
 }
 
+export interface IGetDropDetailParams {
+  offset: number;
+  limit: number;
+  dropsid: number;
+  poolstate: number;
+}
+
+export interface IDropDetailResponse {
+  accountaddress: string;
+  website: string;
+  twitter: string;
+  instagram: string;
+  title: string;
+  description: string;
+  bgcolor: string;
+  coverimgurl: string;
+  dropdate: number;
+  nfts: number;
+  itemname: string;
+  fileurl: string;
+  price: string;
+  username: string;
+  standard: number;
+  tokenid: number;
+  auctionpoolid: number;
+  ordernum: number;
+  creatorurl: string;
+  created_at: string;
+}
 export interface IAccountsResponse {
   accountaddress: string;
   bandimgurl: string;

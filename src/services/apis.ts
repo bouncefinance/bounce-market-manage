@@ -10,8 +10,9 @@ export const Apis = {
   deleteonedrops: '/api/bouadmin/main/auth/deleteonedrops', // 删除一条drop
   addaccountdrops: '/api/bouadmin/main/auth/addaccountdrops', // 新增一条drop
   getauctionpoolsbyaccount: '/api/bouadmin/main/auth/getauctionpoolsbyaccount', // 查询一个账户地址下的pools
-  getaccountsbylikename: '/api/bouadmin/main/auth/getaccountsbylikename', // 查询用户信息
+  getaccountsbylikename: '/api/bouadmin/main/auth/getaccountsbylikename', // 查询用户信息 filter: 1:likestr, 2:accountaddress, 3:identity
   updatedrops: '/api/bouadmin/main/auth/updatedrops', // 编辑一条drop
+  getonedropsdetail: '/api/bouadmin/main/auth/getonedropsdetail', // 获取一条drop的信息
 };
 
 export default Apis;

@@ -18,12 +18,21 @@ const AddNftTable: React.FC<{
   selectedRowKeys: number[];
   setSelectedRowKeys: any;
 }> = ({ selectedNftList, setSelectedNftList, selectedRowKeys, setSelectedRowKeys }) => {
-  const up = (originIndex: number, targetIndex: number) => {
+  const moveUp = (originIndex: number, targetIndex: number) => {
     let tempList = [...selectedNftList];
     const tempNft = tempList[originIndex];
     tempList[originIndex] = tempList[targetIndex];
     tempList[targetIndex] = tempNft;
-    console.log('tempList: ', tempList);
+    // console.log('tempList: ', tempList);
+    setSelectedNftList(tempList);
+  };
+
+  const moveDown = (originIndex: number, targetIndex: number) => {
+    let tempList = [...selectedNftList];
+    const tempNft = tempList[originIndex];
+    tempList[originIndex] = tempList[targetIndex];
+    tempList[targetIndex] = tempNft;
+    // console.log('tempList: ', tempList);
     setSelectedNftList(tempList);
   };
 
@@ -84,15 +93,21 @@ const AddNftTable: React.FC<{
             disabled={index === 0 ? true : false}
             size="small"
             onClick={() => {
-              console.log('text: ', text);
-              console.log('record: ', record);
-              console.log('index: ', index);
-              up(index, index - 1);
+              // console.log('text: ', text);
+              // console.log('record: ', record);
+              // console.log('index: ', index);
+              moveUp(index, index - 1);
             }}
           >
             <CaretUpOutlined />
           </Button>
-          <Button size="small" disabled={index === selectedNftList.length - 1 ? true : false}>
+          <Button
+            size="small"
+            disabled={index === selectedNftList.length - 1 ? true : false}
+            onClick={() => {
+              moveDown(index, index + 1);
+            }}
+          >
             <CaretDownOutlined />
           </Button>
           <Button

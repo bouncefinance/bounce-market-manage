@@ -95,4 +95,12 @@ export default {
   'pages.nft.handile.hasBanned': 'Has banned',
   'pages.recommend.index.Pools': 'Pools',
   'pages.recommend.index.Brands': 'Brands',
+  'pages.account.hideCreationButton': 'Hide Creation',
+  'pages.account.showCreationButton': 'Show Creation',
+  'pages.account.DisableButton': 'Disable User',
+  'pages.account.enableButton': 'Enable User',
+  'pages.account.hideCreation': 'Are you sure you want to hide this user’s all creations on Fangible?',
+  'pages.account.showCreation': 'Are you sure you want to show this user’s all creations on Fangible?',
+  'pages.account.Disable': 'Are you sure you want to disable this user’s actions on Fangible？',
+  'pages.account.Enable': 'Are you sure you want to enable this user’s actions on Fangible？',
 };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Table, Avatar, Image, Card, Switch, message } from 'antd';
-import { useRequest } from 'umi';
+import { Table, Avatar, Image, Card, Switch, message, Modal } from 'antd';
+import { useIntl, useRequest } from 'umi';
 import { ImgErrorUrl } from '@/tools/const';
 import UserRoleView from './components/userRole';
 import { IUserItem, UserCreationEnum, UserCreationType, UserDisableType, UserDisableEnum, UserRoleType, UserRoleEnum } from './actions/apiType';
@@ -11,6 +11,8 @@ import { updateUserCreation, updateUserDisplay } from './actions/updateUser';
 import { AddressCopyView } from '@/components/Address';
 import { VerifyIcon } from '@/components/verify';
 import styles from './index.less'
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+const { confirm } = Modal
 
 const index: React.FC = () => {
   const [role, setRole] = useState<UserRoleType>();
@@ -86,22 +88,31 @@ const columns: (run: () => void) => columns = (run) => {
       render: (id, record) => {
         const [oldValue, setValue] = useState<UserCreationType>(record.state)
         const [loading, setLoading] = useState(false)
+        const intl = useIntl()
+        const onChange = (checked: boolean) => {
+          confirm({
+            title: intl.formatMessage({ id: checked ? 'pages.account.hideCreationButton' : 'pages.account.showCreationButton' }),
+            icon: <ExclamationCircleOutlined />,
+            content: intl.formatMessage({ id: checked ? 'pages.account.hideCreation' : 'pages.account.showCreation' }),
+            onOk: async () => {
+              setLoading(true)
+              const state: UserCreationType = checked ? UserCreationEnum.Disable : UserCreationEnum.Normal
+              const isOk = await updateUserCreation({ id, state })
+              setLoading(false)
+              if (isOk) {
+                message.success('Set Success 🎉 🎉 🎉')
+                setValue(state)
+                run && run()
+                return
+              }
+              message.error('error')
+            },
+          });
+        }
         return <Switch
           loading={loading}
           checked={oldValue == 2}
-          onChange={async (checked: boolean) => {
-            setLoading(true)
-            const state: UserCreationType = checked ? UserCreationEnum.Disable : UserCreationEnum.Normal
-            const isOk = await updateUserCreation({ id, state })
-            setLoading(false)
-            if (isOk) {
-              message.success('Set Success 🎉 🎉 🎉')
-              setValue(state)
-              run && run()
-              return
-            }
-            message.error('error')
-          }}
+          onChange={onChange}
         />
       }
     },
@@ -112,22 +123,31 @@ const columns: (run: () => void) => columns = (run) => {
       render: (id, record) => {
         const [oldValue, setValue] = useState<UserDisableType>(record.display)
         const [loading, setLoading] = useState(false)
+        const intl = useIntl()
+        const onChange = (checked: boolean) => {
+          confirm({
+            title: intl.formatMessage({ id: checked ? 'pages.account.DisableButton' : 'pages.account.enableButton' }),
+            icon: <ExclamationCircleOutlined />,
+            content: intl.formatMessage({ id: checked ? 'pages.account.Disable' : 'pages.account.Enable' }),
+            onOk: async (checked: boolean) => {
+              setLoading(true)
+              const display: UserDisableType = checked ? UserDisableEnum.Normal : UserDisableEnum.Disable
+              const isOk = await updateUserDisplay({ id, display })
+              setLoading(false)
+              if (isOk) {
+                message.success('Set Success 🎉 🎉 🎉')
+                setValue(display)
+                run && run()
+                return
+              }
+              message.error('error')
+            }
+          })
+        }
         return <Switch
           loading={loading}
           checked={oldValue == 2}
-          onChange={async (checked: boolean) => {
-            setLoading(true)
-            const display: UserDisableType = checked ? UserDisableEnum.Normal : UserDisableEnum.Disable
-            const isOk = await updateUserDisplay({ id, display })
-            setLoading(false)
-            if (isOk) {
-              message.success('Set Success 🎉 🎉 🎉')
-              setValue(display)
-              run && run()
-              return
-            }
-            message.error('error')
-          }}
+          onChange={onChange}
         />
       }
     }

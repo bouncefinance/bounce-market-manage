@@ -4,7 +4,8 @@ import { Table, Avatar, Image, Card, Switch, message, Modal } from 'antd';
 import { useIntl, useRequest } from 'umi';
 import { ImgErrorUrl } from '@/tools/const';
 import UserRoleView from './components/userRole';
-import { IUserItem, UserCreationEnum, UserCreationType, UserDisableType, UserDisableEnum, UserRoleType, UserRoleEnum } from './actions/apiType';
+import type { IUserItem, UserCreationType, UserDisableType, UserRoleType } from './actions/apiType';
+import { UserCreationEnum, UserDisableEnum, UserRoleEnum } from './actions/apiType';
 import { defaultUserPageParams, getUserList, getUserListFormatResult } from './actions/getUser';
 import UserTopView from './components/top';
 import { updateUserCreation, updateUserDisplay } from './actions/updateUser';
@@ -12,6 +13,7 @@ import { AddressCopyView } from '@/components/Address';
 import { VerifyIcon } from '@/components/verify';
 import styles from './index.less'
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+
 const { confirm } = Modal
 
 const index: React.FC = () => {
@@ -38,12 +40,12 @@ const index: React.FC = () => {
 
 export default index;
 
-type columns = Array<{
+type columns = {
   title: string;
   dataIndex: string;
   key: string;
   render?: (value: string, record: IUserItem) => JSX.Element;
-}>
+}[]
 const columns: (run: () => void) => columns = (run) => {
   return [
     {
@@ -79,7 +81,7 @@ const columns: (run: () => void) => columns = (run) => {
       title: 'Identity',
       dataIndex: 'identity',
       key: 'identity',
-      render: (value, record) => <UserRoleView id={record.id} value={value} />
+      render: (value, record) => <UserRoleView id={record.id} value={value} run={run} />
     },
     {
       title: 'Hide Creation',
@@ -111,7 +113,7 @@ const columns: (run: () => void) => columns = (run) => {
         }
         return <Switch
           loading={loading}
-          checked={oldValue == 2}
+          checked={oldValue === UserCreationEnum.Disable}
           onChange={onChange}
         />
       }
@@ -129,9 +131,9 @@ const columns: (run: () => void) => columns = (run) => {
             title: intl.formatMessage({ id: 'pages.account.disableButton' }, { v: intl.formatMessage({ id: checked ? 'g.disable' : 'g.enable' }) }),
             icon: <ExclamationCircleOutlined />,
             content: intl.formatMessage({ id: 'pages.account.Disable' }, { v: intl.formatMessage({ id: checked ? 'g.disable' : 'g.enable' }) }),
-            onOk: async (checked: boolean) => {
+            onOk: async () => {
               setLoading(true)
-              const display: UserDisableType = checked ? UserDisableEnum.Normal : UserDisableEnum.Disable
+              const display: UserDisableType = checked ? UserDisableEnum.Disable : UserDisableEnum.Normal
               const isOk = await updateUserDisplay({ id, display })
               setLoading(false)
               if (isOk) {
@@ -146,7 +148,7 @@ const columns: (run: () => void) => columns = (run) => {
         }
         return <Switch
           loading={loading}
-          checked={oldValue == 2}
+          checked={oldValue === UserDisableEnum.Disable}
           onChange={onChange}
         />
       }

@@ -1,11 +1,10 @@
-import { Table, Image, Typography, Tooltip, Tag } from 'antd';
+import { Table, Typography, Tooltip, Tag } from 'antd';
+import Image from '@/components/Image';
 import React from 'react';
 import { useRequest } from 'umi';
 import request from 'umi-request';
 import { Apis } from '@/services';
 import type { IPoolResponse, poolStateType } from '@/services/drops/types';
-
-import { ImgErrorUrl } from '@/tools/const';
 
 const getPoolsByCreatorAddress = (userAddress: string, offset: number = 0, limit: number = 7) => {
   return request.post(Apis.getauctionpoolsbyaccount, {
@@ -87,16 +86,7 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
       dataIndex: 'fileurl',
       title: 'Cover',
       width: 80,
-      render: (src: any) => (
-        <Image
-          height={60}
-          width={60}
-          style={{ objectFit: 'contain' }}
-          preview={false}
-          src={src}
-          fallback={ImgErrorUrl}
-        />
-      ),
+      render: (src: any) => <Image height={60} width={60} src={src} />,
     },
     {
       dataIndex: 'itemname',
@@ -106,7 +96,8 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
     {
       dataIndex: 'state',
       title: 'State',
-      render: (state: poolStateType) => (state === 0 ? <Tag color={'blue'}>live</Tag> : <Tag color={'red'}>closed</Tag>),
+      render: (state: poolStateType) =>
+        state === 0 ? <Tag color={'blue'}>live</Tag> : <Tag color={'red'}>closed</Tag>,
     },
     {
       dataIndex: 'creator',

@@ -1,16 +1,7 @@
 import { Table, Image, Typography, Tooltip, Space, Button } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { useRequest } from 'umi';
-import request from 'umi-request';
-import { Apis } from '@/services';
-import { IPoolResponse } from '@/services/drops/types';
-import {
-  ArrowDownOutlined,
-  ArrowUpOutlined,
-  CaretDownOutlined,
-  CaretUpOutlined,
-  DeleteOutlined,
-} from '@ant-design/icons';
+import React from 'react';
+import type { IPoolResponse } from '@/services/drops/types';
+import { CaretDownOutlined, CaretUpOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import { ImgErrorUrl } from '@/tools/const';
 
@@ -30,11 +21,10 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
   setSelectedNftList,
   selectedKeys,
   setSelectedKeys,
-  tempSelectedKeys,
   setTempSelectedKeys,
-}) => {
+}: IOperateNftTableProps) => {
   const moveUp = (originIndex: number, targetIndex: number) => {
-    let tempList = [...selectedNftList];
+    const tempList = [...selectedNftList];
     const tempNft = tempList[originIndex];
     tempList[originIndex] = tempList[targetIndex];
     tempList[targetIndex] = tempNft;
@@ -43,7 +33,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
   };
 
   const moveDown = (originIndex: number, targetIndex: number) => {
-    let tempList = [...selectedNftList];
+    const tempList = [...selectedNftList];
     const tempNft = tempList[originIndex];
     tempList[originIndex] = tempList[targetIndex];
     tempList[targetIndex] = tempNft;
@@ -127,7 +117,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
       render: (text: string, record: IPoolResponse, index: number) => (
         <Space>
           <Button
-            disabled={index === 0 ? true : false}
+            disabled={index === 0}
             size="small"
             onClick={() => {
               // console.log('text: ', text);
@@ -140,7 +130,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
           </Button>
           <Button
             size="small"
-            disabled={index === selectedNftList.length - 1 ? true : false}
+            disabled={index === selectedNftList.length - 1}
             onClick={() => {
               moveDown(index, index + 1);
             }}
@@ -167,8 +157,8 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
 
   return (
     <Table
-      rowKey={(record) => {
-        return record.id + record.standard + Date.now(); //在这里加上一个时间戳就可以了
+      rowKey={(record: IPoolResponse) => {
+        return record.id + record.standard + Date.now(); // 在这里加上一个时间戳就可以了
       }}
       bordered
       dataSource={selectedNftList}

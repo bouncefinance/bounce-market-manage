@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import moment from 'moment';
+import styles from './index.less';
+import React, { useEffect, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import {
   Button,
   Card,
   Form,
   Input,
-  Image,
   DatePicker,
   Modal,
   message,
@@ -15,21 +16,16 @@ import {
   Empty,
   Tag,
 } from 'antd';
+import Image from '@/components/Image';
 import ImageUploader from '@/components/ImageUploader';
-import { useState } from 'react';
-import styles from './index.less';
 import ColorPicker from '@/components/ColorPicker';
-import type { IAddDropParams, IPoolResponse } from '@/services/drops/types';
-import type { IUserItem } from '@/services/user/types';
+import { useRequest, history } from 'umi';
 import { addOneDrop } from '@/services/drops';
 import { getAccountByAddress } from '@/services/user';
-import { useRequest, history } from 'umi';
-import moment from 'moment';
-
+import type { IUserItem } from '@/services/user/types';
 import AddNftTable from '@/pages/drops/AddNftTable';
 import OperateNftTable from '@/pages/drops/OperateNftTable';
-
-import { ImgErrorUrl } from '@/tools/const';
+import type { IAddDropParams, IPoolResponse } from '@/services/drops/types';
 
 const { Option } = Select;
 
@@ -38,7 +34,7 @@ const targetDropId = history.location.query?.id;
 
 function range(start: any, end: any) {
   const result = [];
-  for (let i = start; i < end; i+=1) {
+  for (let i = start; i < end; i += 1) {
     result.push(i);
   }
   return result;
@@ -103,7 +99,6 @@ const DropEdit: React.FC = () => {
   //   });
   // };
 
-
   const handleEdit = (data: any) => {
     if (!selectedAccount) return;
     const params: IAddDropParams = {
@@ -150,38 +145,52 @@ const DropEdit: React.FC = () => {
   //   });
   // };
 
+  // const options = accountData?.list?.map((account: IUserItem) => {
+  //   return (
+  //     <Option key={account.id} value={account.accountaddress} disabled={account.identity === 1}>
+  //       <List
+  //         itemLayout="horizontal"
+  //         loading={accountLoading}
+  //         dataSource={[account]}
+  //         renderItem={(item: IUserItem) => (
+  //           <List.Item key={item?.id}>
+  //             <List.Item.Meta
+  //               avatar={<Image src={item?.imgurl} width={50} height={50} />}
+  //               title={
+  //                 <Space>
+  //                   <span>{item?.username}</span>
+  //                   {item?.identity === 1 ? (
+  //                     <Tag color="error">Unverfied</Tag>
+  //                   ) : (
+  //                     <Tag color="blue">{'Verfied'}</Tag>
+  //                   )}
+  //                 </Space>
+  //               }
+  //               description={<span>{item?.accountaddress}</span>}
+  //             />
+  //           </List.Item>
+  //         )}
+  //       />
+  //     </Option>
+  //   );
+  // });
   const options = accountData?.list?.map((account: IUserItem) => {
+    console.log('account=>', Date.now());
     return (
       <Option key={account.id} value={account.accountaddress} disabled={account.identity === 1}>
-        <List
-          itemLayout="horizontal"
-          dataSource={[account]}
-          renderItem={(item: IUserItem) => (
-            <List.Item key={item?.id}>
-              <List.Item.Meta
-                avatar={
-                  <Image
-                    src={item?.imgurl}
-                    width={50}
-                    height={50}
-                    style={{ objectFit: 'contain' }}
-                    fallback={ImgErrorUrl}
-                  />
-                }
-                title={
-                  <Space>
-                    <span>{item?.username}</span>
-                    {item?.identity === 1 ? (
-                      <Tag color="error">Unverfied</Tag>
-                    ) : (
-                      <Tag color="blue">{'Verfied'}</Tag>
-                    )}
-                  </Space>
-                }
-                description={<span>{item?.accountaddress}</span>}
-              />
-            </List.Item>
-          )}
+        <List.Item.Meta
+          avatar={<Image src={account?.imgurl} width={50} height={50} />}
+          title={
+            <Space>
+              <span>{account?.username}</span>
+              {account?.identity === 1 ? (
+                <Tag color="error">Unverfied</Tag>
+              ) : (
+                <Tag color="blue">{'Verfied'}</Tag>
+              )}
+            </Space>
+          }
+          description={<span>{account?.accountaddress}</span>}
         />
       </Option>
     );
@@ -205,7 +214,7 @@ const DropEdit: React.FC = () => {
                 defaultActiveFirstOption={false}
                 showSearch
                 value={selectedAccountAddress}
-                placeholder={'Input Address'}
+                placeholder="Input Address"
                 onSearch={(value) => {
                   if (value) searchAccount(value);
                 }}
@@ -229,15 +238,7 @@ const DropEdit: React.FC = () => {
                 renderItem={(item) => (
                   <List.Item key={item?.id}>
                     <List.Item.Meta
-                      avatar={
-                        <Image
-                          src={item?.imgurl}
-                          width={50}
-                          height={50}
-                          style={{ objectFit: 'contain' }}
-                          fallback={ImgErrorUrl}
-                        />
-                      }
+                      avatar={<Image src={item?.imgurl} width={50} height={50} />}
                       title={<span>{item?.username}</span>}
                       description={item?.accountaddress}
                     />
@@ -275,20 +276,10 @@ const DropEdit: React.FC = () => {
             {coverImage && (
               <div className={styles['cover-image']}>
                 <div className={styles.preview}>
-                  <Image
-                    width={240}
-                    height={100}
-                    src={coverImage?.thumbUrl || coverImage?.url}
-                    preview={false}
-                  />
+                  <Image width={240} height={100} src={coverImage?.thumbUrl || coverImage?.url} />
                 </div>
                 <div className={styles.preview}>
-                  <Image
-                    width={73}
-                    height={100}
-                    src={coverImage?.thumbUrl || coverImage?.url}
-                    preview={false}
-                  />
+                  <Image width={73} height={100} src={coverImage?.thumbUrl || coverImage?.url} />
                 </div>
               </div>
             )}

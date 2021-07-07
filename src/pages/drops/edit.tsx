@@ -29,6 +29,8 @@ import type { IAddDropParams, IPoolResponse } from '@/services/drops/types';
 
 const { Option } = Select;
 
+// type backgroundType = 'cover' | 'background color';
+
 // console.log('history.location.query: ', history.location.query?.id);
 const targetDropId = history.location.query?.id;
 
@@ -39,15 +41,24 @@ function range(start: any, end: any) {
   }
   return result;
 }
-
-const disabledDate = (currentDate: any) => currentDate && currentDate < moment().subtract(1, 'day');
-const disabledTime = () => {
+const disabledDate = (currentDate: any) =>
+  currentDate && currentDate < moment().subtract(1, 'day').endOf('day');
+const disabledTime = (date: any) => {
   const hours = moment().hours();
   const minutes = moment().minutes();
+  const seconds = moment().seconds();
   // 当日只能选择当前时间之后的时间点
+  if (date && moment(date).date() === moment().date()) {
+    return {
+      disabledHours: () => range(0, 24).splice(0, hours),
+      disabledMinutes: () => range(0, 60).splice(0, minutes + 1),
+      disabledSeconds: () => range(0, 60).splice(0, seconds + 1),
+    };
+  }
   return {
-    disabledHours: () => range(0, 24).splice(0, hours),
-    disabledMinutes: () => range(0, 60).splice(0, minutes + 1),
+    disabledHours: () => [],
+    disabledMinutes: () => [],
+    disabledSeconds: () => [],
   };
 };
 
@@ -60,6 +71,7 @@ const DropEdit: React.FC = () => {
   const [tempSelectedNftList, setTempSelectedNftList] = useState<IPoolResponse[]>([]);
   const [selectedNftList, setSelectedNftList] = useState<IPoolResponse[]>([]);
   const [selectedAccountAddress, setSelectedAccountAddress] = useState('');
+  // const [backgroundType, setBackgroundType] = useState<backgroundType>('cover');
 
   useEffect(() => {
     setSelectedNftList([]);
@@ -100,6 +112,7 @@ const DropEdit: React.FC = () => {
   // };
 
   const handleEdit = (data: any) => {
+    // console.log('data: ', data);
     if (!selectedAccount) return;
     const params: IAddDropParams = {
       accountaddress: selectedAccount.accountaddress,
@@ -108,8 +121,8 @@ const DropEdit: React.FC = () => {
       Instagram: data.instagram,
       title: data.title,
       description: data.description,
-      bgcolor: data.bgcolor,
-      coverimgurl: data.cover?.url,
+      bgcolor: data?.bgcolor,
+      coverimgurl: data?.cover?.url,
       poolids: selectedNftList.map((nft) => {
         return nft.id;
       }),
@@ -145,37 +158,7 @@ const DropEdit: React.FC = () => {
   //   });
   // };
 
-  // const options = accountData?.list?.map((account: IUserItem) => {
-  //   return (
-  //     <Option key={account.id} value={account.accountaddress} disabled={account.identity === 1}>
-  //       <List
-  //         itemLayout="horizontal"
-  //         loading={accountLoading}
-  //         dataSource={[account]}
-  //         renderItem={(item: IUserItem) => (
-  //           <List.Item key={item?.id}>
-  //             <List.Item.Meta
-  //               avatar={<Image src={item?.imgurl} width={50} height={50} />}
-  //               title={
-  //                 <Space>
-  //                   <span>{item?.username}</span>
-  //                   {item?.identity === 1 ? (
-  //                     <Tag color="error">Unverfied</Tag>
-  //                   ) : (
-  //                     <Tag color="blue">{'Verfied'}</Tag>
-  //                   )}
-  //                 </Space>
-  //               }
-  //               description={<span>{item?.accountaddress}</span>}
-  //             />
-  //           </List.Item>
-  //         )}
-  //       />
-  //     </Option>
-  //   );
-  // });
   const options = accountData?.list?.map((account: IUserItem) => {
-    console.log('account=>', Date.now());
     return (
       <Option key={account.id} value={account.accountaddress} disabled={account.identity === 1}>
         <List.Item.Meta
@@ -186,7 +169,7 @@ const DropEdit: React.FC = () => {
               {account?.identity === 1 ? (
                 <Tag color="error">Unverfied</Tag>
               ) : (
-                <Tag color="blue">{'Verfied'}</Tag>
+                <Tag color="blue">Verfied</Tag>
               )}
             </Space>
           }
@@ -249,6 +232,44 @@ const DropEdit: React.FC = () => {
               <></>
             )}
           </Form.Item>
+
+          {/* <Form.Item
+            name={backgroundType}
+            label="Background"
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (value || getFieldValue(backgroundType)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error(`${backgroundType} cannot be empty`));
+                },
+              }),
+            ]}
+          >
+            <Space direction="vertical">
+              <Select
+                style={{ width: 160 }}
+                defaultValue={backgroundType}
+                onSelect={(value: backgroundType) => {
+                  setBackgroundType(value);
+                }}
+              >
+                <Option value="cover">Cover</Option>
+                <Option value="background color">Background Color</Option>
+              </Select>
+
+              <ImageUploader
+                maxCount={1}
+                onChange={(file) => {
+                  setCoverImage(file);
+                }}
+              />
+
+              {backgroundType === 'background color' && <ColorPicker value="#000" />}
+            </Space>
+          </Form.Item> */}
+
           <Form.Item
             name="cover"
             label="Cover"
@@ -272,6 +293,7 @@ const DropEdit: React.FC = () => {
               }}
             />
           </Form.Item>
+          {/* {backgroundType === 'cover' && ( */}
           <Form.Item label="Preview">
             {coverImage && (
               <div className={styles['cover-image']}>
@@ -284,6 +306,7 @@ const DropEdit: React.FC = () => {
               </div>
             )}
           </Form.Item>
+          {/* )} */}
           <Form.Item
             name="bgcolor"
             label="Background Color"

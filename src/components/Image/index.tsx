@@ -30,11 +30,11 @@ const ImageLoading: React.FC = () => {
 const Image: React.FC<IImage> = ({ preview, fallback, placeholder, ...rest }) => {
   return (
     <AntdImage
+      // style={{ objectFit: 'contain' }}
       {...rest}
       fallback={fallback}
       preview={preview}
       placeholder={placeholder}
-      style={{ objectFit: 'contain' }}
     />
   );
 };

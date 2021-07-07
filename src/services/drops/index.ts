@@ -83,14 +83,14 @@ export const getVerfiedUsersList = ({ offset, limit }: IGetAccountsParams) => {
 };
 
 export const getAccountByAddress = function ({
-  offset,
-  limit = 5,
+  // offset,
+  // limit,
   accountaddress,
 }: IGetAccountsParams) {
   return post<IAccountsResponse[]>(Apis.getaccountsbylikename, {
     filter: 2,
-    limit,
-    offset,
+    // limit,
+    // offset,
     accountaddress,
   });
 };

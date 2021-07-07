@@ -15,6 +15,10 @@ import {
   Tooltip,
   Dropdown,
   List,
+  Avatar,
+  Select,
+  Empty,
+  Tag,
 } from 'antd';
 import ImageUploader from '@/components/ImageUploader';
 import { useState } from 'react';
@@ -29,11 +33,12 @@ import moment from 'moment';
 import AddNftTable from '@/pages/drops/AddNftTable';
 import OperateNftTable from '@/pages/drops/OperateNftTable';
 
-import placeholderImg from '@/assets/images/placeholderImg.svg';
 import { ImgErrorUrl } from '@/tools/const';
 
 const { Column } = Table;
 const { Search } = Input;
+const { Meta } = Card;
+const { Option } = Select;
 
 // console.log('history.location.query: ', history.location.query?.id);
 const targetDropId = history.location.query?.id;
@@ -50,57 +55,40 @@ const disabledDate = (currentDate: any) => currentDate && currentDate < moment()
 const disabledTime = () => {
   const hours = moment().hours();
   const minutes = moment().minutes();
-  const seconds = moment().seconds();
   // 当日只能选择当前时间之后的时间点
   return {
     disabledHours: () => range(0, 24).splice(0, hours),
     disabledMinutes: () => range(0, 60).splice(0, minutes + 1),
-    disabledSeconds: () => range(0, 60).splice(0, seconds + 1),
   };
 };
 
 const DropEdit: React.FC = () => {
   const [coverImage, setCoverImage] = useState<any>(null);
   const [selectedAccount, setSelectedAccount] = useState<IAccountsResponse>();
-  const [dropdownVisible, setDropdownVisible] = useState(false);
   const [addNftModalVisible, setAddNftModalVisible] = useState(false);
   const [tempSelectedKeys, setTempSelectedKeys] = useState<number[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<number[]>([]);
   const [tempSelectedNftList, setTempSelectedNftList] = useState<INftResponse[]>([]);
   const [selectedNftList, setSelectedNftList] = useState<INftResponse[]>([]);
-
-  useEffect(() => {
-    console.log('tempSelectedKeys: ', tempSelectedKeys);
-  }, [tempSelectedKeys]);
-
-  useEffect(() => {
-    console.log('selectedKeys: ', selectedKeys);
-  }, [selectedKeys]);
-
-  // useEffect(() => {
-  //   console.log("tempSelectedNftList: ", tempSelectedNftList)
-  // }, [tempSelectedNftList])
-
-  // useEffect(() => {
-  //   console.log("selectedNftList: ", selectedNftList)
-  // }, [selectedNftList])
+  const [selectedAccountAddress, setSelectedAccountAddress] = useState('');
 
   useEffect(() => {
     setSelectedNftList([]);
   }, [selectedAccount]);
 
   // getAccountByAddress
-  const { tableProps: accountTableProps, run: searchAccount } = useRequest(
-    ({ pageSize: limit, current: offset }, accountaddress) => {
+  const {
+    data: accountData,
+    loading: accountLoading,
+    run: searchAccount,
+  } = useRequest(
+    (accountaddress) => {
       return getAccountByAddress({
-        offset: (offset - 1) * limit,
-        limit,
         accountaddress,
       });
     },
     {
       manual: true,
-      paginated: true,
       cacheKey: 'accounts',
       formatResult(data: any) {
         return {
@@ -111,6 +99,8 @@ const DropEdit: React.FC = () => {
     },
   );
 
+  // console.log('accountData: ', accountData);
+
   // getonedropsdetail = ({ offset, limit, dropsid, poolstate }: IGetDropDetailParams) => {
   //   return post<IDropDetailResponse[]>(Apis.getonedropsdetail, {
   //     offset,
@@ -120,82 +110,7 @@ const DropEdit: React.FC = () => {
   //   });
   // };
 
-  const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-      setSelectedAccount({ ...selectedRows[0] });
-      setDropdownVisible(false);
-      // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
-    },
-    getCheckboxProps: (record: IAccountsResponse) => ({
-      disabled: record.identity === 1,
-    }),
-  };
-
   const menuEl = useRef(null);
-  const formRef = useRef<FormInstance>(null);
-
-  const menu = (
-    <Menu ref={menuEl}>
-      <Table
-        rowSelection={{
-          type: 'radio',
-          ...rowSelection,
-        }}
-        rowKey="id"
-        {...accountTableProps}
-        size="small"
-        style={{ width: 500 }}
-      >
-        <Column
-          title="Avatar"
-          dataIndex="imgurl"
-          key="imgurl"
-          width={110}
-          align={'center'}
-          render={(imgurl) => (
-            <Image
-              preview={false}
-              src={imgurl}
-              width={64}
-              height={64}
-              style={{ objectFit: 'contain' }}
-              fallback={ImgErrorUrl}
-            />
-          )}
-        />
-
-        <Column
-          title="User name"
-          dataIndex="username"
-          key="username"
-          align={'center'}
-          ellipsis={{ showTitle: false }}
-          render={(username) =>
-            username ? (
-              <Tooltip placement="topLeft" title={username}>
-                <span>{username}</span>
-              </Tooltip>
-            ) : (
-              '--'
-            )
-          }
-        />
-
-        <Column
-          title="Address"
-          dataIndex="accountaddress"
-          key="accountaddress"
-          width={120}
-          align={'center'}
-          render={(accountaddress) => (
-            <Tooltip placement="topLeft" title={accountaddress}>
-              <span>{`${accountaddress.slice(0, 6)}...${accountaddress.slice(-4)}`}</span>
-            </Tooltip>
-          )}
-        />
-      </Table>
-    </Menu>
-  );
 
   const handleEdit = (data: any) => {
     console.log('data.dropdate.unix()', data.dropdate.unix());
@@ -245,6 +160,43 @@ const DropEdit: React.FC = () => {
     });
   };
 
+  const options = accountData?.list?.map((account: IAccountsResponse) => {
+    return (
+      <Option key={account.id} value={account.accountaddress} disabled={account.identity === 1}>
+        <List
+          itemLayout="horizontal"
+          dataSource={[account]}
+          renderItem={(item: IAccountsResponse) => (
+            <List.Item key={item?.id}>
+              <List.Item.Meta
+                avatar={
+                  <Image
+                    src={item?.imgurl}
+                    width={50}
+                    height={50}
+                    style={{ objectFit: 'contain' }}
+                    fallback={ImgErrorUrl}
+                  />
+                }
+                title={
+                  <Space>
+                    <span>{item?.username}</span>
+                    {item?.identity === 1 ? (
+                      <Tag color="error">Unverfied</Tag>
+                    ) : (
+                      <Tag color="blue">{'Verfied'}</Tag>
+                    )}
+                  </Space>
+                }
+                description={<span>{item?.accountaddress}</span>}
+              />
+            </List.Item>
+          )}
+        />
+      </Option>
+    );
+  });
+
   return (
     <PageContainer>
       <Card>
@@ -256,28 +208,29 @@ const DropEdit: React.FC = () => {
         >
           <Form.Item label="Account">
             {!targetDropId && (
-              <>
-                <Input.Group compact>
-                  <Search
-                    placeholder={'Input Address'}
-                    allowClear
-                    enterButton
-                    style={{ width: '82%' }}
-                    onSearch={(value) => {
-                      if (value === '') {
-                        setDropdownVisible(false);
-                        return;
-                      }
-                      searchAccount({ current: 1, pageSize: 5 }, value);
-                      setDropdownVisible(true);
-                    }}
-                    // onBlur={() => {setDropdownVisible(false);}}
-                  />
-                </Input.Group>
-                <Dropdown visible={dropdownVisible} overlay={menu}>
-                  <span></span>
-                </Dropdown>
-              </>
+              <Select
+                // open
+                loading={accountLoading}
+                optionLabelProp={'value'}
+                defaultActiveFirstOption={false}
+                showSearch
+                value={selectedAccountAddress}
+                placeholder={'Input Address'}
+                onSearch={(value) => {
+                  if (value) searchAccount(value);
+                }}
+                onChange={(value) => {
+                  setSelectedAccountAddress(value);
+                  setSelectedAccount(
+                    accountData?.list?.find((account: IAccountsResponse) => {
+                      return account.accountaddress === value;
+                    }),
+                  );
+                }}
+                notFoundContent={<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+              >
+                {options}
+              </Select>
             )}
             {selectedAccount ? (
               <List
@@ -286,7 +239,15 @@ const DropEdit: React.FC = () => {
                 renderItem={(item) => (
                   <List.Item key={item?.id}>
                     <List.Item.Meta
-                      avatar={<Image src={item?.imgurl} width={50} fallback={placeholderImg} />}
+                      avatar={
+                        <Image
+                          src={item?.imgurl}
+                          width={50}
+                          height={50}
+                          style={{ objectFit: 'contain' }}
+                          fallback={ImgErrorUrl}
+                        />
+                      }
                       title={<span>{item?.username}</span>}
                       description={item?.accountaddress}
                     />
@@ -399,12 +360,12 @@ const DropEdit: React.FC = () => {
             </Form.Item>
           </Form.Item>
           <Form.Item
-            // name="nfts"
+            name="nfts"
             label="Drop NFTs List"
             rules={[
               () => ({
                 validator(_, value) {
-                  console.log(selectedNftList)
+                  console.log(selectedNftList);
                   // if (selectedNftList) {
                   //   return Promise.resolve();
                   // }

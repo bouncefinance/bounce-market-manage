@@ -127,7 +127,7 @@ const DropsPage: React.FC = () => {
               <Button
                 danger
                 onClick={() => {
-                  console.log(item.id)
+                  console.log(item.id);
                   handleCloseDrop(item.id);
                 }}
               >
@@ -157,6 +157,13 @@ const DropsPage: React.FC = () => {
         setState(Number(key) as DropsState);
       }}
       tabList={tabs}
+      tabBarExtraContent={
+        [<Link to="/drops/edit">
+          <Button key="add" icon={<PlusOutlined />} type="primary">
+            Add
+          </Button>
+        </Link>]
+      }
     >
       <ProTable
         actionRef={ref as any}
@@ -183,13 +190,6 @@ const DropsPage: React.FC = () => {
             placeholder: 'Input address',
           },
         }}
-        toolBarRender={() => [
-          <Link to="/drops/edit">
-            <Button key="button" icon={<PlusOutlined />} type="primary">
-              Add
-            </Button>
-          </Link>,
-        ]}
       ></ProTable>
     </PageContainer>
   );

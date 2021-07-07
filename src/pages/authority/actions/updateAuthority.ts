@@ -1,32 +1,34 @@
+import { message } from 'antd';
 import request from 'umi-request';
-import { AuthorityRoleStatus, AuthorityRoleType } from './apiType';
+import type { AuthorityRoleStatus, AuthorityRoleType } from './apiType';
 
 export interface IUpdateAuthorityParams {
   address?: string;
-  id: number,
+  id: number;
   notename?: string;
-  opRole?: AuthorityRoleType,
-  status?: AuthorityRoleStatus,
+  opRole?: AuthorityRoleType;
+  status?: AuthorityRoleStatus;
   userImageUrl?: string;
   username?: string;
 }
 const updateAuthority = async (param: IUpdateAuthorityParams) => {
   const result: any = await request.post('/api/bouadmin/main/auth/updateoperatorinfo', {
-    data: param
-  })
+    data: param,
+  });
   if (result.code === 1) {
-    return true
+    return true;
   }
-  return false
-}
-export default updateAuthority
+  message.error(result.msg);
+  return false;
+};
+export default updateAuthority;
 
 export const deleteAuthority = async (param: { id: number; address: string }) => {
   const result: any = await request.post('/api/bouadmin/main/auth/deleteoperators', {
-    data: param
-  })
+    data: param,
+  });
   if (result.code === 1) {
-    return true
+    return true;
   }
-  return false
-}
+  return false;
+};

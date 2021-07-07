@@ -198,7 +198,7 @@ const DropEdit: React.FC = () => {
   );
 
   const handleEdit = (data: any) => {
-    console.log("data.dropdate.unix()", data.dropdate.unix());
+    console.log('data.dropdate.unix()', data.dropdate.unix());
     if (!selectedAccount) return;
     const params: IAddDropParams = {
       accountaddress: selectedAccount.accountaddress,
@@ -208,7 +208,7 @@ const DropEdit: React.FC = () => {
       title: data.title,
       description: data.description,
       bgcolor: data.bgcolor,
-      coverimgurl: data.cover.url,
+      coverimgurl: data.cover?.url,
       poolids: selectedNftList.map((nft) => {
         return nft.id;
       }),
@@ -297,7 +297,22 @@ const DropEdit: React.FC = () => {
               <></>
             )}
           </Form.Item>
-          <Form.Item name="cover" label="Cover">
+          <Form.Item
+            name="cover"
+            label="Cover"
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (value || getFieldValue('bgcolor')) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error('The Cover and Background Color cannot both be remote.'),
+                  );
+                },
+              }),
+            ]}
+          >
             <ImageUploader
               maxCount={1}
               onChange={(file, items) => {
@@ -330,16 +345,18 @@ const DropEdit: React.FC = () => {
           <Form.Item
             name="bgcolor"
             label="Background Color"
-            // rules={[
-            //   ({ getFieldValue }) => ({
-            //     validator(_, value) {
-            //       if (!value || !getFieldValue('cover')) {
-            //         return Promise.resolve();
-            //       }
-            //       return Promise.reject(new Error('Back'));
-            //     },
-            //   }),
-            // ]}
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (value || getFieldValue('cover')) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error('The Cover and Background Color cannot both be remote.'),
+                  );
+                },
+              }),
+            ]}
           >
             <ColorPicker value="#000" />
           </Form.Item>
@@ -384,7 +401,17 @@ const DropEdit: React.FC = () => {
           <Form.Item
             // name="nfts"
             label="Drop NFTs List"
-            // rules={[{ required: true, message: 'Drop NFTs List cannot be empty' }]}
+            rules={[
+              () => ({
+                validator(_, value) {
+                  console.log(selectedNftList)
+                  // if (selectedNftList) {
+                  //   return Promise.resolve();
+                  // }
+                  return Promise.reject(new Error('The Drop NFTs List cannot be empty.'));
+                },
+              }),
+            ]}
           >
             <Space direction="vertical">
               <Button

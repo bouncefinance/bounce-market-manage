@@ -39,12 +39,12 @@ const routes: MenuDataItem[] = [
     icon: 'BarChart',
     component: './overview',
   },
-  {
-    name: 'LandingPage',
-    path: '/landingPage',
-    icon: 'Home',
-    component: './landingPage',
-  },
+  // {
+  //   name: 'LandingPage',
+  //   path: '/landingPage',
+  //   icon: 'Home',
+  //   component: './landingPage',
+  // },
   {
     name: 'Marketplace',
     path: '/marketplace',

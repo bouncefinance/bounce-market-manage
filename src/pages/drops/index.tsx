@@ -158,8 +158,8 @@ const DropsPage: React.FC = () => {
       }}
       tabList={tabs}
       tabBarExtraContent={
-        [<Link to="/drops/edit">
-          <Button key="add" icon={<PlusOutlined />} type="primary">
+        [<Link key="add" to="/drops/edit">
+          <Button icon={<PlusOutlined />} type="primary">
             Add
           </Button>
         </Link>]

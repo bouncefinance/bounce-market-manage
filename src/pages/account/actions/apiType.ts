@@ -16,8 +16,8 @@ export enum UserRoleEnum {
  */
 export type UserDisableType = 1 | 2
 export enum UserDisableEnum {
-  Normal = 2,
-  Disable = 1,
+  Normal = 1,
+  Disable = 2,
 }
 
 /**

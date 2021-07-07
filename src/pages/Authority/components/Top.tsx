@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Button, Modal, Upload, message, Form, Select, Divider, Image } from 'antd';
+import { Input, Button, Modal, Upload, message, Form, Select, Divider } from 'antd';
 import styles from '../index.less';
 import { useIntl, useRequest } from 'umi';
 import { AuthorityRoleEnum } from '../actions/apiType';
@@ -7,7 +7,7 @@ import type { IAddAuthorityParams } from '../actions/addAuthority';
 import addAuthority from '../actions/addAuthority';
 import { defaultUserPageParams, getUserList } from '@/services/user';
 import Text from 'antd/lib/typography/Text';
-import { ImgErrorUrl } from '@/tools/const';
+import Image from '@/components/Image';
 
 const { Option } = Select;
 const { Search } = Input;
@@ -139,7 +139,7 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
                 <Text>{matchUser.accountaddress}</Text>
               </Form.Item>
               <Form.Item label="User Id">
-                <Text>{matchUser.id}</Text>
+                <Text>{matchUser.username ?? '--'}</Text>
               </Form.Item>
               <Form.Item label="Avatar">
                 <div className={[styles.avatarUploader, 'flex flex-center-y'].join(' ')}>
@@ -150,11 +150,7 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
                     showUploadList={false}
                     className={styles.updater}
                   >
-                    {matchUser ? (
-                      <Image src={matchUser.imgurl} placeholder={ImgErrorUrl} alt="avatar" />
-                    ) : (
-                      <></>
-                    )}
+                    {matchUser ? <Image src={matchUser.imgurl} alt="avatar" /> : <></>}
                   </Upload>
                 </div>
               </Form.Item>

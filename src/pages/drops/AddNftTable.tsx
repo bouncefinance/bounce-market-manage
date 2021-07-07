@@ -1,11 +1,10 @@
-import { Table, Image, Typography, Tooltip, Space } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { Table, Image, Typography, Tooltip, Tag } from 'antd';
+import React from 'react';
 import { useRequest } from 'umi';
 import request from 'umi-request';
 import { Apis } from '@/services';
-import { INftResponse } from '@/services/drops/types';
+import type { IPoolResponse, poolStateType } from '@/services/drops/types';
 
-import placeholderImg from '@/assets/images/placeholderImg.svg';
 import { ImgErrorUrl } from '@/tools/const';
 
 const getPoolsByCreatorAddress = (userAddress: string, offset: number = 0, limit: number = 7) => {
@@ -16,7 +15,7 @@ const getPoolsByCreatorAddress = (userAddress: string, offset: number = 0, limit
 
 interface IAddNftTableProps {
   userAddress: string;
-  tempSelectedNftList: INftResponse[];
+  tempSelectedNftList: IPoolResponse[];
   setTempSelectedNftList: any;
   tempSelectedKeys: number[];
   setTempSelectedKeys: any;
@@ -29,7 +28,6 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
   setTempSelectedNftList,
   tempSelectedKeys,
   setTempSelectedKeys,
-  selectedKeys,
 }) => {
   // useEffect(() => {
   //   console.log('selectedNftList: ', selectedNftList);
@@ -40,13 +38,11 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
   // }, [selectedKeys])
 
   const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: INftResponse[]) => {
+    onChange: (selectedRowKeys: React.Key[]) => {
       setTempSelectedKeys(selectedRowKeys);
       // console.log('temp', `selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
-    onSelect: (record: INftResponse, selected: boolean) => {
-      console.log('record: ', record);
-      console.log('selected: ', selected);
+    onSelect: (record: IPoolResponse, selected: boolean) => {
       if (selected) {
         setTempSelectedNftList(tempSelectedNftList.concat(record));
       } else {
@@ -57,14 +53,16 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
         );
       }
     },
+    getCheckboxProps: (record: IPoolResponse) => ({
+      disabled: record.state === 1, // Column configuration not to be checked
+    }),
     preserveSelectedRowKeys: true,
     hideSelectAll: true,
     selectedRowKeys: tempSelectedKeys,
   };
 
   const { tableProps: nftTableProps } = useRequest(
-    ({ pageSize: limit, current: offset }, userAddress) => {
-      console.log('userAddress: ', userAddress);
+    ({ pageSize: limit, current: offset }) => {
       return getPoolsByCreatorAddress(userAddress, (offset - 1) * limit, limit);
     },
     {
@@ -106,8 +104,9 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
       width: 100,
     },
     {
-      dataIndex: 'status',
-      title: 'Status',
+      dataIndex: 'state',
+      title: 'State',
+      render: (state: poolStateType) => (state === 0 ? <Tag color={'blue'}>live</Tag> : <Tag color={'red'}>closed</Tag>),
     },
     {
       dataIndex: 'creator',

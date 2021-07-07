@@ -39,6 +39,7 @@ export interface IUserItem {
   identity: UserRoleType;
   state: UserCreationType;
   display: UserDisableType;
+  username: string;
 }
 
 export interface IUserListParma {
@@ -56,49 +57,3 @@ export interface IGetAccountsParams {
   likestr?: number;
 }
 
-// export interface IGetPoolsResponse {
-//   id: number;
-//   contractaddress: string;
-//   tokenid: number;
-//   metadata: string;
-//   category: string;
-//   channel: string;
-//   itemsymbol: string;
-//   standard: number;
-//   itemname: string;
-//   externallink: string;
-//   description: string;
-//   fileurl: string;
-//   litimgurl: string;
-//   supply: number;
-//   creator: string;
-//   username: string;
-//   popularweight: number;
-//   poolweight: number;
-//   likecount: number;
-//   artistpoolweight: number;
-//   status: number;
-//   created_at: string;
-// }
-
-// export interface IAccountsResponse {
-//   accountaddress: string;
-//   bandimgurl: string;
-//   bio: string;
-//   bounceid: number;
-//   created_at: string;
-//   display: number;
-//   email: string;
-//   facebook: string;
-//   fullnam: string;
-//   id: number;
-//   identity: number;
-//   imgurl: string;
-//   instagram: string;
-//   state: number;
-//   top_weight: number;
-//   twitter: string;
-//   updated_at: string;
-//   username: string;
-//   website: string;
-// }

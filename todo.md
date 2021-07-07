@@ -11,7 +11,7 @@
   - /api/bouadmin/main/auth/getoperatorsinfo [×] (注：编辑的时候才用这个接口，暂时没有需要编辑页面)
   - 中文 [×] (注：大部分完成中文化)
   - 复制 [√]
-  - 身份标识 [×]
+  - 身份标识 [√]
 - 用户 User
   - LIST getaccountsbylikename [√] Creation 后台暂无字段 [×]
   - 设置身份 [√]

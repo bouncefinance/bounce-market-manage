@@ -1,7 +1,7 @@
 import { ApiServiceUrl, Apis } from './apis';
 import UMIRequest from 'umi-request';
 import { history } from 'umi';
-import { IResponse } from './types';
+import type { IResponse } from './types';
 import { IsPre } from '@/tools/const';
 
 /**
@@ -21,7 +21,7 @@ export const ToOffset = (page: number = 1, pageSize: number): number => {
  * @param params
  * @returns UMIRequest
  */
-export function get<TDataType> (url: string, params?: object) {
+export function get<TDataType>(url: string, params?: object) {
   return UMIRequest<IResponse<TDataType>>(url, {
     params,
     method: 'get',
@@ -33,7 +33,7 @@ export function get<TDataType> (url: string, params?: object) {
  * @param params
  * @returns UMIRequest
  */
-export function post<TDataType> (url: string, params?: object) {
+export function post<TDataType>(url: string, params?: object) {
   return UMIRequest<IResponse<TDataType>>(url, {
     method: 'post',
     data: params,
@@ -48,7 +48,7 @@ UMIRequest.interceptors.request.use((url, options) => {
   };
 });
 
-// Reponse 拦截
+// Response 拦截
 UMIRequest.interceptors.response.use((res) => {
   // 无权访问
   if (res.status === 403) {

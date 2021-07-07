@@ -1,32 +1,38 @@
+import type { UserCreationType, UserDisableType, UserRoleType } from '@/services/user/types';
 import request from 'umi-request';
-import { UserCreationType, UserDisableType, UserRoleType } from './apiType';
 
 export const updateUserRole = async (param: { id: number | string; identity: UserRoleType }) => {
   const result: any = await request.post('/api/bouadmin/main/auth/updateuseridentity', {
-    data: param
-  })
+    data: param,
+  });
   if (result.code === 1) {
-    return true
+    return true;
   }
-  return false
-}
+  return false;
+};
 
-export const updateUserDisplay = async (param: { id: number | string; display: UserDisableType }) => {
+export const updateUserDisplay = async (param: {
+  id: number | string;
+  display: UserDisableType;
+}) => {
   const result: any = await request.post('/api/bouadmin/main/auth/updateuserdisplay', {
-    data: param
-  })
+    data: param,
+  });
   if (result.code === 1) {
-    return true
+    return true;
   }
-  return false
-}
+  return false;
+};
 
-export const updateUserCreation = async (param: { id: number | string; state: UserCreationType }) => {
+export const updateUserCreation = async (param: {
+  id: number | string;
+  state: UserCreationType;
+}) => {
   const result: any = await request.post('/api/bouadmin/main/auth/updateuserstate', {
-    data: param
-  })
+    data: param,
+  });
   if (result.code === 1) {
-    return true
+    return true;
   }
-  return false
-}
+  return false;
+};

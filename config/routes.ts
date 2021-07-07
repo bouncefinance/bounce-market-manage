@@ -70,14 +70,14 @@ const routes: MenuDataItem[] = [
     component: './nft',
   },
   {
-    name: 'User',
+    name: 'Users',
     path: 'account',
     icon: 'User',
     component: './account',
   },
   {
-    name: 'Administor',
-    path: 'administor',
+    name: 'Administrator',
+    path: 'administrator',
     icon: 'Key',
     component: './authority',
   },

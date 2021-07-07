@@ -1,12 +1,8 @@
 import { Apis, post, ToOffset } from '../index';
-import {
+import type {
   IDropsRequest,
   IDropsResponse,
   IAddDropParams,
-  IGetPoolsParams,
-  IGetPoolsResponse,
-  IGetAccountsParams,
-  IAccountsResponse,
   IGetDropDetailParams,
   IDropDetailResponse,
 } from './types';
@@ -69,28 +65,5 @@ export const addOneDrop = ({
     poolids,
     ordernum,
     dropdate,
-  });
-};
-
-// fileter: 1:normal, 2:identitied
-export const getVerfiedUsersList = ({ offset, limit }: IGetAccountsParams) => {
-  return post<IGetPoolsResponse[]>(Apis.getaccountsbylikename, {
-    filter: 3,
-    identity: 2,
-    offset,
-    limit,
-  });
-};
-
-export const getAccountByAddress = function ({
-  offset,
-  limit = 5,
-  accountaddress,
-}: IGetAccountsParams) {
-  return post<IAccountsResponse[]>(Apis.getaccountsbylikename, {
-    filter: 2,
-    limit,
-    offset,
-    accountaddress,
   });
 };

@@ -1,9 +1,9 @@
 import React from 'react';
 import { message, Select } from 'antd';
 import { useState } from 'react';
-import type { UserRoleType } from '../actions/apiType';
-import { UserRoleEnum } from '../actions/apiType';
 import { updateUserRole } from '../actions/updateUser';
+import type { UserRoleType } from '@/services/user/types';
+import { UserRoleEnum } from '@/services/user/types';
 
 const { Option } = Select;
 

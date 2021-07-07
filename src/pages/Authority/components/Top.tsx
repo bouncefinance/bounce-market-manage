@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Button, Modal, Upload, message, Form, Select } from 'antd';
+import { Input, Button, Modal, Upload, message, Form, Select, Divider } from 'antd';
 import styles from '../index.less';
 import { useIntl } from 'umi';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
@@ -23,6 +23,10 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
     setIsModalVisible(true);
   };
 
+  // const { data, loading: userSearchLoading, run, cancel } = useRequest(getEmail, {
+  //   throttleInterval: 500,
+  //   manual: true
+  // });
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const uploadButton = (
@@ -128,44 +132,45 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
             <Input allowClear placeholder="Input Address" />
           </Form.Item>
           <Form.Item
-            name="username"
-            label="User Name"
-            rules={[{ required: true, message: 'user name not empty' }]}
-          >
-            <Input allowClear placeholder="Input note name" />
-          </Form.Item>
-          <Form.Item
             name="notename"
             label="Note Name"
             rules={[{ required: true, message: 'note name not empty' }]}
           >
             <Input allowClear placeholder="Input note name" />
           </Form.Item>
-          <Form.Item
-            name="userImageUrl"
-            label="Avatar"
-            rules={
-              [
-                // { required: true, message: 'avatar not empty' },
-              ]
-            }
-          >
-            <div className={[styles.avatarUploader, 'flex flex-center-y'].join(' ')}>
-              <Upload
-                name="Avatar"
-                listType="picture-card"
-                showUploadList={false}
-                beforeUpload={onBeforeUpload}
-                className={styles.updater}
+          {true && (
+            <>
+              <Divider plain>Match of user</Divider>
+              <Form.Item
+                name="username"
+                label="User Name"
+                // rules={[{ required: true, message: 'user name not empty' }]}
               >
-                {imageUrl ? <img src={imageUrl} alt="avatar" /> : uploadButton}
-              </Upload>
-              <div className={styles.avatarUploaderRight}>
-                <p className={styles.tips}>Supports JPG, PNG, JPEG2000</p>
-                <p className={styles.tips}>300x300 Recommended</p>
-              </div>
-            </div>
-          </Form.Item>
+                <Input allowClear placeholder="Input note name" />
+              </Form.Item>
+              <Form.Item
+                name="userImageUrl"
+                label="Avatar"
+                // rules={[{ required: true, message: 'avatar not empty' }]}
+              >
+                <div className={[styles.avatarUploader, 'flex flex-center-y'].join(' ')}>
+                  <Upload
+                    name="Avatar"
+                    listType="picture-card"
+                    showUploadList={false}
+                    beforeUpload={onBeforeUpload}
+                    className={styles.updater}
+                  >
+                    {imageUrl ? <img src={imageUrl} alt="avatar" /> : uploadButton}
+                  </Upload>
+                  <div className={styles.avatarUploaderRight}>
+                    <p className={styles.tips}>Supports JPG, PNG, JPEG2000</p>
+                    <p className={styles.tips}>300x300 Recommended</p>
+                  </div>
+                </div>
+              </Form.Item>
+            </>
+          )}
         </Form>
       </Modal>
     </>

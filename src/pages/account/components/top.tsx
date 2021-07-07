@@ -1,8 +1,8 @@
 import React from 'react';
 import { Input, Select } from 'antd';
 import styles from '../index.less';
-import type { UserRoleType } from '../actions/apiType';
-import { UserRoleEnum } from '../actions/apiType';
+import type { UserRoleType } from '@/services/user/types';
+import { UserRoleEnum } from '@/services/user/types';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -16,7 +16,12 @@ const UserTopView: React.FC<{
     <>
       <div className={['flex flex-space-x', styles.topHandle].join(' ')}>
         <div style={{ width: '500px' }}>
-          <Search placeholder="Input user name" allowClear onSearch={onSearch} size="middle" />
+          <Search
+            placeholder="Input Username or Address"
+            allowClear
+            onSearch={onSearch}
+            size="middle"
+          />
         </div>
         <Select placeholder="select user identity" onChange={onRoleChange} style={{ width: 220 }}>
           {[

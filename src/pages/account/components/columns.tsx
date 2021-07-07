@@ -3,13 +3,13 @@ import { Avatar, Image, Switch, message, Modal } from 'antd';
 import { useIntl } from 'umi';
 import { ImgErrorUrl } from '@/tools/const';
 import UserRoleView from '../components/userRole';
-import type { IUserItem, UserCreationType, UserDisableType } from '../actions/apiType';
-import { UserCreationEnum, UserDisableEnum, UserRoleEnum } from '../actions/apiType';
 import { updateUserCreation, updateUserDisplay } from '../actions/updateUser';
 import { AddressCopyView } from '@/components/Address';
 import { VerifyIcon } from '@/components/verify';
 import styles from '../index.less';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import type { IUserItem, UserCreationType, UserDisableType } from '@/services/user/types';
+import { UserCreationEnum, UserDisableEnum, UserRoleEnum } from '@/services/user/types';
 
 const { confirm } = Modal;
 

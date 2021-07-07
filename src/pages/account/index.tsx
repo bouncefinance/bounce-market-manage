@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Table, Card } from 'antd';
 import { useRequest } from 'umi';
-import type { UserRoleType } from './actions/apiType';
-import { defaultUserPageParams, getUserList, getUserListFormatResult } from './actions/getUser';
 import UserTopView from './components/top';
 import columns from './components/columns';
+import type { UserRoleType } from '@/services/user/types';
+import { defaultUserPageParams, getUserList, getUserListFormatResult } from '@/services/user';
 
 const Index: React.FC = () => {
   const [role, setRole] = useState<UserRoleType>();

@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { Input, Button, Modal, Upload, message, Form, Select, Divider } from 'antd';
+import { Input, Button, Modal, Upload, message, Form, Select, Divider, Image } from 'antd';
 import styles from '../index.less';
-import { useIntl } from 'umi';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import type { RcFile } from 'antd/lib/upload';
-import request from 'umi-request';
+import { useIntl, useRequest } from 'umi';
 import { AuthorityRoleEnum } from '../actions/apiType';
 import type { IAddAuthorityParams } from '../actions/addAuthority';
 import addAuthority from '../actions/addAuthority';
-import { Apis } from '@/services';
+import { defaultUserPageParams, getUserList } from '@/services/user';
+import Text from 'antd/lib/typography/Text';
+import { ImgErrorUrl } from '@/tools/const';
 
 const { Option } = Select;
 const { Search } = Input;
@@ -23,40 +22,10 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
     setIsModalVisible(true);
   };
 
-  // const { data, loading: userSearchLoading, run, cancel } = useRequest(getEmail, {
-  //   throttleInterval: 500,
-  //   manual: true
-  // });
-  const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState('');
-  const uploadButton = (
-    <div>
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
-
   const [formLoading, setFormLoading] = useState(false);
   const [form] = Form.useForm();
-  const onBeforeUpload = async (file: RcFile) => {
-    if (file.type.indexOf('image/') < 0) {
-      message.error('Please select the image type');
-      return;
-    }
-    const formData = new FormData();
-    formData.append('filename', file);
-    setLoading(true);
-    const result = await request.post(Apis.fileupload, {
-      data: formData,
-    });
-    setLoading(false);
-    if (result.code !== 200) {
-      message.error(result.msg);
-      return;
-    }
-    setImageUrl(result.result.path);
-    form.setFieldsValue({ userImageUrl: result.result.path });
-  };
+  const [address, setAddress] = useState('');
+
   const onFinish = async (values: IAddAuthorityParams) => {
     setFormLoading(true);
     const res = await addAuthority(values);
@@ -71,7 +40,7 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
   };
   const reset = () => {
     form.resetFields();
-    setImageUrl('');
+    setAddress('');
   };
   const handleOk = () => {
     form.submit();
@@ -79,6 +48,24 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
   const handleCancel = () => {
     reset();
     setIsModalVisible(false);
+  };
+
+  const {
+    data: userSearchResult,
+    loading: userSearchLoading,
+    run: userSearchRun,
+    params,
+  } = useRequest((props, value = '') => getUserList({ ...props }, value), {
+    throttleInterval: 500,
+    manual: true,
+  });
+  const matchUser = userSearchResult?.[0];
+  const onUserSearch = (e: any) => {
+    const { value } = e.target;
+    setAddress(value);
+    if (value) {
+      userSearchRun({ ...params, ...defaultUserPageParams }, value);
+    }
   };
   return (
     <>
@@ -100,9 +87,10 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
+        width={640}
       >
         <Form
-          labelCol={{ span: 5 }}
+          labelCol={{ span: 6 }}
           initialValues={{ opRole: AuthorityRoleEnum.super }}
           form={form}
           onFinish={onFinish}
@@ -112,7 +100,7 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
             label="Role"
             rules={[{ required: true, message: 'role not empty' }]}
           >
-            <Select loading={loading} style={{ width: 220 }}>
+            <Select style={{ width: 250 }}>
               {[
                 { value: AuthorityRoleEnum.super, label: 'Super administrator', key: 1 },
                 { value: AuthorityRoleEnum.dropList, label: 'Drops administrator', key: 2 },
@@ -126,10 +114,16 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
           </Form.Item>
           <Form.Item
             name="address"
-            label="Address"
+            label="Address / UserName"
             rules={[{ required: true, message: 'address not empty' }]}
           >
-            <Input allowClear placeholder="Input Address" />
+            <Input
+              allowClear
+              value={address}
+              placeholder="Input Address or Username"
+              onChange={onUserSearch}
+              onInput={onUserSearch}
+            />
           </Form.Item>
           <Form.Item
             name="notename"
@@ -138,35 +132,30 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
           >
             <Input allowClear placeholder="Input note name" />
           </Form.Item>
-          {true && (
+          {userSearchLoading === false && address && matchUser && (
             <>
               <Divider plain>Match of user</Divider>
-              <Form.Item
-                name="username"
-                label="User Name"
-                // rules={[{ required: true, message: 'user name not empty' }]}
-              >
-                <Input allowClear placeholder="Input note name" />
+              <Form.Item label="Address">
+                <Text>{matchUser.accountaddress}</Text>
               </Form.Item>
-              <Form.Item
-                name="userImageUrl"
-                label="Avatar"
-                // rules={[{ required: true, message: 'avatar not empty' }]}
-              >
+              <Form.Item label="User Id">
+                <Text>{matchUser.id}</Text>
+              </Form.Item>
+              <Form.Item label="Avatar">
                 <div className={[styles.avatarUploader, 'flex flex-center-y'].join(' ')}>
                   <Upload
                     name="Avatar"
+                    disabled
                     listType="picture-card"
                     showUploadList={false}
-                    beforeUpload={onBeforeUpload}
                     className={styles.updater}
                   >
-                    {imageUrl ? <img src={imageUrl} alt="avatar" /> : uploadButton}
+                    {matchUser ? (
+                      <Image src={matchUser.imgurl} placeholder={ImgErrorUrl} alt="avatar" />
+                    ) : (
+                      <></>
+                    )}
                   </Upload>
-                  <div className={styles.avatarUploaderRight}>
-                    <p className={styles.tips}>Supports JPG, PNG, JPEG2000</p>
-                    <p className={styles.tips}>300x300 Recommended</p>
-                  </div>
                 </div>
               </Form.Item>
             </>

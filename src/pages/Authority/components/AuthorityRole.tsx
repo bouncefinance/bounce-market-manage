@@ -30,7 +30,7 @@ const AuthorityRoleView: React.FC<{
   };
   return (
     <>
-      <Select loading={loading} value={oldValue} style={{ width: 220 }} onChange={onChange}>
+      <Select loading={loading} value={oldValue} style={{ width: 150 }} onChange={onChange}>
         {[
           { value: AuthorityRoleEnum.super, label: 'Super administrator', key: 1 },
           { value: AuthorityRoleEnum.dropList, label: 'Drops administrator', key: 2 },

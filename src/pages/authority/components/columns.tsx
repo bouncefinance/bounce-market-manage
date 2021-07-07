@@ -26,7 +26,7 @@ const columns: (run: () => void, refresh: () => void) => columnsType = (run, ref
         <div className={styles.avatar}>
           <Avatar shape="square" size={64} src={<Image src={url} fallback={ImgErrorUrl} />} />
           {record.opRole === AuthorityRoleEnum.super && (
-            <AdminIcon width={25} height={25} className={styles.verify} />
+            <AdminIcon width={15} height={15} className={styles.verify} />
           )}
         </div>
       ),

@@ -1,10 +1,10 @@
 import { ToOffset } from '@/services';
 import request from 'umi-request';
-import { IUserItem, UserRoleType } from './apiType';
+import type { IUserItem, UserRoleType } from './apiType';
 
 interface IResult {
   code: number;
-  data: Array<IUserItem>;
+  data: IUserItem[];
   total: number;
 }
 export interface IUserListParma {
@@ -13,23 +13,23 @@ export interface IUserListParma {
   role?: UserRoleType;
 }
 export const getUserList: (parma: IUserListParma, search: string) => Promise<IResult> = (
-  {
-    pageSize: limit,
-    current: offset,
-    role
-  }: IUserListParma, search: string) => {
+  { pageSize: limit, current: offset, role }: IUserListParma,
+  search: string,
+) => {
   return request.post('/api/bouadmin/main/auth/getaccountsbylikename', {
     data: {
-      likestr: search, limit, offset: ToOffset(offset, limit),
-      ...(role ? { identity: role } : {})
-    }
-  })
-}
+      likestr: search,
+      limit,
+      offset: ToOffset(offset, limit),
+      ...(role ? { identity: role } : {}),
+    },
+  });
+};
 export const getUserListFormatResult = (data: IResult) => {
   return {
     total: data.total,
-    list: data.data
-  }
-}
+    list: data.data,
+  };
+};
 
-export const defaultUserPageParams = { current: 1, pageSize: 5 }
+export const defaultUserPageParams = { current: 1, pageSize: 5 };

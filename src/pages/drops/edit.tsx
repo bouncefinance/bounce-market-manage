@@ -9,13 +9,8 @@ import {
   DatePicker,
   Modal,
   message,
-  Menu,
-  Table,
   Space,
-  Tooltip,
-  Dropdown,
   List,
-  Avatar,
   Select,
   Empty,
   Tag,
@@ -24,10 +19,11 @@ import ImageUploader from '@/components/ImageUploader';
 import { useState } from 'react';
 import styles from './index.less';
 import ColorPicker from '@/components/ColorPicker';
-import { IAddDropParams, IAccountsResponse, INftResponse } from '@/services/drops/types';
-import { addOneDrop, getAccountByAddress, getonedropsdetail } from '@/services/drops';
+import type { IAddDropParams, INftResponse } from '@/services/drops/types';
+import type { IAccountsResponse } from '@/services/user/types';
+import { addOneDrop } from '@/services/drops';
+import { getAccountByAddress } from '@/services/user';
 import { useRequest, history } from 'umi';
-import { FormInstance } from 'antd/lib/form';
 import moment from 'moment';
 
 import AddNftTable from '@/pages/drops/AddNftTable';
@@ -35,9 +31,6 @@ import OperateNftTable from '@/pages/drops/OperateNftTable';
 
 import { ImgErrorUrl } from '@/tools/const';
 
-const { Column } = Table;
-const { Search } = Input;
-const { Meta } = Card;
 const { Option } = Select;
 
 // console.log('history.location.query: ', history.location.query?.id);
@@ -45,7 +38,7 @@ const targetDropId = history.location.query?.id;
 
 function range(start: any, end: any) {
   const result = [];
-  for (let i = start; i < end; i++) {
+  for (let i = start; i < end; i+=1) {
     result.push(i);
   }
   return result;
@@ -110,10 +103,8 @@ const DropEdit: React.FC = () => {
   //   });
   // };
 
-  const menuEl = useRef(null);
 
   const handleEdit = (data: any) => {
-    console.log('data.dropdate.unix()', data.dropdate.unix());
     if (!selectedAccount) return;
     const params: IAddDropParams = {
       accountaddress: selectedAccount.accountaddress,
@@ -150,15 +141,14 @@ const DropEdit: React.FC = () => {
     setSelectedAccount(undefined);
     setSelectedKeys([]);
     form.resetFields();
-    // formRef.current!.resetFields();
   };
 
-  const onFill = () => {
-    form.setFieldsValue({
-      note: 'Hello world!',
-      gender: 'male',
-    });
-  };
+  // const onFill = () => {
+  //   form.setFieldsValue({
+  //     note: 'Hello world!',
+  //     gender: 'male',
+  //   });
+  // };
 
   const options = accountData?.list?.map((account: IAccountsResponse) => {
     return (
@@ -276,7 +266,7 @@ const DropEdit: React.FC = () => {
           >
             <ImageUploader
               maxCount={1}
-              onChange={(file, items) => {
+              onChange={(file) => {
                 setCoverImage(file);
               }}
             />
@@ -284,7 +274,7 @@ const DropEdit: React.FC = () => {
           <Form.Item label="Preview">
             {coverImage && (
               <div className={styles['cover-image']}>
-                <div className={styles['preview']}>
+                <div className={styles.preview}>
                   <Image
                     width={240}
                     height={100}
@@ -292,7 +282,7 @@ const DropEdit: React.FC = () => {
                     preview={false}
                   />
                 </div>
-                <div className={styles['preview']}>
+                <div className={styles.preview}>
                   <Image
                     width={73}
                     height={100}
@@ -365,7 +355,6 @@ const DropEdit: React.FC = () => {
             rules={[
               () => ({
                 validator() {
-                  console.log(selectedNftList);
                   if (selectedNftList.length > 0) {
                     return Promise.resolve();
                   }

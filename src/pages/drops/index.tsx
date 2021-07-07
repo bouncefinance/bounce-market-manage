@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable, { ProColumns } from '@ant-design/pro-table';
-import { EditFilled, ExclamationCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, message, Space, Tooltip, Typography, Image, Modal } from 'antd';
 import { getDrops, deleteOneDrop, closeOneDrop } from '@/services/drops';
 import { DropsState, IDropsResponse } from '@/services/drops/types';

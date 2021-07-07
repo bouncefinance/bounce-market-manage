@@ -1,11 +1,10 @@
-import { Table, Image, Typography, Tooltip, Space } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { Table, Image, Typography, Tooltip } from 'antd';
+import React from 'react';
 import { useRequest } from 'umi';
 import request from 'umi-request';
 import { Apis } from '@/services';
 import { INftResponse } from '@/services/drops/types';
 
-import placeholderImg from '@/assets/images/placeholderImg.svg';
 import { ImgErrorUrl } from '@/tools/const';
 
 const getPoolsByCreatorAddress = (userAddress: string, offset: number = 0, limit: number = 7) => {
@@ -29,7 +28,6 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
   setTempSelectedNftList,
   tempSelectedKeys,
   setTempSelectedKeys,
-  selectedKeys,
 }) => {
   // useEffect(() => {
   //   console.log('selectedNftList: ', selectedNftList);
@@ -40,7 +38,7 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
   // }, [selectedKeys])
 
   const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: INftResponse[]) => {
+    onChange: (selectedRowKeys: React.Key[]) => {
       setTempSelectedKeys(selectedRowKeys);
       // console.log('temp', `selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },

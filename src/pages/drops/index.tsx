@@ -8,6 +8,7 @@ import { DropsState, IDropsResponse } from '@/services/drops/types';
 import moment from 'moment';
 import { useState } from 'react';
 import { Link } from 'umi';
+import { ImgErrorUrl } from '@/tools/const';
 
 const { confirm } = Modal;
 
@@ -89,7 +90,7 @@ const DropsPage: React.FC = () => {
     {
       dataIndex: 'coverimgurl',
       title: 'Cover',
-      render: (src: any) => <Image width={40} preview={false} src={src} />,
+      render: (src: any) => <Image width={40} preview={false} src={src} fallback={ImgErrorUrl} />,
     },
     {
       dataIndex: 'title',
@@ -137,14 +138,16 @@ const DropsPage: React.FC = () => {
             {/* <Link to={`/drops/edit/?id=${item.id}`}>
               <Button icon={<EditFilled />} />
             </Link> */}
-            <Button
-              danger
-              onClick={() => {
-                handleDelete(item.id);
-              }}
-            >
-              Delete
-            </Button>
+            {state === 3 && (
+              <Button
+                danger
+                onClick={() => {
+                  handleDelete(item.id);
+                }}
+              >
+                Delete
+              </Button>
+            )}
           </Space>
         );
       },
@@ -157,13 +160,13 @@ const DropsPage: React.FC = () => {
         setState(Number(key) as DropsState);
       }}
       tabList={tabs}
-      tabBarExtraContent={
-        [<Link key="add" to="/drops/edit">
+      tabBarExtraContent={[
+        <Link key="add" to="/drops/edit">
           <Button icon={<PlusOutlined />} type="primary">
             Add
           </Button>
-        </Link>]
-      }
+        </Link>,
+      ]}
     >
       <ProTable
         actionRef={ref as any}

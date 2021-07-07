@@ -364,11 +364,11 @@ const DropEdit: React.FC = () => {
             label="Drop NFTs List"
             rules={[
               () => ({
-                validator(_, value) {
+                validator() {
                   console.log(selectedNftList);
-                  // if (selectedNftList) {
-                  //   return Promise.resolve();
-                  // }
+                  if (selectedNftList.length > 0) {
+                    return Promise.resolve();
+                  }
                   return Promise.reject(new Error('The Drop NFTs List cannot be empty.'));
                 },
               }),

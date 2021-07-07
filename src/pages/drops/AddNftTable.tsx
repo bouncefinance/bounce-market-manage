@@ -106,6 +106,10 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
       width: 100,
     },
     {
+      dataIndex: 'status',
+      title: 'Status',
+    },
+    {
       dataIndex: 'creator',
       title: 'Artist Account',
       render: (text: any) => (

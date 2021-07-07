@@ -20,8 +20,9 @@ const columns: (run: () => void, refresh: () => void) => columnsType = (run, ref
   return [
     {
       title: 'Avatar',
-      dataIndex: 'userImageUrl',
+      dataIndex: 'imgurl',
       key: 'userImageUrl',
+      width: 150,
       render: (url, record) => (
         <div className={styles.avatar}>
           <Avatar shape="square" size={64} src={<Image src={url} fallback={ImgErrorUrl} />} />
@@ -35,6 +36,8 @@ const columns: (run: () => void, refresh: () => void) => columnsType = (run, ref
       title: 'User Name',
       dataIndex: 'username',
       key: 'username',
+      width: 200,
+      ellipsis: true,
     },
     {
       title: 'Address',

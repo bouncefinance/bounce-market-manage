@@ -286,7 +286,7 @@ const DropEdit: React.FC = () => {
               <div className={styles['cover-image']}>
                 <div className={styles['preview']}>
                   <Image
-                    width={300}
+                    width={240}
                     height={100}
                     src={coverImage?.thumbUrl || coverImage?.url}
                     preview={false}
@@ -294,7 +294,7 @@ const DropEdit: React.FC = () => {
                 </div>
                 <div className={styles['preview']}>
                   <Image
-                    width={80}
+                    width={73}
                     height={100}
                     src={coverImage?.thumbUrl || coverImage?.url}
                     preview={false}

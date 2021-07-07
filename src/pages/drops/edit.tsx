@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import {
   Button,
@@ -19,8 +19,8 @@ import ImageUploader from '@/components/ImageUploader';
 import { useState } from 'react';
 import styles from './index.less';
 import ColorPicker from '@/components/ColorPicker';
-import type { IAddDropParams, INftResponse } from '@/services/drops/types';
-import type { IAccountsResponse } from '@/services/user/types';
+import type { IAddDropParams, IPoolResponse } from '@/services/drops/types';
+import type { IUserItem } from '@/services/user/types';
 import { addOneDrop } from '@/services/drops';
 import { getAccountByAddress } from '@/services/user';
 import { useRequest, history } from 'umi';
@@ -57,12 +57,12 @@ const disabledTime = () => {
 
 const DropEdit: React.FC = () => {
   const [coverImage, setCoverImage] = useState<any>(null);
-  const [selectedAccount, setSelectedAccount] = useState<IAccountsResponse>();
+  const [selectedAccount, setSelectedAccount] = useState<IUserItem>();
   const [addNftModalVisible, setAddNftModalVisible] = useState(false);
   const [tempSelectedKeys, setTempSelectedKeys] = useState<number[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<number[]>([]);
-  const [tempSelectedNftList, setTempSelectedNftList] = useState<INftResponse[]>([]);
-  const [selectedNftList, setSelectedNftList] = useState<INftResponse[]>([]);
+  const [tempSelectedNftList, setTempSelectedNftList] = useState<IPoolResponse[]>([]);
+  const [selectedNftList, setSelectedNftList] = useState<IPoolResponse[]>([]);
   const [selectedAccountAddress, setSelectedAccountAddress] = useState('');
 
   useEffect(() => {
@@ -150,13 +150,13 @@ const DropEdit: React.FC = () => {
   //   });
   // };
 
-  const options = accountData?.list?.map((account: IAccountsResponse) => {
+  const options = accountData?.list?.map((account: IUserItem) => {
     return (
       <Option key={account.id} value={account.accountaddress} disabled={account.identity === 1}>
         <List
           itemLayout="horizontal"
           dataSource={[account]}
-          renderItem={(item: IAccountsResponse) => (
+          renderItem={(item: IUserItem) => (
             <List.Item key={item?.id}>
               <List.Item.Meta
                 avatar={
@@ -212,7 +212,7 @@ const DropEdit: React.FC = () => {
                 onChange={(value) => {
                   setSelectedAccountAddress(value);
                   setSelectedAccount(
-                    accountData?.list?.find((account: IAccountsResponse) => {
+                    accountData?.list?.find((account: IUserItem) => {
                       return account.accountaddress === value;
                     }),
                   );

@@ -78,27 +78,27 @@ export interface IDropDetailResponse {
   creatorurl: string;
   created_at: string;
 }
-export interface INftResponse {
+
+// 0：live，1：closed
+export type poolStateType = 0 | 1
+export interface IPoolResponse {
   artistpoolweight: number;
   category: string;
   channel: string;
   contractaddress: string;
   created_at: string;
   creator: string;
-  description: string;
-  externallink: string;
   fileurl: string;
   id: number;
   itemname: string;
   itemsymbol: string;
   likecount: number;
   litimgurl: string;
-  metadata: string;
   poolweight: number;
   popularweight: number;
   standard: number;
   status: number;
-  supply: number;
   tokenid: number;
   username: string;
+  state: poolStateType;
 }

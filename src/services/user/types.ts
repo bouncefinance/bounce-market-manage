@@ -39,6 +39,7 @@ export interface IUserItem {
   identity: UserRoleType;
   state: UserCreationType;
   display: UserDisableType;
+  username: string;
 }
 
 export interface IUserListParma {
@@ -55,3 +56,4 @@ export interface IGetAccountsParams {
   identity?: number;
   likestr?: number;
 }
+

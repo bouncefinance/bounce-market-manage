@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import request from 'umi-request';
 import { Apis } from '@/services';
-import { INftResponse } from '@/services/drops/types';
+import { IPoolResponse } from '@/services/drops/types';
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
@@ -15,7 +15,7 @@ import {
 import { ImgErrorUrl } from '@/tools/const';
 
 interface IOperateNftTableProps {
-  selectedNftList: INftResponse[];
+  selectedNftList: IPoolResponse[];
   setTempSelectedNftList: any;
   setSelectedNftList: any;
   selectedKeys: number[];
@@ -51,7 +51,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
     setSelectedNftList(tempList);
   };
 
-  const remove = (record: INftResponse) => {
+  const remove = (record: IPoolResponse) => {
     // console.log('selectedNftList: ', selectedNftList);
     // console.log('index: ', selectedNftList.indexOf(record));
     // console.log('selectedKeys: ', selectedKeys);
@@ -124,7 +124,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
       dataIndex: 'actions',
       title: 'Action',
       width: 100,
-      render: (text: string, record: INftResponse, index: number) => (
+      render: (text: string, record: IPoolResponse, index: number) => (
         <Space>
           <Button
             disabled={index === 0 ? true : false}

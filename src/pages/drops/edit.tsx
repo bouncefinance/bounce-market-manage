@@ -29,7 +29,7 @@ import type { IAddDropParams, IPoolResponse } from '@/services/drops/types';
 
 const { Option } = Select;
 
-// type backgroundType = 'cover' | 'background color';
+type BGType = 'cover' | 'bgcolor';
 
 // console.log('history.location.query: ', history.location.query?.id);
 const targetDropId = history.location.query?.id;
@@ -71,7 +71,7 @@ const DropEdit: React.FC = () => {
   const [tempSelectedNftList, setTempSelectedNftList] = useState<IPoolResponse[]>([]);
   const [selectedNftList, setSelectedNftList] = useState<IPoolResponse[]>([]);
   const [selectedAccountAddress, setSelectedAccountAddress] = useState('');
-  // const [backgroundType, setBackgroundType] = useState<backgroundType>('cover');
+  const [backgroundType, setBackgroundType] = useState<BGType>('cover');
 
   useEffect(() => {
     setSelectedNftList([]);
@@ -112,7 +112,7 @@ const DropEdit: React.FC = () => {
   // };
 
   const handleEdit = (data: any) => {
-    // console.log('data: ', data);
+    console.log('data: ', data);
     if (!selectedAccount) return;
     const params: IAddDropParams = {
       accountaddress: selectedAccount.accountaddress,
@@ -214,6 +214,7 @@ const DropEdit: React.FC = () => {
                 {options}
               </Select>
             )}
+
             {selectedAccount ? (
               <List
                 itemLayout="horizontal"
@@ -233,8 +234,7 @@ const DropEdit: React.FC = () => {
             )}
           </Form.Item>
 
-          {/* <Form.Item
-            name={backgroundType}
+          <Form.Item
             label="Background"
             rules={[
               ({ getFieldValue }) => ({
@@ -242,7 +242,13 @@ const DropEdit: React.FC = () => {
                   if (value || getFieldValue(backgroundType)) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error(`${backgroundType} cannot be empty`));
+                  return Promise.reject(
+                    new Error(
+                      `${
+                        backgroundType === 'cover' ? 'Cover' : 'Background color'
+                      } cannot be empty`,
+                    ),
+                  );
                 },
               }),
             ]}
@@ -251,80 +257,45 @@ const DropEdit: React.FC = () => {
               <Select
                 style={{ width: 160 }}
                 defaultValue={backgroundType}
-                onSelect={(value: backgroundType) => {
+                onSelect={(value: BGType) => {
                   setBackgroundType(value);
                 }}
               >
                 <Option value="cover">Cover</Option>
-                <Option value="background color">Background Color</Option>
+                <Option value="bgcolor">Background Color</Option>
               </Select>
-
-              <ImageUploader
-                maxCount={1}
-                onChange={(file) => {
-                  setCoverImage(file);
-                }}
-              />
-
-              {backgroundType === 'background color' && <ColorPicker value="#000" />}
+              {backgroundType === 'cover' && (
+                <Form.Item name="cover" noStyle>
+                  <ImageUploader
+                    maxCount={1}
+                    onChange={(file) => {
+                      setCoverImage(file);
+                    }}
+                  />
+                </Form.Item>
+              )}
+              {backgroundType === 'bgcolor' && (
+                <Form.Item name="bgcolor" noStyle>
+                  <ColorPicker value="#000" />
+                </Form.Item>
+              )}
             </Space>
-          </Form.Item> */}
+          </Form.Item>
 
-          <Form.Item
-            name="cover"
-            label="Cover"
-            rules={[
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (value || getFieldValue('bgcolor')) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error('The Cover and Background Color cannot both be remote.'),
-                  );
-                },
-              }),
-            ]}
-          >
-            <ImageUploader
-              maxCount={1}
-              onChange={(file) => {
-                setCoverImage(file);
-              }}
-            />
-          </Form.Item>
-          {/* {backgroundType === 'cover' && ( */}
-          <Form.Item label="Preview">
-            {coverImage && (
-              <div className={styles['cover-image']}>
-                <div className={styles.preview}>
-                  <Image width={240} height={100} src={coverImage?.thumbUrl || coverImage?.url} />
+          {backgroundType === 'cover' && (
+            <Form.Item label="Preview">
+              {coverImage && (
+                <div className={styles['cover-image']}>
+                  <div className={styles.preview}>
+                    <Image width={240} height={100} src={coverImage?.thumbUrl || coverImage?.url} />
+                  </div>
+                  <div className={styles.preview}>
+                    <Image width={73} height={100} src={coverImage?.thumbUrl || coverImage?.url} />
+                  </div>
                 </div>
-                <div className={styles.preview}>
-                  <Image width={73} height={100} src={coverImage?.thumbUrl || coverImage?.url} />
-                </div>
-              </div>
-            )}
-          </Form.Item>
-          {/* )} */}
-          <Form.Item
-            name="bgcolor"
-            label="Background Color"
-            rules={[
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (value || getFieldValue('cover')) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error('The Cover and Background Color cannot both be remote.'),
-                  );
-                },
-              }),
-            ]}
-          >
-            <ColorPicker value="#000" />
-          </Form.Item>
+              )}
+            </Form.Item>
+          )}
           <Form.Item
             name="title"
             label="Title"

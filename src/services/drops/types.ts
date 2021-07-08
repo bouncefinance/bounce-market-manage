@@ -1,5 +1,8 @@
 export type DropsState = 0 | 1 | 2 | 3;
 
+// 1:display, 2:hidden
+export type dropDisplay = 1 | 2;
+
 export interface IAddDropParams {
   accountaddress: string;
   website: string;
@@ -80,7 +83,7 @@ export interface IDropDetailResponse {
 }
 
 // 0：live，1：closed
-export type poolStateType = 0 | 1
+export type poolStateType = 0 | 1;
 export interface IPoolResponse {
   artistpoolweight: number;
   category: string;

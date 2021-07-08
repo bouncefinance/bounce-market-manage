@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable, { ProColumns } from '@ant-design/pro-table';
 import { ExclamationCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, message, Space, Tooltip, Typography, Image, Modal } from 'antd';
+import { Button, message, Space, Tooltip, Typography, Image, Modal, Switch } from 'antd';
 import { getDrops, deleteOneDrop, closeOneDrop } from '@/services/drops';
 import { DropsState, IDropsResponse } from '@/services/drops/types';
 import moment from 'moment';
@@ -63,7 +63,7 @@ const DropsPage: React.FC = () => {
   const handleCloseDrop = (dropId: number) => {
     confirm({
       title: <span style={{ fontSize: 14 }}>{'Close Drop'}</span>,
-      // icon: <ExclamationCircleOutlined />,
+      icon: <ExclamationCircleOutlined />,
       content: (
         <>
           <span style={{ fontSize: 20 }}>{'Confirm that you want to close this Drop？'}</span>
@@ -74,6 +74,30 @@ const DropsPage: React.FC = () => {
         closeOneDrop(dropId).then((res) => {
           if (res.code === 1) {
             message.success('Closed Successfully');
+            ref?.current?.reload();
+          }
+        });
+      },
+    });
+  };
+
+  const handleChangeDropDisplay = (dropId: number, targetState: 'show' | 'hide') => {
+    confirm({
+      title: <span style={{ fontSize: 14 }}>{'Close Drop'}</span>,
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <>
+          <span
+            style={{ fontSize: 20 }}
+          >{`Confirm that you want to ${targetState} this Drop？`}</span>
+        </>
+      ),
+      onOk() {
+        closeOneDrop(dropId).then((res) => {
+          if (res.code === 1) {
+            message.success(
+              `${targetState === 'show' ? 'Showing this drop.' : 'Hid successfully.'} `,
+            );
             ref?.current?.reload();
           }
         });
@@ -119,6 +143,7 @@ const DropsPage: React.FC = () => {
       },
     },
     {
+      // title: 'Close',
       dataIndex: 'operact',
       width: 100,
       render(_, item) {
@@ -128,7 +153,6 @@ const DropsPage: React.FC = () => {
               <Button
                 danger
                 onClick={() => {
-                  console.log(item.id);
                   handleCloseDrop(item.id);
                 }}
               >
@@ -138,7 +162,7 @@ const DropsPage: React.FC = () => {
             {/* <Link to={`/drops/edit/?id=${item.id}`}>
               <Button icon={<EditFilled />} />
             </Link> */}
-            {state === 3 && (
+            {state === 1 && (
               <Button
                 danger
                 onClick={() => {
@@ -149,6 +173,26 @@ const DropsPage: React.FC = () => {
               </Button>
             )}
           </Space>
+        );
+      },
+    },
+    {
+      title: 'Hide Creation',
+      width: 100,
+      render(_, item) {
+        return (
+          (state === 2 || state === 3) && (
+            <Switch
+              checkedChildren="hiden"
+              unCheckedChildren="show"
+              checked={item.display === 2}
+              onChange={(checked) => {
+                // console.log('checked: ', checked);
+                if (checked) handleChangeDropDisplay(item.id, 'hide');
+                else handleChangeDropDisplay(item.id, 'show');
+              }}
+            />
+          )
         );
       },
     },

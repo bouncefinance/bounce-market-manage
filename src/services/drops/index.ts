@@ -40,6 +40,14 @@ export const closeOneDrop = (id: number) => {
   return post(Apis.updatedropsstate, { id, state: 3 });
 };
 
+export const showOneDrop = (id: number) => {
+  return post(Apis.updatedropsstate, { id, state: 1 });
+};
+
+export const hideOneDrop = (id: number) => {
+  return post(Apis.updatedropsstate, { id, state: 2 });
+};
+
 export const addOneDrop = ({
   accountaddress,
   website,

@@ -19,20 +19,22 @@ import {
 import Image from '@/components/Image';
 import ImageUploader from '@/components/ImageUploader';
 import ColorPicker from '@/components/ColorPicker';
-import { useRequest, history } from 'umi';
-import { addOneDrop } from '@/services/drops';
+import { useRequest, useLocation, history } from 'umi';
+import {
+  addOneDrop,
+  updateOneDrop,
+  getOneDropDetail,
+  getAllPoolsByCreatorAddress,
+} from '@/services/drops';
 import { getAccountByAddress } from '@/services/user';
 import type { IUserItem } from '@/services/user/types';
 import AddNftTable from '@/pages/drops/AddNftTable';
 import OperateNftTable from '@/pages/drops/OperateNftTable';
-import type { IAddDropParams, IPoolResponse } from '@/services/drops/types';
+import type { IPoolResponse } from '@/services/drops/types';
 
 const { Option } = Select;
 
 type BGType = 'cover' | 'bgcolor';
-
-// console.log('history.location.query: ', history.location.query?.id);
-const targetDropId = history.location.query?.id;
 
 function range(start: any, end: any) {
   const result = [];
@@ -68,13 +70,20 @@ const DropEdit: React.FC = () => {
   const [addNftModalVisible, setAddNftModalVisible] = useState(false);
   const [tempSelectedKeys, setTempSelectedKeys] = useState<number[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<number[]>([]);
-  const [tempSelectedNftList, setTempSelectedNftList] = useState<IPoolResponse[]>([]);
-  const [selectedNftList, setSelectedNftList] = useState<IPoolResponse[]>([]);
+  const [tempSelectedPoolList, setTempSelectedPoolList] = useState<IPoolResponse[]>([]);
+  const [selectedPoolList, setSelectedPoolList] = useState<IPoolResponse[]>([]);
   const [selectedAccountAddress, setSelectedAccountAddress] = useState('');
   const [backgroundType, setBackgroundType] = useState<BGType>('cover');
+  const [dropState, setDropState] = useState<1 | 2 | 3>();
+
+  const [form] = Form.useForm();
+  const location = useLocation();
+  const currentDropId = location['query']?.id || '';
+
+  console.log('currentDropId: ', currentDropId);
 
   useEffect(() => {
-    setSelectedNftList([]);
+    setSelectedPoolList([]);
   }, [selectedAccount]);
 
   // getAccountByAddress
@@ -100,63 +109,130 @@ const DropEdit: React.FC = () => {
     },
   );
 
-  // console.log('accountData: ', accountData);
+  const { data: dropData, loading: dropDataLoading } = useRequest(
+    (dropsid: number) => {
+      return getOneDropDetail({
+        dropsid: Number(dropsid),
+      });
+    },
+    {
+      defaultParams: [currentDropId],
+      formatResult(data: any) {
+        return {
+          list: data.data,
+          total: data.total,
+        };
+      },
+    },
+  );
 
-  // getonedropsdetail = ({ offset, limit, dropsid, poolstate }: IGetDropDetailParams) => {
-  //   return post<IDropDetailResponse[]>(Apis.getonedropsdetail, {
-  //     offset,
-  //     limit,
-  //     dropsid,
-  //     poolstate,
-  //   });
-  // };
+  useEffect(() => {
+    const list = dropData?.list || [];
+    if (currentDropId && !dropDataLoading && list.length) {
+      const selecteds = list.map((drop: any) => {
+        return drop.auctionpoolid;
+      });
+
+      setTempSelectedKeys(selecteds);
+      setSelectedKeys(selecteds);
+
+      const item = list?.[0] || {};
+
+      setDropState(item.state);
+
+      const image = {
+        uid: 0,
+        name: item.title,
+        status: 'done',
+        thumbUrl: item?.coverimgurl || '',
+        src: item?.coverimgurl || '',
+      };
+      setBackgroundType(item?.coverimgurl ? 'cover' : 'bgcolor');
+      setCoverImage(image);
+      form.setFieldsValue({
+        title: item.title,
+        description: item.description,
+        website: item.website,
+        twitter: item.twitter,
+        instagram: item.instagram,
+        bgcolor: item?.bgcolor,
+        coverimgurl: image,
+        dropdate: moment(item.dropdate * 1000),
+      });
+
+      searchAccount(item?.accountaddress).then((res) => {
+        setSelectedAccount(res.list[0] || null);
+      });
+
+      setSelectedAccountAddress(item.accountaddress);
+      getAllPoolsByCreatorAddress(item.accountaddress).then((res) => {
+        const selectedPools = res?.data?.filter((pool: IPoolResponse) =>
+          selecteds.find((selectedKey: number) => selectedKey === pool.id),
+        );
+
+        setTempSelectedPoolList(selectedPools || []);
+        setSelectedPoolList(selectedPools || []);
+      });
+    }
+  }, [currentDropId, dropData, dropDataLoading]);
 
   const handleEdit = (data: any) => {
-    console.log('data: ', data);
     if (!selectedAccount) return;
-    const params: IAddDropParams = {
+
+    let bgcolor;
+    let coverimgurl;
+    if (backgroundType === 'bgcolor') {
+      bgcolor = data?.bgcolor;
+      coverimgurl = '';
+    } else {
+      bgcolor = '';
+      coverimgurl = data?.coverimgurl?.url;
+    }
+
+    const params = {
       accountaddress: selectedAccount.accountaddress,
       website: data.website,
       twitter: data.twitter,
-      Instagram: data.instagram,
+      instagram: data.instagram,
       title: data.title,
       description: data.description,
-      bgcolor: data?.bgcolor,
-      coverimgurl: data?.cover?.url,
-      poolids: selectedNftList.map((nft) => {
+      bgcolor,
+      coverimgurl,
+      poolids: selectedPoolList.map((nft) => {
         return nft.id;
       }),
-      ordernum: new Array(selectedNftList.length).fill(0).map((_, index) => {
+      ordernum: new Array(selectedPoolList.length).fill(0).map((_, index) => {
         return index;
       }),
       dropdate: data.dropdate.unix(),
     };
 
-    addOneDrop(params).then((res) => {
-      if (res.code === 1) {
-        message.success('Added Successfully');
-      } else message.error('Add failed');
-    });
+    if (currentDropId) {
+      updateOneDrop({ ...params, id: Number(currentDropId) }).then((res) => {
+        if (res.code === 1) {
+          message.success('Updated Successfully');
+        } else if (res.msg?.includes('timestamp')) message.error('Drop time is over due');
+        else message.error('Update failed');
+      });
+    } else {
+      addOneDrop(params).then((res) => {
+        if (res.code === 1) {
+          message.success('Added Successfully');
+        } else if (res.msg?.includes('timestamp')) message.error('Drop time is over due');
+        else message.error('Add failed');
+      });
+    }
 
     history.push('/drops');
   };
 
-  const [form] = Form.useForm();
-
   const handleReset = () => {
-    setSelectedNftList([]);
+    setSelectedPoolList([]);
     setCoverImage(null);
     setSelectedAccount(undefined);
     setSelectedKeys([]);
     form.resetFields();
   };
-
-  // const onFill = () => {
-  //   form.setFieldsValue({
-  //     note: 'Hello world!',
-  //     gender: 'male',
-  //   });
-  // };
 
   const options = accountData?.list?.map((account: IUserItem) => {
     return (
@@ -182,14 +258,10 @@ const DropEdit: React.FC = () => {
   return (
     <PageContainer>
       <Card>
-        <Form
-          form={form}
-          /* ref={formRef} */ labelCol={{ span: 6 }}
-          wrapperCol={{ span: 14 }}
-          onFinish={handleEdit}
-        >
+        <h1>dropState: {dropState}</h1>
+        <Form form={form} labelCol={{ span: 6 }} wrapperCol={{ span: 14 }} onFinish={handleEdit}>
           <Form.Item label="Account">
-            {!targetDropId && (
+            {!currentDropId && (
               <Select
                 // open
                 loading={accountLoading}
@@ -256,7 +328,8 @@ const DropEdit: React.FC = () => {
             <Space direction="vertical">
               <Select
                 style={{ width: 160 }}
-                defaultValue={backgroundType}
+                // defaultValue={backgroundType}
+                value={backgroundType}
                 onSelect={(value: BGType) => {
                   setBackgroundType(value);
                 }}
@@ -265,7 +338,7 @@ const DropEdit: React.FC = () => {
                 <Option value="bgcolor">Background Color</Option>
               </Select>
               {backgroundType === 'cover' && (
-                <Form.Item name="cover" noStyle>
+                <Form.Item name="coverimgurl" noStyle>
                   <ImageUploader
                     maxCount={1}
                     onChange={(file) => {
@@ -316,6 +389,8 @@ const DropEdit: React.FC = () => {
             rules={[{ required: true, message: 'Drop date cannot be empty' }]}
           >
             <DatePicker
+              disabled={dropState === 2 || dropState === 3}
+              inputReadOnly
               format={'YYYY-MM-DD HH:mm'}
               showTime
               showNow={false}
@@ -340,7 +415,7 @@ const DropEdit: React.FC = () => {
             rules={[
               () => ({
                 validator() {
-                  if (selectedNftList.length > 0) {
+                  if (selectedPoolList.length > 0) {
                     return Promise.resolve();
                   }
                   return Promise.reject(new Error('The Drop NFTs List cannot be empty.'));
@@ -349,17 +424,19 @@ const DropEdit: React.FC = () => {
             ]}
           >
             <Space direction="vertical">
-              <Button
-                onClick={() => {
-                  setAddNftModalVisible(true);
-                }}
-              >
-                Add
-              </Button>
+              {(!currentDropId || dropState === 1) && (
+                <Button
+                  onClick={() => {
+                    setAddNftModalVisible(true);
+                  }}
+                >
+                  Add
+                </Button>
+              )}
               <OperateNftTable
-                selectedNftList={selectedNftList}
-                setTempSelectedNftList={setTempSelectedNftList}
-                setSelectedNftList={setSelectedNftList}
+                selectedPoolList={selectedPoolList}
+                setTempSelectedPoolList={setTempSelectedPoolList}
+                setSelectedPoolList={setSelectedPoolList}
                 selectedKeys={selectedKeys}
                 setSelectedKeys={setSelectedKeys}
                 tempSelectedKeys={tempSelectedKeys}
@@ -378,7 +455,7 @@ const DropEdit: React.FC = () => {
               Reset
             </Button>
             <Button type="primary" htmlType="submit">
-              Create
+              {currentDropId ? 'Save' : 'Create'}
             </Button>
           </Form.Item>
         </Form>
@@ -391,21 +468,22 @@ const DropEdit: React.FC = () => {
           visible={addNftModalVisible}
           onOk={() => {
             setAddNftModalVisible(false);
-            setSelectedNftList(tempSelectedNftList);
+            setSelectedPoolList(tempSelectedPoolList);
             setSelectedKeys(tempSelectedKeys);
             // setTempSelectedKeys([])
-            // setTempSelectedNftList([])
+            // setTempSelectedPoolList([])
           }}
           onCancel={() => {
             setAddNftModalVisible(false);
-            setTempSelectedNftList(selectedNftList);
+            setTempSelectedPoolList(selectedPoolList);
             setTempSelectedKeys(selectedKeys);
           }}
         >
           <AddNftTable
-            userAddress={selectedAccount?.accountaddress || ''}
-            tempSelectedNftList={tempSelectedNftList}
-            setTempSelectedNftList={setTempSelectedNftList}
+            // userAddress={selectedAccount?.accountaddress || ''}
+            userAddress={selectedAccountAddress || ''}
+            tempSelectedPoolList={tempSelectedPoolList}
+            setTempSelectedPoolList={setTempSelectedPoolList}
             tempSelectedKeys={tempSelectedKeys}
             setTempSelectedKeys={setTempSelectedKeys}
             selectedKeys={selectedKeys}

@@ -5,14 +5,31 @@ import type {
   IAddDropParams,
   IGetDropDetailParams,
   IDropDetailResponse,
+  IPoolResponse,
+  IUpdataDropParams,
 } from './types';
 
-export const getonedropsdetail = ({ offset, limit, dropsid, poolstate }: IGetDropDetailParams) => {
+export const getAllPoolsByCreatorAddress = (userAddress: string) => {
+  return post<IPoolResponse[]>(Apis.getauctionpoolsbyaccount, {
+    userAddress,
+  });
+};
+
+export const getPoolsByCreatorAddress = (
+  userAddress: string,
+  offset: number = 0,
+  limit: number,
+) => {
+  return post(Apis.getauctionpoolsbyaccount, {
+    data: { userAddress, offset, limit },
+  });
+};
+export const getOneDropDetail = ({ /* offset, limit,  */ dropsid }: IGetDropDetailParams) => {
   return post<IDropDetailResponse[]>(Apis.getonedropsdetail, {
-    offset,
-    limit,
+    // offset,
+    // limit,
     dropsid,
-    poolstate,
+    poolstate: 2,
   });
 };
 
@@ -52,7 +69,7 @@ export const addOneDrop = ({
   accountaddress,
   website,
   twitter,
-  Instagram,
+  instagram,
   title,
   description,
   bgcolor,
@@ -65,7 +82,37 @@ export const addOneDrop = ({
     accountaddress,
     website,
     twitter,
-    Instagram,
+    instagram,
+    title,
+    description,
+    bgcolor,
+    coverimgurl,
+    poolids,
+    ordernum,
+    dropdate,
+  });
+};
+
+export const updateOneDrop = ({
+  id,
+  accountaddress,
+  website,
+  twitter,
+  instagram,
+  title,
+  description,
+  bgcolor,
+  coverimgurl,
+  poolids,
+  ordernum,
+  dropdate,
+}: IUpdataDropParams) => {
+  return post(Apis.updatedrops, {
+    id,
+    accountaddress,
+    website,
+    twitter,
+    instagram,
     title,
     description,
     bgcolor,

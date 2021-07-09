@@ -1,14 +1,15 @@
-import { Table, Image, Typography, Tooltip, Space, Button } from 'antd';
 import React from 'react';
+import { Table, Typography, Tooltip, Space, Button } from 'antd';
+import Image from '@/components/Image';
 import type { IPoolResponse } from '@/services/drops/types';
 import { CaretDownOutlined, CaretUpOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import { ImgErrorUrl } from '@/tools/const';
 
 interface IOperateNftTableProps {
-  selectedNftList: IPoolResponse[];
-  setTempSelectedNftList: any;
-  setSelectedNftList: any;
+  selectedPoolList: IPoolResponse[];
+  setTempSelectedPoolList: any;
+  setSelectedPoolList: any;
   selectedKeys: number[];
   setSelectedKeys: any;
   tempSelectedKeys: number[];
@@ -16,55 +17,43 @@ interface IOperateNftTableProps {
 }
 
 const AddNftTable: React.FC<IOperateNftTableProps> = ({
-  selectedNftList,
-  setTempSelectedNftList,
-  setSelectedNftList,
+  selectedPoolList,
+  setTempSelectedPoolList,
+  setSelectedPoolList,
   selectedKeys,
   setSelectedKeys,
   setTempSelectedKeys,
 }: IOperateNftTableProps) => {
   const moveUp = (originIndex: number, targetIndex: number) => {
-    const tempList = [...selectedNftList];
+    const tempList = [...selectedPoolList];
     const tempNft = tempList[originIndex];
     tempList[originIndex] = tempList[targetIndex];
     tempList[targetIndex] = tempNft;
-    // console.log('tempList: ', tempList);
-    setSelectedNftList(tempList);
+    setSelectedPoolList(tempList);
   };
 
   const moveDown = (originIndex: number, targetIndex: number) => {
-    const tempList = [...selectedNftList];
+    const tempList = [...selectedPoolList];
     const tempNft = tempList[originIndex];
     tempList[originIndex] = tempList[targetIndex];
     tempList[targetIndex] = tempNft;
-    // console.log('tempList: ', tempList);
-    setSelectedNftList(tempList);
+    setSelectedPoolList(tempList);
   };
 
   const remove = (record: IPoolResponse) => {
-    // console.log('selectedNftList: ', selectedNftList);
-    // console.log('index: ', selectedNftList.indexOf(record));
-    // console.log('selectedKeys: ', selectedKeys);
-    // console.log(
-    //   'selectedKeys[selectedNftList.indexOf(record)]: ',
-    //   selectedKeys[selectedNftList.indexOf(record)],
-    // );
-
-    const targetKeyIndex = selectedNftList.indexOf(record);
-    // console.log('targetKeyIndex: ', targetKeyIndex);
+    const targetKeyIndex = selectedPoolList.indexOf(record);
     const resulKeysList = selectedKeys.filter((key) => {
       return key !== selectedKeys[targetKeyIndex];
     });
-    // console.log('resulKeysList: ', resulKeysList);
 
     setSelectedKeys(resulKeysList);
     setTempSelectedKeys(resulKeysList);
 
-    const resultNftList = selectedNftList.filter((nft) => {
+    const resultNftList = selectedPoolList.filter((nft) => {
       return nft !== record;
     });
-    setSelectedNftList(resultNftList);
-    setTempSelectedNftList(resultNftList);
+    setSelectedPoolList(resultNftList);
+    setTempSelectedPoolList(resultNftList);
   };
 
   const columns = [
@@ -120,9 +109,6 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
             disabled={index === 0}
             size="small"
             onClick={() => {
-              // console.log('text: ', text);
-              // console.log('record: ', record);
-              // console.log('index: ', index);
               moveUp(index, index - 1);
             }}
           >
@@ -130,7 +116,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
           </Button>
           <Button
             size="small"
-            disabled={index === selectedNftList.length - 1}
+            disabled={index === selectedPoolList.length - 1}
             onClick={() => {
               moveDown(index, index + 1);
             }}
@@ -161,7 +147,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
         return record.id + record.standard + Date.now(); // 在这里加上一个时间戳就可以了
       }}
       bordered
-      dataSource={selectedNftList}
+      dataSource={selectedPoolList}
       columns={columns}
       size="small"
       // style={{ width: 800 }}

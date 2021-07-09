@@ -1,20 +1,24 @@
 export type DropsState = 0 | 1 | 2 | 3;
 
 // 1:display, 2:hidden
-export type dropDisplay = 1 | 2;
+export type DropDisplay = 1 | 2;
 
 export interface IAddDropParams {
   accountaddress: string;
   website: string;
   twitter: string;
-  Instagram: string;
+  instagram: string;
   title: string;
   description: string;
   bgcolor: string;
   coverimgurl: string;
+  dropdate: number;
   poolids: number[];
   ordernum: number[];
-  dropdate: number;
+}
+
+export interface IUpdataDropParams extends IAddDropParams {
+  id: number;
 }
 
 export interface IGetPoolsParams {
@@ -53,10 +57,10 @@ export interface IDropsResponse {
 }
 
 export interface IGetDropDetailParams {
-  offset: number;
-  limit: number;
+  offset?: number;
+  limit?: number;
   dropsid: number;
-  poolstate: number;
+  poolstate?: number;
 }
 
 export interface IDropDetailResponse {

@@ -6,7 +6,7 @@ import request from 'umi-request';
 import { Apis } from '@/services';
 import type { IPoolResponse, poolStateType } from '@/services/drops/types';
 
-const getPoolsByCreatorAddress = (userAddress: string, offset: number = 0, limit: number = 7) => {
+const getPoolsByCreatorAddress = (userAddress: string, offset: number = 0, limit: number) => {
   return request.post(Apis.getauctionpoolsbyaccount, {
     data: { userAddress, offset, limit },
   });
@@ -14,8 +14,8 @@ const getPoolsByCreatorAddress = (userAddress: string, offset: number = 0, limit
 
 interface IAddNftTableProps {
   userAddress: string;
-  tempSelectedNftList: IPoolResponse[];
-  setTempSelectedNftList: any;
+  tempSelectedPoolList: IPoolResponse[];
+  setTempSelectedPoolList: any;
   tempSelectedKeys: number[];
   setTempSelectedKeys: any;
   selectedKeys: any;
@@ -23,30 +23,21 @@ interface IAddNftTableProps {
 
 const AddNftTable: React.FC<IAddNftTableProps> = ({
   userAddress,
-  tempSelectedNftList,
-  setTempSelectedNftList,
+  tempSelectedPoolList,
+  setTempSelectedPoolList,
   tempSelectedKeys,
   setTempSelectedKeys,
 }) => {
-  // useEffect(() => {
-  //   console.log('selectedNftList: ', selectedNftList);
-  // }, [selectedNftList]);
-
-  // useEffect(() => {
-  //   console.log("selectedRowKeys >>>>> ", selectedKeys)
-  // }, [selectedKeys])
-
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[]) => {
       setTempSelectedKeys(selectedRowKeys);
-      // console.log('temp', `selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
     onSelect: (record: IPoolResponse, selected: boolean) => {
       if (selected) {
-        setTempSelectedNftList(tempSelectedNftList.concat(record));
+        setTempSelectedPoolList(tempSelectedPoolList.concat(record));
       } else {
-        setTempSelectedNftList(
-          tempSelectedNftList.filter((nft) => {
+        setTempSelectedPoolList(
+          tempSelectedPoolList.filter((nft) => {
             return nft.id !== record.id || nft.standard !== record.standard;
           }),
         );

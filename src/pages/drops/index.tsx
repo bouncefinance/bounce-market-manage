@@ -1,13 +1,15 @@
 import React, { useRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import ProTable, { ProColumns } from '@ant-design/pro-table';
-import { ExclamationCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, message, Space, Tooltip, Typography, Image, Modal, Switch } from 'antd';
+import ProTable from '@ant-design/pro-table';
+import type { ProColumns } from '@ant-design/pro-table';
+import { EditFilled, ExclamationCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, message, Space, Tooltip, Typography, Modal, Switch } from 'antd';
 import { getDrops, deleteOneDrop, closeOneDrop } from '@/services/drops';
-import { DropsState, IDropsResponse } from '@/services/drops/types';
+import type { DropsState, IDropsResponse } from '@/services/drops/types';
 import moment from 'moment';
 import { useState } from 'react';
 import { Link } from 'umi';
+import Image from '@/components/Image';
 import { ImgErrorUrl } from '@/tools/const';
 
 const { confirm } = Modal;
@@ -143,7 +145,7 @@ const DropsPage: React.FC = () => {
       },
     },
     {
-      // title: 'Close',
+      title: 'Action',
       dataIndex: 'operact',
       width: 100,
       render(_, item) {
@@ -159,9 +161,9 @@ const DropsPage: React.FC = () => {
                 Close Drop
               </Button>
             )}
-            {/* <Link to={`/drops/edit/?id=${item.id}`}>
+            <Link to={`/drops/edit/?id=${item.id}`}>
               <Button icon={<EditFilled />} />
-            </Link> */}
+            </Link>
             {state === 1 && (
               <Button
                 danger
@@ -176,7 +178,10 @@ const DropsPage: React.FC = () => {
         );
       },
     },
-    {
+  ];
+
+  if (state === 2 || state === 3)
+    columns.push({
       title: 'Hide Creation',
       width: 100,
       render(_, item) {
@@ -195,8 +200,7 @@ const DropsPage: React.FC = () => {
           )
         );
       },
-    },
-  ];
+    });
 
   return (
     <PageContainer

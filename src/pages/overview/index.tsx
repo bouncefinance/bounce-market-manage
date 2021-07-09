@@ -8,30 +8,50 @@ const index: React.FC = () => {
   return (
     <PageContainer>
       <p>Transaction data statistics(BSC)</p>
-      <Row gutter={16} style={{ minWidth: 1240 }}>
-        <Col span={4}>
+      <Row gutter={[18, 24]}>
+        <Col flex="0 0 240px">
           <Card>
-            <Statistic groupSeparator="," title="NFTs on sale" value={256568} />
+            <Statistic
+              style={{ height: 63 }}
+              groupSeparator=","
+              title="NFTs on sale"
+              value={256568}
+            />
           </Card>
         </Col>
-        <Col span={4}>
+        <Col flex="0 0 240px">
           <Card>
-            <Statistic groupSeparator="," title="NFTs generated" value={256568} />
+            <Statistic
+              style={{ height: 63 }}
+              groupSeparator=","
+              title="NFTs generated"
+              value={256568}
+            />
           </Card>
         </Col>
-        <Col span={4}>
+        <Col flex="0 0 240px">
           <Card>
-            <Statistic groupSeparator="," title="Total wallets(accounts)" value={112893} />
+            <Statistic
+              style={{ height: 63 }}
+              groupSeparator=","
+              title="Total wallets(accounts)"
+              value={112893}
+            />
           </Card>
         </Col>
-        <Col span={4}>
+        <Col flex="0 0 240px">
           <Card>
-            <Statistic groupSeparator="," title="volumn (24h)" value={112893} />
+            <Statistic
+              style={{ height: 63 }}
+              groupSeparator=","
+              title="volumn (24h)"
+              value={112893}
+            />
           </Card>
         </Col>
-        <Col span={4}>
+        <Col flex="0 0 260px">
           <Card>
-            <Statistic groupSeparator="," title="volumn" value={112893} />
+            <Statistic style={{ height: 63 }} groupSeparator="," title="volumn" value={112893} />
           </Card>
         </Col>
       </Row>

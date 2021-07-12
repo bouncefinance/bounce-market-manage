@@ -345,6 +345,7 @@ const DropEdit: React.FC = () => {
                     }}
                     limit={4 * 1024 * 1024}
                   />
+                  <span>Support PNG, JPG, GIF, WEBP, etc. Max size: 4MB.</span>
                 </Form.Item>
               )}
               {backgroundType === 'bgcolor' && (

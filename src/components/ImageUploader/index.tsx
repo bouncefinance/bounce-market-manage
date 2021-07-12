@@ -72,8 +72,6 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
       >
         {maxCount > fileList.length ? <PlusOutlined /> : null}
       </Upload>
-
-      <span className="ant-upload-hint">Support PNG, JPG, GIF, WEBP, etc. Max size: 4MB.</span>
     </>
     // </ImgCrop>
   );

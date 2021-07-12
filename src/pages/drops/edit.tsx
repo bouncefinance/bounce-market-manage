@@ -343,6 +343,7 @@ const DropEdit: React.FC = () => {
                     onChange={(file) => {
                       setCoverImage(file);
                     }}
+                    limit={4 * 1024 * 1024}
                   />
                 </Form.Item>
               )}

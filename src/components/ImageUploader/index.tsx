@@ -26,7 +26,10 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
       setFileList([value]);
     }
   }, [value]);
+
   const handleChange = ({ file, fileList: newFileList }: UploadChangeParam) => {
+    // console.log('file.status: ', file.status);
+    if (!file.status) return;
     setFileList(newFileList);
     if (file.status === 'done') {
       onChange(file, fileList);
@@ -36,7 +39,7 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
   const handleBeforeUpload = async (file: RcFile) => {
     const size = file.size || 0;
     if (limit && size > limit) {
-      message.error(`Image must smaller than ${limit}`);
+      message.error(`Image must smaller than ${limit / 1024 / 1024}M`);
       return false;
     }
     // setLoading(true);

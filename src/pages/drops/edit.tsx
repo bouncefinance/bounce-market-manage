@@ -374,9 +374,11 @@ const DropEdit: React.FC = () => {
                 <div className={styles['cover-image']}>
                   <div className={styles.preview}>
                     <Image width={240} height={100} src={coverImage?.thumbUrl || coverImage?.url} />
+                    <span>On PC</span>
                   </div>
                   <div className={styles.preview}>
                     <Image width={73} height={100} src={coverImage?.thumbUrl || coverImage?.url} />
+                    <span>On phone</span>
                   </div>
                 </div>
               )}
@@ -411,7 +413,7 @@ const DropEdit: React.FC = () => {
               disabledTime={disabledTime}
             />
           </Form.Item>
-          <Form.Item label="Social Link">
+          <Form.Item label="Links">
             <Form.Item name="instagram">
               <Input addonBefore="Instagram" />
             </Form.Item>
@@ -424,14 +426,14 @@ const DropEdit: React.FC = () => {
           </Form.Item>
           <Form.Item
             name="nfts"
-            label="Drop NFTs List"
+            label="NFTs List"
             rules={[
               () => ({
                 validator() {
                   if (selectedPoolList.length > 0) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('The Drop NFTs List cannot be empty.'));
+                  return Promise.reject(new Error('The NFTs List cannot be empty.'));
                 },
               }),
             ]}

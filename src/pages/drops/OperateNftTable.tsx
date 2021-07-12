@@ -65,7 +65,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
     {
       dataIndex: 'fileurl',
       title: 'Cover',
-      width: 70,
+      width: 80,
       render: (src: any) => (
         <Image
           height={60}
@@ -81,10 +81,12 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
       dataIndex: 'itemname',
       title: 'Name',
       width: 100,
+      ellipsis: true,
     },
     {
       dataIndex: 'creator',
-      title: 'Artist Account',
+      title: 'Creator Account',
+      width: 122,
       render: (text: any) => (
         <Typography.Paragraph style={{ margin: 0, width: 120 }} copyable={{ text }}>
           <Tooltip title={text}>{text.replace(/^(.{6}).*(.{4})$/, '$1...$2')}</Tooltip>
@@ -94,6 +96,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
     {
       dataIndex: 'standard',
       title: 'Auction Type',
+      width: 110,
       render: (standard: any) => (
         <Typography.Paragraph style={{ margin: 0, width: 100 }}>
           {standard === 0 ? 'Fixed Swap' : 'English Auction'}
@@ -103,7 +106,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
     {
       dataIndex: 'actions',
       title: 'Action',
-      width: 100,
+      width: 122,
       render: (text: string, record: IPoolResponse, index: number) => (
         <Space>
           <Button

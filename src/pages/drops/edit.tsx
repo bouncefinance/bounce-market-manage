@@ -307,30 +307,10 @@ const DropEdit: React.FC = () => {
                   </List.Item>
                 )}
               />
-            ) : (
-              <></>
-            )}
+            ) : null}
           </Form.Item>
 
-          <Form.Item
-            label="Background"
-            rules={[
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (value || getFieldValue(backgroundType)) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error(
-                      `${
-                        backgroundType === 'cover' ? 'Cover' : 'Background color'
-                      } cannot be empty`,
-                    ),
-                  );
-                },
-              }),
-            ]}
-          >
+          <Form.Item label="Background">
             <Space direction="vertical">
               <Select
                 style={{ width: 160 }}
@@ -344,7 +324,20 @@ const DropEdit: React.FC = () => {
                 <Option value="bgcolor">Background Color</Option>
               </Select>
               {backgroundType === 'cover' && (
-                <Form.Item name="coverimgurl" noStyle>
+                <Form.Item
+                  name="coverimgurl"
+                  noStyle
+                  rules={[
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (value || getFieldValue('cover')) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(new Error('Cover cannot be empty'));
+                      },
+                    }),
+                  ]}
+                >
                   <ImageUploader
                     maxCount={1}
                     onChange={(file) => {
@@ -354,8 +347,21 @@ const DropEdit: React.FC = () => {
                 </Form.Item>
               )}
               {backgroundType === 'bgcolor' && (
-                <Form.Item name="bgcolor" noStyle>
-                  <ColorPicker value="#000" />
+                <Form.Item
+                  name="bgcolor"
+                  noStyle
+                  rules={[
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (value || getFieldValue('bgcolor')) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(new Error('Background color cannot be empty'));
+                      },
+                    }),
+                  ]}
+                >
+                  <ColorPicker value="#FFF" />
                 </Form.Item>
               )}
             </Space>

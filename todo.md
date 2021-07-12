@@ -28,9 +28,10 @@
 - recommed 板块
   - 增加每个推荐位的售卖状态的显示[×]
 - drops 板块
-  - 编辑 drop
-  - 添加 nft 的 cover 和 color 的必填
-  - 编辑 drop 返回的已选 pool 的顺序不对
+  - 编辑 drop [√]
+  - 编辑 drop 返回的已选 pool 的顺序不对 [√]
+  - 添加 nft 的 cover 和 color 的必填 [√]
+  - 限制上传的图片大小小于 4M
   - cover 在只有 background color 时显示颜色
 - NFT Management 板块
   - 一键复制的按钮改成 antd 自带的

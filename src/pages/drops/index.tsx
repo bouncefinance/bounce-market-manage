@@ -116,7 +116,11 @@ const DropsPage: React.FC = () => {
     {
       dataIndex: 'coverimgurl',
       title: 'Cover',
-      render: (src: any) => <Image width={40} preview={false} src={src} fallback={ImgErrorUrl} />,
+      render: (src: any, record) => {
+        if (src === '-')
+          return <div style={{ backgroundColor: record.bgcolor, width: 40, height: 40 }}></div>;
+        return <Image width={40} height={40} preview={false} src={src} fallback={ImgErrorUrl} />;
+      },
     },
     {
       dataIndex: 'title',
@@ -192,7 +196,6 @@ const DropsPage: React.FC = () => {
               unCheckedChildren="show"
               checked={item.display === 2}
               onChange={(checked) => {
-                // console.log('checked: ', checked);
                 if (checked) handleChangeDropDisplay(item.id, 'hide');
                 else handleChangeDropDisplay(item.id, 'show');
               }}

@@ -11,7 +11,7 @@ export interface IImageUploaderProps {
   value?: UploadFile;
   maxCount?: number;
   limit?: number;
-  onChange: (file: UploadFile, items: UploadFile[]) => void;
+  onChange: (file: UploadFile | null, items: UploadFile[]) => void;
 }
 const ImageUploader: React.FC<IImageUploaderProps> = ({
   value,
@@ -28,11 +28,17 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
   }, [value]);
 
   const handleChange = ({ file, fileList: newFileList }: UploadChangeParam) => {
-    // console.log('file.status: ', file.status);
     if (!file.status) return;
     setFileList(newFileList);
-    if (file.status === 'done') {
-      onChange(file, fileList);
+    switch (file.status) {
+      case 'done':
+        onChange(file, fileList);
+        break;
+      case 'removed':
+        onChange(null, fileList);
+        break;
+      default:
+        break;
     }
   };
 
@@ -54,17 +60,21 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
 
   return (
     // <ImgCrop rotate>
-    <Upload
-      maxCount={maxCount}
-      listType="picture-card"
-      accept="image/*"
-      showUploadList={{ showPreviewIcon: false }}
-      beforeUpload={handleBeforeUpload}
-      onChange={handleChange}
-      fileList={fileList}
-    >
-      {maxCount > fileList.length ? <PlusOutlined /> : null}
-    </Upload>
+    <>
+      <Upload
+        maxCount={maxCount}
+        listType="picture-card"
+        accept="image/*"
+        showUploadList={{ showPreviewIcon: false }}
+        beforeUpload={handleBeforeUpload}
+        onChange={handleChange}
+        fileList={fileList}
+      >
+        {maxCount > fileList.length ? <PlusOutlined /> : null}
+      </Upload>
+
+      <span className="ant-upload-hint">Support PNG, JPG, GIF, WEBP, etc. Max size: 4MB.</span>
+    </>
     // </ImgCrop>
   );
 };

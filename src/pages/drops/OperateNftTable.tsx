@@ -69,6 +69,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
       render: (src: any) => (
         <Image
           height={60}
+          width={60}
           style={{ objectFit: 'contain' }}
           preview={false}
           src={src}

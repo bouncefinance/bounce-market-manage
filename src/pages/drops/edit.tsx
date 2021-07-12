@@ -132,6 +132,7 @@ const DropEdit: React.FC = () => {
       const selecteds = list.map((drop: any) => {
         return drop.auctionpoolid;
       });
+      // console.log('selecteds: ', selecteds)
 
       setTempSelectedKeys(selecteds);
       setSelectedKeys(selecteds);
@@ -166,9 +167,15 @@ const DropEdit: React.FC = () => {
 
       setSelectedAccountAddress(item.accountaddress);
       getAllPoolsByCreatorAddress(item.accountaddress).then((res) => {
-        const selectedPools = res?.data?.filter((pool: IPoolResponse) =>
-          selecteds.find((selectedKey: number) => selectedKey === pool.id),
-        );
+        // const selectedPools = res?.data?.filter((pool: IPoolResponse) =>
+        //   selecteds.find((selectedKey: number) => selectedKey === pool.id),
+        // );
+
+        const selectedPools = selecteds.map((selectedKey: number) => {
+          return res?.data?.find((pool) => {
+            return selectedKey === pool.id;
+          });
+        });
 
         setTempSelectedPoolList(selectedPools || []);
         setSelectedPoolList(selectedPools || []);
@@ -258,7 +265,6 @@ const DropEdit: React.FC = () => {
   return (
     <PageContainer>
       <Card>
-        <h1>dropState: {dropState}</h1>
         <Form form={form} labelCol={{ span: 6 }} wrapperCol={{ span: 14 }} onFinish={handleEdit}>
           <Form.Item label="Account">
             {!currentDropId && (

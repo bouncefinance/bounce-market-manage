@@ -31,6 +31,7 @@
   - 编辑 drop
   - 添加 nft 的 cover 和 color 的必填
   - 编辑 drop 返回的已选 pool 的顺序不对
+  - cover 在只有 background color 时显示颜色
 - NFT Management 板块
   - 一键复制的按钮改成 antd 自带的
 

@@ -24,20 +24,33 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
   setSelectedKeys,
   setTempSelectedKeys,
 }: IOperateNftTableProps) => {
-  const moveUp = (originIndex: number, targetIndex: number) => {
-    const tempList = [...selectedPoolList];
-    const tempNft = tempList[originIndex];
-    tempList[originIndex] = tempList[targetIndex];
-    tempList[targetIndex] = tempNft;
-    setSelectedPoolList(tempList);
+  const firstSelectedPoolId = selectedPoolList[0]?.id;
+  const lastSelectedPoolId = selectedPoolList[selectedPoolList.length - 1]?.id;
+
+  const moveUp = (currentPoolId: number) => {
+    const currentPool = selectedPoolList.find((pool) => pool.id === currentPoolId);
+    let currentPoolIndex;
+    if (currentPool) {
+      currentPoolIndex = selectedPoolList.indexOf(currentPool);
+      const tempList = [...selectedPoolList];
+      const tempNft = tempList[currentPoolIndex];
+      tempList[currentPoolIndex] = tempList[currentPoolIndex - 1];
+      tempList[currentPoolIndex - 1] = tempNft;
+      setSelectedPoolList(tempList);
+    }
   };
 
-  const moveDown = (originIndex: number, targetIndex: number) => {
-    const tempList = [...selectedPoolList];
-    const tempNft = tempList[originIndex];
-    tempList[originIndex] = tempList[targetIndex];
-    tempList[targetIndex] = tempNft;
-    setSelectedPoolList(tempList);
+  const moveDown = (currentPoolId: number) => {
+    const currentPool = selectedPoolList.find((pool) => pool.id === currentPoolId);
+    let currentPoolIndex;
+    if (currentPool) {
+      currentPoolIndex = selectedPoolList.indexOf(currentPool);
+      const tempList = [...selectedPoolList];
+      const tempNft = tempList[currentPoolIndex];
+      tempList[currentPoolIndex] = tempList[currentPoolIndex + 1];
+      tempList[currentPoolIndex + 1] = tempNft;
+      setSelectedPoolList(tempList);
+    }
   };
 
   const remove = (record: IPoolResponse) => {
@@ -107,22 +120,22 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
       dataIndex: 'actions',
       title: 'Action',
       width: 122,
-      render: (text: string, record: IPoolResponse, index: number) => (
+      render: (_: string, record: IPoolResponse) => (
         <Space>
           <Button
-            disabled={index === 0}
+            disabled={record.id === firstSelectedPoolId}
             size="small"
             onClick={() => {
-              moveUp(index, index - 1);
+              moveUp(record.id);
             }}
           >
             <CaretUpOutlined />
           </Button>
           <Button
             size="small"
-            disabled={index === selectedPoolList.length - 1}
+            disabled={record.id === lastSelectedPoolId}
             onClick={() => {
-              moveDown(index, index + 1);
+              moveDown(record.id);
             }}
           >
             <CaretDownOutlined />

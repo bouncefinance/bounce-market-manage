@@ -21,9 +21,12 @@ export const getPoolsByCreatorAddress = (
   limit: number,
 ) => {
   return post(Apis.getauctionpoolsbyaccount, {
-    data: { userAddress, offset, limit },
+    userAddress,
+    offset,
+    limit,
   });
 };
+
 export const getOneDropDetail = ({ /* offset, limit,  */ dropsid }: IGetDropDetailParams) => {
   return post<IDropDetailResponse[]>(Apis.getonedropsdetail, {
     // offset,

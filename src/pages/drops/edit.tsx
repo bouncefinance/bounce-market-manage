@@ -65,7 +65,7 @@ const disabledTime = (date: any) => {
 };
 
 const DropEdit: React.FC = () => {
-  const [coverImage, setCoverImage] = useState<any>(null);
+  const [coverImage, setCoverImage] = useState<string>('');
   const [selectedAccount, setSelectedAccount] = useState<IUserItem>();
   const [addNftModalVisible, setAddNftModalVisible] = useState(false);
   const [tempSelectedKeys, setTempSelectedKeys] = useState<number[]>([]);
@@ -79,8 +79,6 @@ const DropEdit: React.FC = () => {
   const [form] = Form.useForm();
   const location = useLocation();
   const currentDropId = location['query']?.id || '';
-
-  console.log('currentDropId: ', currentDropId);
 
   useEffect(() => {
     setSelectedPoolList([]);
@@ -146,10 +144,10 @@ const DropEdit: React.FC = () => {
         name: item.title,
         status: 'done',
         thumbUrl: item?.coverimgurl || '',
-        src: item?.coverimgurl || '',
+        url: item?.coverimgurl || '',
       };
       setBackgroundType(item?.coverimgurl ? 'cover' : 'bgcolor');
-      setCoverImage(image);
+      setCoverImage(item?.coverimgurl || item?.coverimgurl);
       form.setFieldsValue({
         title: item.title,
         description: item.description,
@@ -166,11 +164,8 @@ const DropEdit: React.FC = () => {
       });
 
       setSelectedAccountAddress(item.accountaddress);
-      getAllPoolsByCreatorAddress(item.accountaddress).then((res) => {
-        // const selectedPools = res?.data?.filter((pool: IPoolResponse) =>
-        //   selecteds.find((selectedKey: number) => selectedKey === pool.id),
-        // );
 
+      getAllPoolsByCreatorAddress(item.accountaddress).then((res) => {
         const selectedPools = selecteds.map((selectedKey: number) => {
           return res?.data?.find((pool) => {
             return selectedKey === pool.id;
@@ -235,7 +230,7 @@ const DropEdit: React.FC = () => {
 
   const handleReset = () => {
     setSelectedPoolList([]);
-    setCoverImage(null);
+    setCoverImage('');
     setSelectedAccount(undefined);
     setSelectedKeys([]);
     form.resetFields();
@@ -324,29 +319,32 @@ const DropEdit: React.FC = () => {
                 <Option value="bgcolor">Background Color</Option>
               </Select>
               {backgroundType === 'cover' && (
-                <Form.Item
-                  name="coverimgurl"
-                  noStyle
-                  rules={[
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (value || getFieldValue('cover')) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(new Error('Cover cannot be empty'));
-                      },
-                    }),
-                  ]}
-                >
-                  <ImageUploader
-                    maxCount={1}
-                    onChange={(file) => {
-                      setCoverImage(file);
-                    }}
-                    limit={4 * 1024 * 1024}
-                  />
+                <>
+                  <Form.Item
+                    name="coverimgurl"
+                    noStyle
+                    rules={[{ required: true, message: 'Cover cannot be empty' }]}
+                    // rules={[
+                    //   ({ getFieldValue }) => ({
+                    //     validator(_, value) {
+                    //       if (value || getFieldValue('coverimgurl')) {
+                    //         return Promise.resolve();
+                    //       }
+                    //       return Promise.reject(new Error('Cover cannot be empty'));
+                    //     },
+                    //   }),
+                    // ]}
+                  >
+                    <ImageUploader
+                      maxCount={1}
+                      onChange={(file) => {
+                        setCoverImage(file?.thumbUrl || file?.url || '');
+                      }}
+                      limit={4 * 1024 * 1024}
+                    />
+                  </Form.Item>
                   <span>Support PNG, JPG, GIF, WEBP, etc. Max size: 4MB.</span>
-                </Form.Item>
+                </>
               )}
               {backgroundType === 'bgcolor' && (
                 <Form.Item
@@ -374,11 +372,11 @@ const DropEdit: React.FC = () => {
               {coverImage && (
                 <div className={styles['cover-image']}>
                   <div className={styles.preview}>
-                    <Image width={240} height={100} src={coverImage?.thumbUrl || coverImage?.url} />
+                    <Image width={240} height={100} src={coverImage} />
                     <span>On PC</span>
                   </div>
                   <div className={styles.preview}>
-                    <Image width={73} height={100} src={coverImage?.thumbUrl || coverImage?.url} />
+                    <Image width={73} height={100} src={coverImage} />
                     <span>On phone</span>
                   </div>
                 </div>

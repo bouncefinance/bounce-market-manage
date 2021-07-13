@@ -51,6 +51,7 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
     // setLoading(true);
     const formData = new FormData();
     formData.append('filename', file);
+    console.log('formData: ', formData);
     const res = await fileUploader(formData);
     // eslint-disable-next-line no-param-reassign
     file.url = res.result?.path;
@@ -60,19 +61,17 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
 
   return (
     // <ImgCrop rotate>
-    <>
-      <Upload
-        maxCount={maxCount}
-        listType="picture-card"
-        accept="image/*"
-        showUploadList={{ showPreviewIcon: false }}
-        beforeUpload={handleBeforeUpload}
-        onChange={handleChange}
-        fileList={fileList}
-      >
-        {maxCount > fileList.length ? <PlusOutlined /> : null}
-      </Upload>
-    </>
+    <Upload
+      maxCount={maxCount}
+      listType="picture-card"
+      accept="image/*"
+      showUploadList={{ showPreviewIcon: false }}
+      beforeUpload={handleBeforeUpload}
+      onChange={handleChange}
+      fileList={fileList}
+    >
+      {maxCount > fileList.length ? <PlusOutlined /> : null}
+    </Upload>
     // </ImgCrop>
   );
 };

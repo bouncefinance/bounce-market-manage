@@ -47,7 +47,6 @@ const disabledDate = (currentDate: any) =>
   currentDate && currentDate < moment().subtract(1, 'day').endOf('day');
 
 const disabledTime = (date: any) => {
-  console.log('moment(date).hour(): ', moment(date).hour());
   const hours = moment().hours();
   const minutes = moment().minutes();
   // 当日只能选择当前时间之后的时间点

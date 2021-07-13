@@ -15,6 +15,7 @@ export const Apis = {
   getonedropsdetail: '/api/bouadmin/main/auth/getonedropsdetail', // 获取一条drop的信息
   updatedropsstate: '/api/bouadmin/main/auth/updatedropsstate', // 更新一条drop的进行状态
   updatedropsdisplay: '/api/bouadmin/main/auth/updatedropsdisplay', // 更新一条drop的显示状态
+  get_overviews: '/api/bouadmin/main/auth/get_overviews', // 获取统计数据
 };
 
 export default Apis;

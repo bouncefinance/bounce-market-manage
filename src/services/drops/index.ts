@@ -5,27 +5,8 @@ import type {
   IAddDropParams,
   IGetDropDetailParams,
   IDropDetailResponse,
-  IPoolResponse,
   IUpdataDropParams,
 } from './types';
-
-export const getAllPoolsByCreatorAddress = (userAddress: string) => {
-  return post<IPoolResponse[]>(Apis.getauctionpoolsbyaccount, {
-    userAddress,
-  });
-};
-
-export const getPoolsByCreatorAddress = (
-  userAddress: string,
-  offset: number = 0,
-  limit: number,
-) => {
-  return post(Apis.getauctionpoolsbyaccount, {
-    userAddress,
-    offset,
-    limit,
-  });
-};
 
 export const getOneDropDetail = ({ /* offset, limit,  */ dropsid }: IGetDropDetailParams) => {
   return post<IDropDetailResponse[]>(Apis.getonedropsdetail, {

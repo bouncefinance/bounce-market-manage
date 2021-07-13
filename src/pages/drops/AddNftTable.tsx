@@ -2,8 +2,8 @@ import { Table, Typography, Tooltip, Tag } from 'antd';
 import Image from '@/components/Image';
 import React from 'react';
 import { useRequest } from 'umi';
-import type { IPoolResponse } from '@/services/drops/types';
-import { getPoolsByCreatorAddress } from '@/services/drops';
+import type { IPoolResponse } from '@/services/pool/types';
+import { getPoolsByCreatorAddress } from '@/services/pool';
 
 interface IAddNftTableProps {
   userAddress: string;

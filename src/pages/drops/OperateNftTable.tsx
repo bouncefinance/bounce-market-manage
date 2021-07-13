@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table, Typography, Tooltip, Space, Button } from 'antd';
 import Image from '@/components/Image';
-import type { IPoolResponse } from '@/services/drops/types';
+import type { IPoolResponse } from '@/services/pool/types';
 import { CaretDownOutlined, CaretUpOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import { ImgErrorUrl } from '@/tools/const';

@@ -56,7 +56,7 @@ export interface IPopularBrand {
   status: number;
 }
 
-const getPoolLists = function (offset: number, limit: number, orderfield: 1 | 2 = 1) {
+const getPoolLists = (offset: number, limit: number, orderfield: 1 | 2 = 1) => {
   return request.post('[FGB_V2]/api/v2/main/getauctionpoolsbypage', {
     data: {
       limit,
@@ -64,13 +64,13 @@ const getPoolLists = function (offset: number, limit: number, orderfield: 1 | 2 
       category: '',
       channel: '',
       currency: '0x0000000000000000000000000000000000000000',
-      orderfield: orderfield,
+      orderfield,
     },
   });
 };
 
 // get pools weight
-const getPoolsInfobypage = function (offset: number, limit: number) {
+const getPoolsInfobypage = (offset: number, limit: number) => {
   return request.post('[FGB_V2]/api/v2/main/getpoolsinfobypage', {
     data: {
       limit,
@@ -89,7 +89,7 @@ const getPoolsInfobypage = function (offset: number, limit: number) {
 //   });
 // };
 
-const getPopularBrands = function () {
+const getPopularBrands = () => {
   return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
     data: {
       filter: 1,
@@ -100,11 +100,11 @@ const getPopularBrands = function () {
   });
 };
 
-const getBrandsByPage = function (likestr: string = '', offset: number) {
+const getBrandsByPage = (likestr: string = '', offset: number) => {
   return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
     data: {
-      likestr: likestr,
-      offset: offset,
+      likestr,
+      offset,
       // limit: limit, 单页显示数量
     },
   });
@@ -117,7 +117,7 @@ let oldBrandItem: IPopularBrand;
 let clickedCardIndex: number;
 let clickedCardType: 'Banner' | 'Fast Mover' | 'Brand';
 
-export default function recommend() {
+const Recommend: React.FC = () => {
   const [poolModalVisible, setPoolModalVisible] = useState(false);
   const [filterPoolList, setFilterPoolList] = useState<IpoolItem[]>([]);
   const [recommendBrandList, setRecommendBrandList] = useState<IPopularBrand[]>([]);
@@ -194,6 +194,11 @@ export default function recommend() {
   useEffect(() => {
     console.log('modalActionType: ', modalActionType);
   }, [modalActionType]);
+
+  const brandResultList = new Array(RECOMMEND_BRANDS_AMOUNT).fill(0);
+  recommendBrandList.forEach((value) => {
+    brandResultList[RECOMMEND_BRANDS_AMOUNT - Math.floor(value.popularweight / 10000)] = value;
+  });
 
   useEffect(() => {
     switch (modalActionType) {
@@ -295,26 +300,21 @@ export default function recommend() {
     }
   }, [modalActionType]);
 
-  useEffect(() => {
-    console.log('modalDataSource: ', modalDataSource);
-  }, [modalDataSource]);
+  // useEffect(() => {
+  //   console.log('modalDataSource: ', modalDataSource);
+  // }, [modalDataSource]);
 
-  useEffect(() => {
-    console.log('clickedCardIndex: ', clickedCardIndex);
-  }, [clickedCardIndex]);
+  // useEffect(() => {
+  //   console.log('clickedCardIndex: ', clickedCardIndex);
+  // }, [clickedCardIndex]);
 
-  useEffect(() => {
-    console.log('poolModalVisible: ', poolModalVisible);
-  }, [poolModalVisible]);
+  // useEffect(() => {
+  //   console.log('poolModalVisible: ', poolModalVisible);
+  // }, [poolModalVisible]);
 
-  let poolResultList = new Array(RECOMMEND_POOLS_AMOUNT).fill(0);
-  filterPoolList.map((value) => {
+  const poolResultList = new Array(RECOMMEND_POOLS_AMOUNT).fill(0);
+  filterPoolList.forEach((value) => {
     poolResultList[RECOMMEND_POOLS_AMOUNT - value.poolweight] = value;
-  });
-
-  let brandResultList = new Array(RECOMMEND_BRANDS_AMOUNT).fill(0);
-  recommendBrandList.map((value) => {
-    brandResultList[RECOMMEND_BRANDS_AMOUNT - Math.floor(value.popularweight / 10000)] = value;
   });
 
   useEffect(() => {
@@ -552,4 +552,5 @@ export default function recommend() {
       )}
     </div>
   );
-}
+};
+export default Recommend;

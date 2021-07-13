@@ -20,17 +20,13 @@ import Image from '@/components/Image';
 import ImageUploader from '@/components/ImageUploader';
 import ColorPicker from '@/components/ColorPicker';
 import { useRequest, useLocation, history } from 'umi';
-import {
-  addOneDrop,
-  updateOneDrop,
-  getOneDropDetail,
-  getAllPoolsByCreatorAddress,
-} from '@/services/drops';
+import { addOneDrop, updateOneDrop, getOneDropDetail } from '@/services/drops';
+import { getAllPoolsByCreatorAddress } from '@/services/pool';
 import { getAccountByAddress } from '@/services/user';
 import type { IUserItem } from '@/services/user/types';
 import AddNftTable from '@/pages/drops/AddNftTable';
 import OperateNftTable from '@/pages/drops/OperateNftTable';
-import type { IPoolResponse } from '@/services/drops/types';
+import type { IPoolResponse } from '@/services/pool/types';
 
 const { Option } = Select;
 

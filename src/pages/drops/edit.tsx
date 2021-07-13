@@ -45,22 +45,25 @@ function range(start: any, end: any) {
 }
 const disabledDate = (currentDate: any) =>
   currentDate && currentDate < moment().subtract(1, 'day').endOf('day');
+
 const disabledTime = (date: any) => {
+  console.log('moment(date).hour(): ', moment(date).hour());
   const hours = moment().hours();
   const minutes = moment().minutes();
-  const seconds = moment().seconds();
   // 当日只能选择当前时间之后的时间点
   if (date && moment(date).date() === moment().date()) {
+    if (moment(date).hour() === moment().hour())
+      return {
+        disabledHours: () => range(0, 24).splice(0, hours),
+        disabledMinutes: () => range(0, 60).splice(0, minutes + 1),
+      };
     return {
       disabledHours: () => range(0, 24).splice(0, hours),
-      disabledMinutes: () => range(0, 60).splice(0, minutes + 1),
-      disabledSeconds: () => range(0, 60).splice(0, seconds + 1),
     };
   }
   return {
     disabledHours: () => [],
     disabledMinutes: () => [],
-    disabledSeconds: () => [],
   };
 };
 
@@ -386,7 +389,7 @@ const DropEdit: React.FC = () => {
               disabled={dropState === 2 || dropState === 3}
               inputReadOnly
               format={'YYYY-MM-DD HH:mm'}
-              showTime
+              showTime={{ defaultValue: moment().add(1, 'minute') }}
               showNow={false}
               disabledDate={disabledDate}
               disabledTime={disabledTime}

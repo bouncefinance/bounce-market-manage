@@ -83,6 +83,7 @@ const DropEdit: React.FC = () => {
 
   useEffect(() => {
     setSelectedPoolList([]);
+    setTempSelectedPoolList([]);
   }, [selectedAccount]);
 
   // getAccountByAddress

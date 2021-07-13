@@ -16,7 +16,7 @@ const Overview: React.FC = () => {
         <TabPane tab="Overview" key="1">
           <OverviewTab />
         </TabPane>
-        <TabPane tab="Tab 2" key="2">
+        <TabPane tab="Transactions" key="2">
           Content of Tab Pane 2
         </TabPane>
       </Tabs>

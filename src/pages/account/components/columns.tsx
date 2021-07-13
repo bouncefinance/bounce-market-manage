@@ -76,14 +76,14 @@ const columns: (run: () => void, refresh: () => void) => columnsType = (run, ref
             ),
             onOk: async () => {
               setLoading(true);
-              const state: UserCreationType = checked
+              const display: UserCreationType = checked
                 ? UserCreationEnum.Disable
                 : UserCreationEnum.Normal;
-              const isOk = await updateUserCreation({ id, state });
+              const isOk = await updateUserCreation({ id, display });
               setLoading(false);
               if (isOk) {
                 message.success('Set Success 🎉 🎉 🎉');
-                setValue(state);
+                setValue(display);
                 if (refresh) refresh();
                 return;
               }
@@ -121,14 +121,14 @@ const columns: (run: () => void, refresh: () => void) => columnsType = (run, ref
             ),
             onOk: async () => {
               setLoading(true);
-              const display: UserDisableType = checked
+              const state: UserDisableType = checked
                 ? UserDisableEnum.Disable
                 : UserDisableEnum.Normal;
-              const isOk = await updateUserDisplay({ id, display });
+              const isOk = await updateUserDisplay({ id, state });
               setLoading(false);
               if (isOk) {
                 message.success('Set Success 🎉 🎉 🎉');
-                setValue(display);
+                setValue(state);
                 if (refresh) refresh();
                 return;
               }

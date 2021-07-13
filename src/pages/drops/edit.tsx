@@ -45,42 +45,42 @@ function range(start: any, end: any) {
 }
 const disabledDate = (currentDate: any) =>
   currentDate && currentDate < moment().subtract(1, 'day').endOf('day');
+
 const disabledTime = (date: any) => {
+  console.log('moment(date).hour(): ', moment(date).hour());
   const hours = moment().hours();
   const minutes = moment().minutes();
-  const seconds = moment().seconds();
   // 当日只能选择当前时间之后的时间点
   if (date && moment(date).date() === moment().date()) {
+    if (moment(date).hour() === moment().hour())
+      return {
+        disabledHours: () => range(0, 24).splice(0, hours),
+        disabledMinutes: () => range(0, 60).splice(0, minutes + 1),
+      };
     return {
       disabledHours: () => range(0, 24).splice(0, hours),
-      disabledMinutes: () => range(0, 60).splice(0, minutes + 1),
-      disabledSeconds: () => range(0, 60).splice(0, seconds + 1),
     };
   }
   return {
     disabledHours: () => [],
     disabledMinutes: () => [],
-    disabledSeconds: () => [],
   };
 };
 
 const DropEdit: React.FC = () => {
-  const [coverImage, setCoverImage] = useState<any>(null);
+  const [coverImage, setCoverImage] = useState<string>('');
   const [selectedAccount, setSelectedAccount] = useState<IUserItem>();
   const [addNftModalVisible, setAddNftModalVisible] = useState(false);
   const [tempSelectedKeys, setTempSelectedKeys] = useState<number[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<number[]>([]);
   const [tempSelectedPoolList, setTempSelectedPoolList] = useState<IPoolResponse[]>([]);
   const [selectedPoolList, setSelectedPoolList] = useState<IPoolResponse[]>([]);
-  const [selectedAccountAddress, setSelectedAccountAddress] = useState('');
   const [backgroundType, setBackgroundType] = useState<BGType>('cover');
   const [dropState, setDropState] = useState<1 | 2 | 3>();
 
   const [form] = Form.useForm();
   const location = useLocation();
   const currentDropId = location['query']?.id || '';
-
-  console.log('currentDropId: ', currentDropId);
 
   useEffect(() => {
     setSelectedPoolList([]);
@@ -132,7 +132,6 @@ const DropEdit: React.FC = () => {
       const selecteds = list.map((drop: any) => {
         return drop.auctionpoolid;
       });
-      // console.log('selecteds: ', selecteds)
 
       setTempSelectedKeys(selecteds);
       setSelectedKeys(selecteds);
@@ -146,10 +145,10 @@ const DropEdit: React.FC = () => {
         name: item.title,
         status: 'done',
         thumbUrl: item?.coverimgurl || '',
-        src: item?.coverimgurl || '',
+        url: item?.coverimgurl || '',
       };
       setBackgroundType(item?.coverimgurl ? 'cover' : 'bgcolor');
-      setCoverImage(image);
+      setCoverImage(item?.coverimgurl || item?.coverimgurl);
       form.setFieldsValue({
         title: item.title,
         description: item.description,
@@ -165,12 +164,7 @@ const DropEdit: React.FC = () => {
         setSelectedAccount(res.list[0] || null);
       });
 
-      setSelectedAccountAddress(item.accountaddress);
       getAllPoolsByCreatorAddress(item.accountaddress).then((res) => {
-        // const selectedPools = res?.data?.filter((pool: IPoolResponse) =>
-        //   selecteds.find((selectedKey: number) => selectedKey === pool.id),
-        // );
-
         const selectedPools = selecteds.map((selectedKey: number) => {
           return res?.data?.find((pool) => {
             return selectedKey === pool.id;
@@ -184,6 +178,7 @@ const DropEdit: React.FC = () => {
   }, [currentDropId, dropData, dropDataLoading]);
 
   const handleEdit = (data: any) => {
+    // console.log('data: ', data);
     if (!selectedAccount) return;
 
     let bgcolor;
@@ -214,6 +209,8 @@ const DropEdit: React.FC = () => {
       dropdate: data.dropdate.unix(),
     };
 
+    console.log('params: ', params);
+
     if (currentDropId) {
       updateOneDrop({ ...params, id: Number(currentDropId) }).then((res) => {
         if (res.code === 1) {
@@ -235,7 +232,7 @@ const DropEdit: React.FC = () => {
 
   const handleReset = () => {
     setSelectedPoolList([]);
-    setCoverImage(null);
+    setCoverImage('');
     setSelectedAccount(undefined);
     setSelectedKeys([]);
     form.resetFields();
@@ -266,7 +263,7 @@ const DropEdit: React.FC = () => {
     <PageContainer>
       <Card>
         <Form form={form} labelCol={{ span: 6 }} wrapperCol={{ span: 14 }} onFinish={handleEdit}>
-          <Form.Item label="Account">
+          <Form.Item label="Account" required>
             {!currentDropId && (
               <Select
                 // open
@@ -274,13 +271,13 @@ const DropEdit: React.FC = () => {
                 optionLabelProp={'value'}
                 defaultActiveFirstOption={false}
                 showSearch
-                value={selectedAccountAddress}
+                value={selectedAccount?.accountaddress}
                 placeholder="Input Address"
                 onSearch={(value) => {
                   if (value) searchAccount(value);
                 }}
                 onChange={(value) => {
-                  setSelectedAccountAddress(value);
+                  console.log('value: ', value);
                   setSelectedAccount(
                     accountData?.list?.find((account: IUserItem) => {
                       return account.accountaddress === value;
@@ -310,7 +307,7 @@ const DropEdit: React.FC = () => {
             ) : null}
           </Form.Item>
 
-          <Form.Item label="Background">
+          <Form.Item label="Background" required>
             <Space direction="vertical">
               <Select
                 style={{ width: 160 }}
@@ -324,44 +321,28 @@ const DropEdit: React.FC = () => {
                 <Option value="bgcolor">Background Color</Option>
               </Select>
               {backgroundType === 'cover' && (
-                <Form.Item
-                  name="coverimgurl"
-                  noStyle
-                  rules={[
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (value || getFieldValue('cover')) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(new Error('Cover cannot be empty'));
-                      },
-                    }),
-                  ]}
-                >
-                  <ImageUploader
-                    maxCount={1}
-                    onChange={(file) => {
-                      setCoverImage(file);
-                    }}
-                    limit={4 * 1024 * 1024}
-                  />
+                <>
+                  <Form.Item
+                    name="coverimgurl"
+                    noStyle
+                    rules={[{ required: true, message: 'Cover cannot be empty' }]}
+                  >
+                    <ImageUploader
+                      maxCount={1}
+                      onChange={(file) => {
+                        setCoverImage(file?.thumbUrl || file?.url || '');
+                      }}
+                      limit={4 * 1024 * 1024}
+                    />
+                  </Form.Item>
                   <span>Support PNG, JPG, GIF, WEBP, etc. Max size: 4MB.</span>
-                </Form.Item>
+                </>
               )}
               {backgroundType === 'bgcolor' && (
                 <Form.Item
                   name="bgcolor"
                   noStyle
-                  rules={[
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (value || getFieldValue('bgcolor')) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(new Error('Background color cannot be empty'));
-                      },
-                    }),
-                  ]}
+                  rules={[{ required: true, message: 'Background color cannot be empty' }]}
                 >
                   <ColorPicker value="#FFF" />
                 </Form.Item>
@@ -374,11 +355,11 @@ const DropEdit: React.FC = () => {
               {coverImage && (
                 <div className={styles['cover-image']}>
                   <div className={styles.preview}>
-                    <Image width={240} height={100} src={coverImage?.thumbUrl || coverImage?.url} />
+                    <Image width={240} height={100} src={coverImage} />
                     <span>On PC</span>
                   </div>
                   <div className={styles.preview}>
-                    <Image width={73} height={100} src={coverImage?.thumbUrl || coverImage?.url} />
+                    <Image width={73} height={100} src={coverImage} />
                     <span>On phone</span>
                   </div>
                 </div>
@@ -408,7 +389,7 @@ const DropEdit: React.FC = () => {
               disabled={dropState === 2 || dropState === 3}
               inputReadOnly
               format={'YYYY-MM-DD HH:mm'}
-              showTime
+              showTime={{ defaultValue: moment().add(1, 'minute') }}
               showNow={false}
               disabledDate={disabledDate}
               disabledTime={disabledTime}
@@ -428,6 +409,7 @@ const DropEdit: React.FC = () => {
           <Form.Item
             name="nfts"
             label="NFTs List"
+            required
             rules={[
               () => ({
                 validator() {
@@ -497,7 +479,7 @@ const DropEdit: React.FC = () => {
         >
           <AddNftTable
             // userAddress={selectedAccount?.accountaddress || ''}
-            userAddress={selectedAccountAddress || ''}
+            userAddress={selectedAccount?.accountaddress || ''}
             tempSelectedPoolList={tempSelectedPoolList}
             setTempSelectedPoolList={setTempSelectedPoolList}
             tempSelectedKeys={tempSelectedKeys}

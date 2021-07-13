@@ -60,19 +60,17 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
 
   return (
     // <ImgCrop rotate>
-    <>
-      <Upload
-        maxCount={maxCount}
-        listType="picture-card"
-        accept="image/*"
-        showUploadList={{ showPreviewIcon: false }}
-        beforeUpload={handleBeforeUpload}
-        onChange={handleChange}
-        fileList={fileList}
-      >
-        {maxCount > fileList.length ? <PlusOutlined /> : null}
-      </Upload>
-    </>
+    <Upload
+      maxCount={maxCount}
+      listType="picture-card"
+      accept="image/*"
+      showUploadList={{ showPreviewIcon: false }}
+      beforeUpload={handleBeforeUpload}
+      onChange={handleChange}
+      fileList={fileList}
+    >
+      {maxCount > fileList.length ? <PlusOutlined /> : null}
+    </Upload>
     // </ImgCrop>
   );
 };

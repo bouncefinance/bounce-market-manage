@@ -61,11 +61,11 @@ export const closeOneDrop = (id: number) => {
 };
 
 export const showOneDrop = (id: number) => {
-  return post(Apis.updatedropsstate, { id, state: 1 });
+  return post(Apis.updatedropsstate, { id, display: 1 });
 };
 
 export const hideOneDrop = (id: number) => {
-  return post(Apis.updatedropsstate, { id, state: 2 });
+  return post(Apis.updatedropsdisplay, { id, display: 2 });
 };
 
 export const addOneDrop = ({

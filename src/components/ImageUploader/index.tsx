@@ -51,7 +51,6 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
     // setLoading(true);
     const formData = new FormData();
     formData.append('filename', file);
-    console.log('formData: ', formData);
     const res = await fileUploader(formData);
     // eslint-disable-next-line no-param-reassign
     file.url = res.result?.path;

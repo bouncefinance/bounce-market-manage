@@ -13,7 +13,8 @@ export const Apis = {
   getaccountsbylikename: '/api/bouadmin/main/auth/getaccountsbylikename', // 查询用户信息 filter: 1:likestr, 2:accountaddress, 3:identity
   updatedrops: '/api/bouadmin/main/auth/updatedrops', // 编辑一条drop
   getonedropsdetail: '/api/bouadmin/main/auth/getonedropsdetail', // 获取一条drop的信息
-  updatedropsstate: '/api/bouadmin/main/auth/updatedropsstate', // 更新一条drop的状态
+  updatedropsstate: '/api/bouadmin/main/auth/updatedropsstate', // 更新一条drop的进行状态
+  updatedropsdisplay: '/api/bouadmin/main/auth/updatedropsdisplay', // 更新一条drop的显示状态
 };
 
 export default Apis;

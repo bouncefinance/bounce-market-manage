@@ -145,6 +145,7 @@ const DropEdit: React.FC = () => {
       };
       setBackgroundType(item?.coverimgurl ? 'cover' : 'bgcolor');
       setCoverImage(item?.coverimgurl || item?.coverimgurl);
+
       form.setFieldsValue({
         title: item.title,
         description: item.description,
@@ -152,7 +153,7 @@ const DropEdit: React.FC = () => {
         twitter: item.twitter,
         instagram: item.instagram,
         bgcolor: item?.bgcolor,
-        coverimgurl: image,
+        coverimgurl: item?.coverimgurl ? image : null,
         dropdate: moment(item.dropdate * 1000),
       });
 

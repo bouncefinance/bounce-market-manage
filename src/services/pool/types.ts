@@ -1,6 +1,6 @@
-// 0：live，1：closed
-export type poolStateType = 0 | 1;
+export type poolStateType = 0 | 1; // 0：live，1：closed
 
+export type poolSaleType = 1 | 2; // 1：fixed swap 2：English auction
 export interface IGetPoolsParams {
   creator?: string;
   filter?: number;
@@ -30,4 +30,5 @@ export interface IPoolResponse {
   tokenid: number;
   username: string;
   state: poolStateType;
+  pooltype: poolSaleType;
 }

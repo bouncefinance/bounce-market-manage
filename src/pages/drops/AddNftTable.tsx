@@ -2,7 +2,7 @@ import { Table, Typography, Tooltip, Tag } from 'antd';
 import Image from '@/components/Image';
 import React from 'react';
 import { useRequest } from 'umi';
-import type { IPoolResponse } from '@/services/pool/types';
+import type { IPoolResponse, poolStateType } from '@/services/pool/types';
 import { getPoolsByCreatorAddress } from '@/services/pool';
 
 interface IAddNftTableProps {
@@ -96,11 +96,11 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
       ),
     },
     {
-      dataIndex: 'standard',
+      dataIndex: 'pooltype',
       title: 'Auction Type',
-      render: (standard: any) => (
+      render: (pooltype: poolStateType) => (
         <Typography.Paragraph style={{ margin: 0, width: 100 }}>
-          {standard === 0 ? 'Fixed Swap' : 'English Auction'}
+          {pooltype === 1 ? 'Fixed Swap' : 'English Auction'}
         </Typography.Paragraph>
       ),
     },

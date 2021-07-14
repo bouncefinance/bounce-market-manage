@@ -12,7 +12,7 @@ export const getPoolsByCreatorAddress = (
   offset: number = 0,
   limit: number,
 ) => {
-  return post(Apis.getauctionpoolsbyaccount, {
+  return post<IPoolResponse[]>(Apis.getauctionpoolsbyaccount, {
     userAddress,
     offset,
     limit,

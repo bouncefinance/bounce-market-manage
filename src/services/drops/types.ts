@@ -5,16 +5,17 @@ export type DropDisplay = 1 | 2;
 
 export interface IAddDropParams {
   accountaddress: string;
-  website: string;
-  twitter: string;
-  instagram: string;
+  website?: string;
+  twitter?: string;
+  instagram?: string;
   title: string;
   description: string;
-  bgcolor: string;
-  coverimgurl: string;
+  bgcolor?: string;
+  coverimgurl?: string;
   dropdate: number;
   poolids: number[];
   ordernum: number[];
+  videourl?: string;
 }
 
 export interface IUpdataDropParams extends IAddDropParams {
@@ -75,4 +76,6 @@ export interface IDropDetailResponse {
   ordernum: number;
   creatorurl: string;
   created_at: string;
+  videourl: string;
+  state: DropsState;
 }

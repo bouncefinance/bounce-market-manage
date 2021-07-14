@@ -18,6 +18,7 @@ import {
 } from 'antd';
 import Image from '@/components/Image';
 import ImageUploader from '@/components/ImageUploader';
+import VideoUploader from '@/components/VideoUploader';
 import ColorPicker from '@/components/ColorPicker';
 import { useRequest, useLocation, history } from 'umi';
 import { addOneDrop, updateOneDrop, getOneDropDetail } from '@/services/drops';
@@ -27,6 +28,7 @@ import type { IUserItem } from '@/services/user/types';
 import AddNftTable from '@/pages/drops/AddNftTable';
 import OperateNftTable from '@/pages/drops/OperateNftTable';
 import type { IPoolResponse } from '@/services/pool/types';
+import { DropsState, IDropDetailResponse } from '@/services/drops/types';
 
 const { Option } = Select;
 
@@ -64,6 +66,7 @@ const disabledTime = (date: any) => {
 
 const DropEdit: React.FC = () => {
   const [coverImage, setCoverImage] = useState<string>('');
+  const [videoUrl, setVideoUrl] = useState<string>('');
   const [selectedAccount, setSelectedAccount] = useState<IUserItem>();
   const [addNftModalVisible, setAddNftModalVisible] = useState(false);
   const [tempSelectedKeys, setTempSelectedKeys] = useState<number[]>([]);
@@ -71,7 +74,7 @@ const DropEdit: React.FC = () => {
   const [tempSelectedPoolList, setTempSelectedPoolList] = useState<IPoolResponse[]>([]);
   const [selectedPoolList, setSelectedPoolList] = useState<IPoolResponse[]>([]);
   const [backgroundType, setBackgroundType] = useState<BGType>('cover');
-  const [dropState, setDropState] = useState<1 | 2 | 3>();
+  const [dropState, setDropState] = useState<DropsState>();
 
   const [form] = Form.useForm();
   const location = useLocation();
@@ -132,19 +135,29 @@ const DropEdit: React.FC = () => {
       setTempSelectedKeys(selecteds);
       setSelectedKeys(selecteds);
 
-      const item = list?.[0] || {};
+      const item: IDropDetailResponse = list?.[0] || {};
 
       setDropState(item.state);
 
       const image = {
         uid: 0,
-        name: item.title,
+        name: 'image file',
         status: 'done',
         thumbUrl: item?.coverimgurl || '',
         url: item?.coverimgurl || '',
       };
+
+      const video = {
+        uid: 0,
+        name: 'video file',
+        status: 'done',
+        // thumbUrl: item?.coverimgurl || '',
+        url: item?.videourl || '',
+      };
+
       setBackgroundType(item?.coverimgurl ? 'cover' : 'bgcolor');
-      setCoverImage(item?.coverimgurl || item?.coverimgurl);
+      setCoverImage(item?.coverimgurl || '');
+      setVideoUrl(item?.videourl || '');
 
       form.setFieldsValue({
         title: item.title,
@@ -154,6 +167,7 @@ const DropEdit: React.FC = () => {
         instagram: item.instagram,
         bgcolor: item?.bgcolor,
         coverimgurl: item?.coverimgurl ? image : null,
+        videourl: item?.videourl ? video : null,
         dropdate: moment(item.dropdate * 1000),
       });
 
@@ -176,6 +190,7 @@ const DropEdit: React.FC = () => {
 
   const handleEdit = (data: any) => {
     // console.log('data: ', data);
+
     if (!selectedAccount) return;
 
     let bgcolor;
@@ -197,6 +212,7 @@ const DropEdit: React.FC = () => {
       description: data.description,
       bgcolor,
       coverimgurl,
+      videourl: data.videourl?.url || '',
       poolids: selectedPoolList.map((nft) => {
         return nft.id;
       }),
@@ -206,12 +222,13 @@ const DropEdit: React.FC = () => {
       dropdate: data.dropdate.unix(),
     };
 
-    console.log('params: ', params);
+    // console.log('params: ', params);
 
     if (currentDropId) {
       updateOneDrop({ ...params, id: Number(currentDropId) }).then((res) => {
         if (res.code === 1) {
           message.success('Updated Successfully');
+          history.push('/drops');
         } else if (res.msg?.includes('timestamp')) message.error('Drop time is over due');
         else message.error('Update failed');
       });
@@ -219,12 +236,11 @@ const DropEdit: React.FC = () => {
       addOneDrop(params).then((res) => {
         if (res.code === 1) {
           message.success('Added Successfully');
+          history.push('/drops');
         } else if (res.msg?.includes('timestamp')) message.error('Drop time is over due');
         else message.error('Add failed');
       });
     }
-
-    history.push('/drops');
   };
 
   const handleReset = () => {
@@ -274,7 +290,6 @@ const DropEdit: React.FC = () => {
                   if (value) searchAccount(value);
                 }}
                 onChange={(value) => {
-                  console.log('value: ', value);
                   setSelectedAccount(
                     accountData?.list?.find((account: IUserItem) => {
                       return account.accountaddress === value;
@@ -347,20 +362,18 @@ const DropEdit: React.FC = () => {
             </Space>
           </Form.Item>
 
-          {backgroundType === 'cover' && (
-            <Form.Item label="Preview">
-              {coverImage && (
-                <div className={styles['cover-image']}>
-                  <div className={styles.preview}>
-                    <Image width={240} height={100} src={coverImage} />
-                    <span>On PC</span>
-                  </div>
-                  <div className={styles.preview}>
-                    <Image width={73} height={100} src={coverImage} />
-                    <span>On phone</span>
-                  </div>
+          {backgroundType === 'cover' && coverImage && (
+            <Form.Item label="Image Preview">
+              <div className={styles['cover-image']}>
+                <div className={styles.preview}>
+                  <Image width={240} height={100} src={coverImage} />
+                  <span>On PC</span>
                 </div>
-              )}
+                <div className={styles.preview}>
+                  <Image width={73} height={100} src={coverImage} />
+                  <span>On phone</span>
+                </div>
+              </div>
             </Form.Item>
           )}
           <Form.Item
@@ -392,6 +405,25 @@ const DropEdit: React.FC = () => {
               disabledTime={disabledTime}
             />
           </Form.Item>
+          <Form.Item label="Video">
+            <Form.Item name="videourl" noStyle>
+              <VideoUploader
+                maxCount={1}
+                onChange={(file) => {
+                  setVideoUrl(file?.url || '');
+                }}
+                limit={4 * 1024 * 1024}
+              />
+            </Form.Item>
+            <span>Support AVI, rmvb, rm, FLV, mp4, etc. Max size: 30M.</span>
+          </Form.Item>
+
+          {videoUrl && (
+            <Form.Item label="Video Preview">
+              <video height={160} src={videoUrl} controls preload={'metadata'} />
+            </Form.Item>
+          )}
+
           <Form.Item label="Links">
             <Form.Item name="instagram">
               <Input addonBefore="Instagram" />

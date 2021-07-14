@@ -61,6 +61,7 @@ export const addOneDrop = ({
   poolids,
   ordernum,
   dropdate,
+  videourl,
 }: IAddDropParams) => {
   return post(Apis.addaccountdrops, {
     accountaddress,
@@ -74,6 +75,7 @@ export const addOneDrop = ({
     poolids,
     ordernum,
     dropdate,
+    videourl,
   });
 };
 
@@ -90,6 +92,7 @@ export const updateOneDrop = ({
   poolids,
   ordernum,
   dropdate,
+  videourl,
 }: IUpdataDropParams) => {
   return post(Apis.updatedrops, {
     id,
@@ -104,5 +107,6 @@ export const updateOneDrop = ({
     poolids,
     ordernum,
     dropdate,
+    videourl,
   });
 };

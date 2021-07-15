@@ -412,7 +412,7 @@ const DropEdit: React.FC = () => {
                 onChange={(file) => {
                   setVideoUrl(file?.url || '');
                 }}
-                limit={4 * 1024 * 1024}
+                limit={30 * 1024 * 1024}
               />
             </Form.Item>
             <span>Support AVI, rmvb, rm, FLV, mp4, etc. Max size: 30M.</span>

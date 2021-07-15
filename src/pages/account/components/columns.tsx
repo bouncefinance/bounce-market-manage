@@ -60,7 +60,7 @@ const columns: (run: () => void, refresh: () => void) => columnsType = (run, ref
       dataIndex: 'id',
       key: 'state',
       render: function Render(id, record) {
-        const [oldValue, setValue] = useState<UserCreationType>(record.state);
+        const [oldValue, setValue] = useState<UserCreationType>(record.display);
         const [loading, setLoading] = useState(false);
         const intl = useIntl();
         const onChange = (checked: boolean) => {
@@ -105,7 +105,7 @@ const columns: (run: () => void, refresh: () => void) => columnsType = (run, ref
       dataIndex: 'id',
       key: 'display',
       render: function Render(id, record) {
-        const [oldValue, setValue] = useState<UserDisableType>(record.display);
+        const [oldValue, setValue] = useState<UserDisableType>(record.state);
         const [loading, setLoading] = useState(false);
         const intl = useIntl();
         const onChange = (checked: boolean) => {

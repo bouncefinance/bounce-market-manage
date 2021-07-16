@@ -7,6 +7,8 @@ export const Apis = {
   // user
   getaccountsbylikename: '/api/bouadmin/main/auth/getaccountsbylikename', // 查询用户信息 filter: 1:likestr, 2:accountaddress, 3:identity
   gettopartistslist: '/api/bouadmin/main/auth/gettopartistslist', // 获取带权重的topartists列表
+  deletehotweight: '/api/bouadmin/main/auth/deletehotweight', // 删除一条Top Artist记录
+  updatetopweight: '/api/bouadmin/main/auth/updatetopweight', // 更新或添加一条Top Artist记录
 
   // brand
   getbrandsbylikename: '/api/bouadmin/main/auth/getbrandsbylikename', // // 查询brand信息 filter: 1:likestr, 2:creator, 3:Id

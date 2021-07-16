@@ -147,7 +147,7 @@ const Collections: React.FC = () => {
 
   return (
     <PageContainer>
-      <Card>
+      <Card style={{ height: '80vh' }}>
         <Row gutter={[18, 24]}>
           {brandResultList.map((item: IBrandResponse | 0, index) => (
             <Col className="gutter-row" flex="0 0 230px">

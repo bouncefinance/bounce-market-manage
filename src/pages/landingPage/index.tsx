@@ -1,272 +1,235 @@
-import React, { useEffect, useState } from 'react';
-import request from 'umi-request';
-import { RECOMMEND_POOLS_AMOUNT, RECOMMEND_BRANDS_AMOUNT } from '@/tools/const';
-// import './index.less';
-import { Tabs, message, Modal, Row, Col, Divider } from 'antd';
+/* eslint-disable no-nested-ternary */
+import React, { useState } from 'react';
+import { useRequest } from '@/.umi/plugin-request/request';
+import {
+  getTopArtistsList,
+  deleteOneTopArtist,
+  updataOneTopArtist,
+  getVerfiedUsersByName,
+} from '@/services/user';
+import type { ITopArtist, IUserItem, modalActionType } from '@/services/user/types';
 
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { PageContainer } from '@ant-design/pro-layout';
+import { Card, Col, Row, Modal, message, Tooltip } from 'antd';
 
-import { useRequest } from 'umi';
-import RecommendPoolCard from './RecommendPoolCard';
-import RecommendBrandCard from './RecommendBrandCard';
-import EditPoolModal from './EditPoolModal';
-import EditBrandModal from './EditBrandModal';
-import SwapPoolModal from './SwapPoolModal';
-import SwapBrandModal from './SwapBrandModal';
+import SkeletonCard from '@/components/Cards/SkeletonCard';
+import AddItemCard from '@/components/Cards/AddItemCard';
+import ItemCard from '@/components/Cards/ItemCard';
+import TopArtistsModal from './TopArtistsModal';
+import SwapTopArtistsModal from './SwapTopArtistsModal';
 
-const { TabPane } = Tabs;
+import { RECOMMEND_TOP_ARTISTS_AMOUNT } from '@/tools/const';
+
 const { confirm } = Modal;
 
-export interface ITopArtist {
-  id: number;
-  bounceid: number;
-  state: number;
-  display: number;
-  identity: number;
-  email: string;
-  bandimgurl: string;
-  accountaddress: string;
-  username: string;
-  fullnam: string;
-  bio: string;
-  imgurl: string;
-  website: string;
-  instagram: string;
-  twitter: string;
-  facebook: string;
-  top_weight: number;
-  created_at: string;
-  updated_at: string;
-}
+const Collections: React.FC = () => {
+  const [clickedIndex, setClickedIndex] = useState<number>();
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [modalAction, setModalAction] = useState<modalActionType>();
+  const [clickedArtistName, setClickedArtistName] = useState<string>();
+  const [targetWeight, setTargetWeight] = useState<number>();
 
-// // get brands weight
-// const getPopularBrands = function () {
-//   return request.post('[FGB_V2]/api/v2/main/getpopularbrands', {
-//     data: {
-//       accountaddress: '',
-//     },
-//   });
-// };
-
-const getPopularBrands = function () {
-  return request.post('/api/bouadmin/main/auth/getbrandsbylikename', {
-    data: {
-      filter: 1,
-      likestr: '',
-      offset: 0,
-      limit: RECOMMEND_BRANDS_AMOUNT,
-    },
-  });
-};
-
-const getTopArtistsList = () => {
-  return request.get('/api/bouadmin/main/auth/getbrandsbylikename', {
-    data: {
-      // limit: limit, 单页显示数量
-    },
-  });
-};
-
-let modalAction: 'add' | 'add and reset';
-let oldArtist: ITopArtist;
-
-let clickedCardIndex: number;
-let clickedCardType: 'Banner' | 'Fast Mover' | 'Brand';
-
-export default function recommend() {
-  const [poolModalVisible, setPoolModalVisible] = useState(false);
-  const [recommendBrandList, setRecommendBrandList] = useState<ITopArtist[]>([]);
-  const [brandModalVisible, setBrandModalVisible] = useState(false);
-  const [resultPoolsLoading, setResultPoolsLoading] = useState(true);
-  const [resultBrandsLoading, setResultBrandsLoading] = useState(true);
-  const [modalDataSource, setModalDataSource] = useState<ITopArtist[]>([]);
-  const [modalActionType, setModalActionType] = useState<
-    'edit brand' | 'swap brand' | 'add brand'
-  >();
-
-  // const {
-  //   data: popularBrands,
-  //   loading: popularBrandsLoading,
-  //   refresh: brandRefresh,
-  // }: { data: IPopularBrand[]; loading: boolean; refresh: any } = useRequest(() => {
-  //   return getPopularBrands();
-  // });
-
-  const { data: topArtistsList }: { data: ITopArtist[]; loading: boolean } = useRequest(() => {
+  const {
+    data: topArtists,
+    loading: topArtistsLoading,
+    refresh: reloadTopArtists,
+  } = useRequest(() => {
     return getTopArtistsList();
   });
 
-  useEffect(() => {
-    console.log('modalActionType: ', modalActionType);
-  }, [modalActionType]);
+  const {
+    tableProps,
+    run: searchAllUsers,
+    // refresh,
+  } = useRequest(
+    ({ pageSize: limit, current: offset }, likestr) =>
+      getVerfiedUsersByName({ offset: (offset - 1) * limit, limit, likestr }),
+    {
+      paginated: true,
+      defaultParams: [{ current: 1, pageSize: 5 }],
+      // refreshDeps: [role, searchValue],
+      formatResult(data: any) {
+        return {
+          list: data.data,
+          total: data.total,
+        };
+      },
+      cacheKey: 'UserList',
+    },
+  );
 
-  useEffect(() => {
-    switch (modalActionType) {
-      case 'edit brand':
-        console.log('in edit brand');
-        console.log('brands: ', topArtistsList);
-        setModalDataSource(
-          topArtistsList
-            .sort((a, b) => {
-              return a.top_weight > b.top_weight ? 1 : -1;
-            }),
-        );
-        break;
+  const resultList: (ITopArtist | 0)[] = new Array(RECOMMEND_TOP_ARTISTS_AMOUNT).fill(0);
+  topArtists
+    ?.sort((a, b) => {
+      return a.top_weight - b.top_weight;
+    })
+    ?.forEach((item) => {
+      resultList[RECOMMEND_TOP_ARTISTS_AMOUNT - item.top_weight] = item;
+    });
 
-      // case 'add brand':
-      //   console.log('in add brand');
-      //   console.log('brands: ', brands);
-      //   setModalDataSource(
-      //     brands
-      //       ?.filter((brand) => {
-      //         // Filter out brands that have been recommended
-      //         return (
-      //           !recommendBrandList.find((recommendBrand) => {
-      //             return recommendBrand.id === brand.id;
-      //           }) &&
-      //           brand.id !== 10 &&
-      //           brand.id !== 11
-      //         );
-      //       })
-      //       .sort((a, b) => {
-      //         return a.popularweight > b.popularweight ? 1 : -1;
-      //       }),
-      //   );
-      //   break;
+  const handleDelete = (username: string) => {
+    confirm({
+      icon: <ExclamationCircleOutlined />,
+      title: 'Do you want to delete this top artist?',
+      onOk() {
+        deleteOneTopArtist({ username }).then((res) => {
+          if (res.code === 1) {
+            message.success('Success');
+            reloadTopArtists();
+          } else {
+            message.error('Error');
+          }
+        });
+      },
+    });
+  };
 
-      // case 'swap brand':
-      //   console.log('in swap brand');
-      //   setModalDataSource(
-      //     brandResultList?.filter((brand) => {
-      //       return brand.id !== 10 && brand.id !== 11;
-      //     }),
-      //   );
-      //   break;
+  const handleAdd = async (user: IUserItem) => {
+    if (!targetWeight) return;
 
-      default:
-        break;
+    const res = await updataOneTopArtist({ username: user.username, topweight: targetWeight });
+    if (res.code === 1) {
+      message.success('Success');
+      reloadTopArtists();
+    } else {
+      message.error('Error');
     }
-  }, [modalActionType]);
 
-  useEffect(() => {
-    console.log('modalDataSource: ', modalDataSource);
-  }, [modalDataSource]);
+    setModalVisible(false);
+  };
 
-  useEffect(() => {
-    console.log('clickedCardIndex: ', clickedCardIndex);
-  }, [clickedCardIndex]);
+  const handleEdit = async (user: IUserItem) => {
+    if (!targetWeight) return;
 
-  useEffect(() => {
-    console.log('poolModalVisible: ', poolModalVisible);
-  }, [poolModalVisible]);
+    const res = await updataOneTopArtist({ username: user.username, topweight: targetWeight });
+    if (res.code === 1) {
+      message.success('Success');
+      reloadTopArtists();
+    } else {
+      message.error('Error');
+    }
 
-  let brandResultList = new Array(RECOMMEND_BRANDS_AMOUNT).fill(0);
-  recommendBrandList.map((value) => {
-    brandResultList[RECOMMEND_BRANDS_AMOUNT - Math.floor(value.popularweight / 10000)] = value;
-  });
+    setModalVisible(false);
+  };
 
-  // useEffect(() => {
-  //   if (!popularBrandsLoading && !popularBrands) {
-  //     setResultBrandsLoading(true);
-  //     message.error('Brand API Error !');
-  //   }
-  //   if (!popularBrandsLoading && popularBrands) {
-  //     setRecommendBrandList(popularBrands);
-  //     setResultBrandsLoading(false);
-  //   }
-  // }, [popularBrands, popularBrandsLoading]);
+  const handleSwap = (targetUser: ITopArtist) => {
+    if (!clickedArtistName || !targetWeight) return;
 
-  // const resetBrandWeight = async () => {
-  //   if (!oldBrandItem) return;
-  //   const res = await request.post('/api/bouadmin/main/auth/updateweight', {
-  //     data: {
-  //       id: oldBrandItem?.id,
-  //       popularweight: 0,
-  //     },
-  //   });
-  //   if (res.code === 1) {
-  //     message.success('reset brand success');
-  //     brandRefresh();
-  //   } else {
-  //     message.error('reset brand error');
-  //   }
-  // };
-
-  // const handleResetBrand = (item: IPopularBrand) => {
-  //   confirm({
-  //     // title: 'Reset',
-  //     icon: <ExclamationCircleOutlined />,
-  //     title: 'Do you want to delete this brand?',
-  //     onOk() {
-  //       oldBrandItem = item;
-  //       resetBrandWeight();
-  //     },
-  //     onCancel() {
-  //       // console.log('Cancel reset');
-  //     },
-  //   });
-  // };
-
-  // const handleEditBrand = (index: number, item: IPopularBrand) => {
-  //   clickedCardIndex = index;
-  //   modalAction = 'add and reset';
-  //   oldBrandItem = item;
-  //   setBrandModalVisible(true);
-  // };
-
-  // const handleAddBrand = (index: number, cardType: 'Brand') => {
-  //   clickedCardIndex = index;
-  //   clickedCardType = cardType;
-  //   modalAction = 'add';
-  //   setBrandModalVisible(true);
-  // };
+    confirm({
+      icon: <ExclamationCircleOutlined />,
+      title: 'Do you want to Change this brand?',
+      onOk() {
+        deleteOneTopArtist({ username: clickedArtistName }).then((res1) => {
+          if (res1.code === 1) {
+            updataOneTopArtist({ username: targetUser.username, topweight: targetWeight }).then(
+              (res2) => {
+                if (res2.code === 1 && targetWeight)
+                  updataOneTopArtist({
+                    username: clickedArtistName,
+                    topweight: targetUser.top_weight,
+                  }).then((res3) => {
+                    if (res3.code === 1) {
+                      message.success('Success');
+                      reloadTopArtists();
+                      setModalVisible(false);
+                    } else message.error('Failed');
+                  });
+                else message.error('Failed');
+              },
+            );
+          } else {
+            message.error('Error');
+          }
+        });
+      },
+    });
+  };
 
   return (
-    <div className="recommend-box">
-      <Divider style={{ fontSize: 26 }}>Top Artists</Divider>
-      <Row gutter={[18, 24]}>
-        {topArtistsList.map((topArtist, index) => {
-          return (
-            <Col key={index} className="gutter-row" flex="0 0 320px">
-              <RecommendBrandCard
-                loading={resultBrandsLoading}
-                item={topArtist}
-                index={index}
-                // handleReset={handleResetBrand}
-                // handleEdit={handleEditBrand}
-                // handleAdd={handleAddBrand}
-                setModalActionType={setModalActionType}
-              />
+    <PageContainer>
+      <Card>
+        <Row gutter={[18, 24]}>
+          {resultList?.map((item: ITopArtist | 0, index) => (
+            <Col className="gutter-row" flex="0 0 230px">
+              {topArtistsLoading ? (
+                <SkeletonCard />
+              ) : item === 0 ? (
+                <AddItemCard
+                  height={427}
+                  handleAdd={() => {
+                    setClickedIndex(index);
+                    setTargetWeight(RECOMMEND_TOP_ARTISTS_AMOUNT - index);
+                    setModalAction('add');
+                    setModalVisible(true);
+                  }}
+                />
+              ) : (
+                <ItemCard
+                  title={`No. ${index + 1}`}
+                  imgSrc={item.imgurl}
+                  handleSwap={() => {
+                    setClickedIndex(index);
+                    setTargetWeight(RECOMMEND_TOP_ARTISTS_AMOUNT - index);
+                    setClickedArtistName(item.username);
+                    setModalAction('swap');
+                    setModalVisible(true);
+                  }}
+                  handleEdit={() => {
+                    setClickedIndex(index);
+                    setTargetWeight(RECOMMEND_TOP_ARTISTS_AMOUNT - index);
+                    setClickedArtistName(item.username);
+                    setModalAction('edit');
+                    setModalVisible(true);
+                  }}
+                  handleReset={() => {
+                    handleDelete(item.username);
+                  }}
+                  description={
+                    <>
+                      <p>id: {item.id} </p>
+                      {item.username.length > 14 ? (
+                        <Tooltip title={item.username}>
+                          <p>name: {`${item.username.slice(0, 14)}...`}</p>
+                        </Tooltip>
+                      ) : (
+                        <p style={{}}>name: {item.username}</p>
+                      )}
+                    </>
+                  }
+                />
+              )}
             </Col>
-          );
-        })}
-      </Row>
-
-      {(modalActionType === 'edit brand' || modalActionType === 'add brand') && (
-        <EditBrandModal
-          brands={modalDataSource as IPopularBrand[]}
-          clickedCardIndex={clickedCardIndex}
-          clickedCardType={clickedCardType}
-          modalAction={modalAction}
-          oldBrandItem={oldBrandItem}
-          brandModalVisible={brandModalVisible}
-          setBrandModalVisible={setBrandModalVisible}
-          refresh={brandRefresh}
+          ))}
+        </Row>
+      </Card>
+      {modalAction === 'swap' ? (
+        <SwapTopArtistsModal
+          data={topArtists}
+          loading={topArtistsLoading}
+          clickedIndex={clickedIndex}
+          clickedArtistName={clickedArtistName}
+          visible={modalVisible}
+          onOk={handleSwap}
+          onCancel={() => {
+            setModalVisible(false);
+          }}
+        />
+      ) : (
+        <TopArtistsModal
+          tableProps={tableProps}
+          searchAllUsers={searchAllUsers}
+          clickedIndex={clickedIndex}
+          visible={modalVisible}
+          onOk={modalAction === 'add' ? handleAdd : handleEdit}
+          // onOk={handleAdd}
+          onCancel={() => {
+            setModalVisible(false);
+          }}
         />
       )}
-
-      {modalActionType === 'swap brand' && (
-        <SwapBrandModal
-          brands={modalDataSource as IPopularBrand[]}
-          clickedCardIndex={clickedCardIndex}
-          clickedCardType={clickedCardType}
-          modalAction={modalAction}
-          oldBrandItem={oldBrandItem}
-          brandModalVisible={brandModalVisible}
-          setBrandModalVisible={setBrandModalVisible}
-          refresh={brandRefresh}
-        />
-      )}
-    </div>
+    </PageContainer>
   );
-}
+};
+
+export default Collections;

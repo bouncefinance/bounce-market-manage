@@ -31,14 +31,20 @@ export enum UserCreationEnum {
   Disable = 2,
 }
 
+export type modalActionType = 'add' | 'swap' | 'edit';
+
+export interface ITopArtist extends IUserItem {
+  top_weight: number;
+}
+
 export interface IUserItem {
+  id: number;
   imgurl: string;
   accountaddress: string;
-  email: string;
-  id: number;
-  identity: UserRoleType;
   state: UserCreationType;
   display: UserDisableType;
+  identity: UserRoleType;
+  email: string;
   username: string;
 }
 
@@ -56,4 +62,3 @@ export interface IGetAccountsParams {
   identity?: number;
   likestr?: number;
 }
-

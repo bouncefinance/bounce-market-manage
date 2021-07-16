@@ -1,6 +1,29 @@
-import { Apis, post, ToOffset } from '..';
+import { Apis, post, ToOffset, get } from '..';
 import type { IResponse } from '../types';
-import type { IGetAccountsParams, IUserItem, IUserListParma } from './types';
+import type { IGetAccountsParams, ITopArtist, IUserItem, IUserListParma } from './types';
+
+export const updataOneTopArtist = ({
+  topweight,
+  username,
+}: {
+  topweight: number;
+  username: string;
+}) => {
+  return post(Apis.updatetopweight, {
+    topweight,
+    username,
+  });
+};
+
+export const deleteOneTopArtist = ({ username }: { username: string }) => {
+  return post(Apis.deletehotweight, {
+    username,
+  });
+};
+
+export const getTopArtistsList = () => {
+  return get<ITopArtist[]>(Apis.gettopartistslist);
+};
 
 export const getUserList = (
   { pageSize: limit, current: offset, role }: IUserListParma,
@@ -25,13 +48,14 @@ export const getUserListFormatResult = (data: IResponse<IUserItem[]>) => {
 
 export const defaultUserPageParams = { current: 1, pageSize: 5 };
 
-// filter: 1:normal, 2:identity
-export const getVerfiedUsersList = ({ offset, limit }: IGetAccountsParams) => {
+// filter: 1:单字段查找, 2:关联查找
+export const getVerfiedUsersByName = ({ offset, limit, likestr }: IGetAccountsParams) => {
   return post<IUserItem[]>(Apis.getaccountsbylikename, {
-    filter: 3,
+    filter: 1,
     identity: 2,
     offset,
     limit,
+    likestr,
   });
 };
 

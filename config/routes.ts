@@ -37,7 +37,18 @@ const routes: MenuDataItem[] = [
     name: 'Overview',
     path: '/overview',
     icon: 'BarChart',
-    component: './overview',
+    routes: [
+      {
+        name: 'Overview',
+        path: 'statstics',
+        component: './overview',
+      },
+      {
+        name: 'Transcations',
+        path: 'transcations',
+        component: './transcations',
+      },
+    ],
   },
   {
     name: 'LandingPage',
@@ -51,11 +62,11 @@ const routes: MenuDataItem[] = [
     icon: 'Shop',
     // component: './recommend',
     routes: [
-      // {
-      //   name: 'Pools',
-      //   path: 'pools',
-      //   component: './marketplace/pools',
-      // },
+      {
+        name: 'Pools',
+        path: 'pools',
+        component: './marketplace/pools',
+      },
       {
         name: 'Collections',
         path: 'collections',

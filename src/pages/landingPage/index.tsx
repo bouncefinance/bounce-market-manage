@@ -23,7 +23,7 @@ import { RECOMMEND_TOP_ARTISTS_AMOUNT } from '@/tools/const';
 
 const { confirm } = Modal;
 
-const Collections: React.FC = () => {
+const TopArtists: React.FC = () => {
   const [clickedIndex, setClickedIndex] = useState<number>();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [modalAction, setModalAction] = useState<modalActionType>();
@@ -232,4 +232,4 @@ const Collections: React.FC = () => {
   );
 };
 
-export default Collections;
+export default TopArtists;

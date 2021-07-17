@@ -7,7 +7,7 @@ const { Meta } = Card;
 
 interface IItemCardProps {
   title: string;
-  imgSrc: string;
+  imgSrc?: string;
   handleSwap: any;
   handleEdit: any;
   handleReset: any;

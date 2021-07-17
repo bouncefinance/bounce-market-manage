@@ -4,6 +4,9 @@ export const ApiServiceUrl = {
 };
 
 export const Apis = {
+  // transcation
+  gettxsbyfilter: '/api/bouadmin/main/auth/gettxsbyfilter', // 查询交易记录 filter: 1:from, 2:to
+
   // user
   getaccountsbylikename: '/api/bouadmin/main/auth/getaccountsbylikename', // 查询用户信息 filter: 1:likestr, 2:accountaddress, 3:identity
   gettopartistslist: '/api/bouadmin/main/auth/gettopartistslist', // 获取带权重的topartists列表
@@ -25,6 +28,8 @@ export const Apis = {
 
   // pool
   getauctionpoolsbyaccount: '/api/bouadmin/main/auth/getauctionpoolsbyaccount', // 查询一个账户地址下的pools。  返回：state 0：live，1：closed； status 0：show，1：hide
+  getpoolsinfobypage: '/api/bouadmin/main/auth/getpoolsinfobypage', // 查询带poolweight的记录
+  getonepoolinfo: '/api/bouadmin/main/auth/getonepoolinfo', // 查询一个pool的信息
 
   // overview
   get_overviews: '/api/bouadmin/main/auth/get_overviews', // 获取统计数据

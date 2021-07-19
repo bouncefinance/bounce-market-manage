@@ -173,21 +173,21 @@ const Collections: React.FC = () => {
                 <ItemCard
                   title={`No. ${index + 1}`}
                   imgSrc={item.imgurl}
-                  handleSwap={() => {
+                  onSwap={() => {
                     clickedBrandIndex = index;
                     setTargetWeight((RECOMMEND_BRANDS_AMOUNT - clickedBrandIndex) * 10000);
                     setClickedBrandId(item.id);
                     setModalAction('swap');
                     setModalVisible(true);
                   }}
-                  handleEdit={() => {
+                  onEdit={() => {
                     clickedBrandIndex = index;
                     setTargetWeight((RECOMMEND_BRANDS_AMOUNT - clickedBrandIndex) * 10000);
                     setClickedBrandId(item.id);
                     setModalAction('edit');
                     setModalVisible(true);
                   }}
-                  handleReset={() => {
+                  onReset={() => {
                     handleResetBrand(item.id);
                   }}
                   description={

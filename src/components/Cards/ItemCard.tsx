@@ -8,18 +8,18 @@ const { Meta } = Card;
 interface IItemCardProps {
   title: string;
   imgSrc?: string;
-  handleSwap: any;
-  handleEdit: any;
-  handleReset: any;
+  onSwap: any;
+  onEdit: any;
+  onReset: any;
   description: React.ReactNode;
 }
 
 const ItemCard: React.FC<IItemCardProps> = ({
   title,
   imgSrc,
-  handleSwap,
-  handleEdit,
-  handleReset,
+  onSwap,
+  onEdit,
+  onReset,
   description,
 }) => {
   return (
@@ -36,7 +36,7 @@ const ItemCard: React.FC<IItemCardProps> = ({
           }}
           key="swap"
           title="Swap"
-          onClick={handleSwap}
+          onClick={onSwap}
         />,
         <EditOutlined
           style={{
@@ -44,7 +44,7 @@ const ItemCard: React.FC<IItemCardProps> = ({
           }}
           key="edit"
           title="Edit"
-          onClick={handleEdit}
+          onClick={onEdit}
         />,
         <DeleteOutlined
           style={{
@@ -52,7 +52,7 @@ const ItemCard: React.FC<IItemCardProps> = ({
           }}
           key="delete"
           title="Delete"
-          onClick={handleReset}
+          onClick={onReset}
         />,
       ]}
     >

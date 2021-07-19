@@ -30,6 +30,9 @@ export const Apis = {
   getauctionpoolsbyaccount: '/api/bouadmin/main/auth/getauctionpoolsbyaccount', // 查询一个账户地址下的pools。  返回：state 0：live，1：closed； status 0：show，1：hide
   getpoolsinfobypage: '/api/bouadmin/main/auth/getpoolsinfobypage', // 查询带poolweight的记录
   getonepoolinfo: '/api/bouadmin/main/auth/getonepoolinfo', // 查询一个pool的信息
+  dealpoolinfo: '/api/bouadmin/main/auth/dealpoolinfo', // 更改一个pool的权重信息
+  getpoolsbylikename: '/api/bouadmin/main/auth/getpoolsbylikename', 
+  getauctionpoolsbyfilter: '/api/bouadmin/main/auth/getauctionpoolsbyfilter', 
 
   // overview
   get_overviews: '/api/bouadmin/main/auth/get_overviews', // 获取统计数据

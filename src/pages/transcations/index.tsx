@@ -6,6 +6,9 @@ import { TxnFilterEnum } from '@/services/transcation/types';
 import { getTranscations } from '@/services/transcation';
 import { useRequest } from '@/.umi/plugin-request/request';
 
+import Image from '@/components/Image';
+import moment from 'moment';
+
 const { Option } = Select;
 const { Search } = Input;
 const { RangePicker } = DatePicker;
@@ -18,11 +21,87 @@ const Transactions: React.FC = () => {
 
   const columns = [
     {
-      title: 'From',
+      dataIndex: 'auction_type',
+      className: 'column-type',
+      align: 'center',
+      title: 'Type',
+      render: (type: any) => (type === 1 ? 'Fixed Swap' : 'English Auction'),
+    },
+    {
+      title: 'Item',
+      align: 'center',
       children: [
         {
-          dataIndex: 'to',
-          title: 'To',
+          dataIndex: 'itemurl',
+          align: 'center',
+          title: 'Image',
+          render: (url: any) => <Image width={50} height={50} preview src={url} />,
+        },
+        {
+          dataIndex: 'Itemname',
+          align: 'center',
+          title: 'Name',
+          render: (text: any) => (
+            <Typography.Paragraph style={{ margin: 0 }}>
+              {text.length > 20 ? (
+                <Tooltip title={text}>{text.replace(/^(.{20}).*$/, '$1...')}</Tooltip>
+              ) : (
+                text
+              )}
+            </Typography.Paragraph>
+          ),
+        },
+        {
+          dataIndex: 'token_id',
+          align: 'center',
+          title: 'Token Id',
+        },
+      ],
+    },
+    {
+      dataIndex: 'price',
+      align: 'center',
+      title: 'Price (BNB)',
+      render: (text: any) => (
+        `${text/1e18}`
+      ),
+    },
+    {
+      dataIndex: 'quantity',
+      align: 'center',
+      title: 'Quantity',
+      render: (_: any, record: any) => (
+        `${record.quantity}/${record.supply}`
+      ),
+    },
+    {
+      title: 'From',
+      align: 'center',
+      children: [
+        {
+          dataIndex: 'fromurl',
+          align: 'center',
+          title: 'Avator',
+          render: (url: any) => <Image width={50} height={50} preview src={url} />,
+        },
+        {
+          dataIndex: 'fromname',
+          align: 'center',
+          title: 'Name',
+          render: (text: any) => (
+            <Typography.Paragraph style={{ margin: 0 }}>
+              {text.length > 20 ? (
+                <Tooltip title={text}>{text.replace(/^(.{20}).*$/, '$1...')}</Tooltip>
+              ) : (
+                text
+              )}
+            </Typography.Paragraph>
+          ),
+        },
+        {
+          dataIndex: 'from',
+          align: 'center',
+          title: 'Address',
           render: (text: any) => (
             <Typography.Paragraph style={{ margin: 0 }} copyable={{ text }}>
               <Tooltip title={text}>{text.replace(/^(.{6}).*(.{4})$/, '$1...$2')}</Tooltip>
@@ -30,6 +109,30 @@ const Transactions: React.FC = () => {
           ),
         },
       ],
+    },
+    {
+      title: 'To',
+      align: 'center',
+      children: [
+        {
+          dataIndex: 'to',
+          align: 'center',
+          title: 'Address',
+          render: (text: any) => (
+            <Typography.Paragraph style={{ margin: 0 }} copyable={{ text }}>
+              <Tooltip title={text}>{text.replace(/^(.{6}).*(.{4})$/, '$1...$2')}</Tooltip>
+            </Typography.Paragraph>
+          ),
+        },
+      ],
+    },
+    {
+      dataIndex: 'ctime',
+      align: 'center',
+      title: 'Date',
+      render: (ctime: any) => (
+        moment(ctime * 1000).format("dddd, MMM Do YYYY, h:mm:ss a")
+      ),
     },
   ];
 
@@ -108,7 +211,7 @@ const Transactions: React.FC = () => {
               onOk={onOk}
             />
           </div>
-          <Table {...tableProps} columns={columns} />
+          <Table {...tableProps} columns={columns} bordered />
         </Space>
       </Card>
     </PageContainer>

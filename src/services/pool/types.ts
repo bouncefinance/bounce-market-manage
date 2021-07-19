@@ -16,10 +16,12 @@ export enum poolInfoEnum {
  * 1 fixed swap
  * 2 English auction
  */
-export type poolSaleType = 1 | 2; // 1：fixed swap 2：English auction
+export type poolSaleType = 1 | 2 | 3 | 4; // 1：fixed swap 2：English auction
 export enum poolSaleEnum {
   fixed_swap = 1,
   English_auction = 2,
+  timed_fixed_swap = 3,
+  timed_English_auction = 4,
 }
 
 /**
@@ -28,14 +30,20 @@ export enum poolSaleEnum {
  * 2 creator
  * 3 tokenid
  */
-export type BrandFilterType = 1 | 2 | 3;
-export enum BrandFilterEnum {
+export type PoolFilterType = 1 | 2 | 3;
+export enum PoolFilterEnum {
   likestr = 1,
   creator = 2,
   tokenid = 3,
 }
 
 export type modalActionType = 'add' | 'swap' | 'edit';
+
+export interface IUpdatePoolWeightParams {
+  poolid: number;
+  standard: poolSaleType;
+  weight?: number;
+}
 
 export interface IPoolInfo {
   poolid?: number;
@@ -48,7 +56,7 @@ export interface IPoolInfo {
   creatorurl?: string;
   username: string;
   poolweight?: number;
-  pooltype?: number;
+  pooltype?: poolSaleType;
   category?: string;
   channel?: string;
   standard?: number;
@@ -61,7 +69,7 @@ export interface ITopPool {
   id: number;
   poolid: number;
   poolweight: number;
-  standard: poolInfoStandard;
+  standard: poolSaleType;
 }
 
 export interface IGetTopPoolsParams {
@@ -96,5 +104,3 @@ export interface IPoolResponse {
   state: poolStateType;
   pooltype: poolSaleType;
 }
-
-export interface IResultPool {}

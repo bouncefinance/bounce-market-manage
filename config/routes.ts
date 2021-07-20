@@ -31,59 +31,81 @@ const routes: MenuDataItem[] = [
 
   {
     path: '/',
-    redirect: './overview',
+    redirect: './overview/statstics',
   },
   {
-    name: 'Overview',
+    name: 'overview',
     path: '/overview',
     icon: 'BarChart',
-    component: './overview',
+    routes: [
+      {
+        name: 'overview',
+        path: 'statstics',
+        component: './overview',
+      },
+      {
+        name: 'transcations',
+        path: 'transcations',
+        component: './transcations',
+      },
+    ],
   },
-  // {
-  //   name: 'LandingPage',
-  //   path: '/landingPage',
-  //   icon: 'Home',
-  //   component: './landingPage',
-  // },
   {
-    name: 'Marketplace',
+    name: 'landingPage',
+    path: '/landingPage',
+    icon: 'Home',
+    component: './landingPage',
+  },
+  {
+    name: 'marketplace',
     path: '/marketplace',
     icon: 'Shop',
-    component: './recommend',
+    routes: [
+      {
+        name: 'pools',
+        path: 'pools',
+        component: './marketplace/pools',
+      },
+      {
+        name: 'collections',
+        path: 'collections',
+        component: './marketplace/brands',
+      },
+    ],
   },
   {
-    name: 'Drops',
+    name: 'drops',
     path: '/drops',
     icon: 'Fire',
     component: './drops',
   },
   {
-    name: 'DropsEdit',
+    name: 'dropsEdit',
     path: '/drops/edit',
     hideInMenu: true,
     component: './drops/edit',
   },
   {
-    name: 'NFT',
+    name: 'nft',
     path: '/nft',
     icon: 'icon-cube',
     component: './nft',
   },
   {
-    name: 'Users',
+    name: 'users',
     path: 'account',
     icon: 'User',
     component: './account',
   },
   {
-    name: 'Administrator',
+    name: 'administrator',
     path: 'administrator',
     icon: 'Key',
     access: 'canAdmin', // 权限定义返回值的某个 key
     component: './authority',
   },
   {
-    name: 'History',
+    name: 'history',
     path: 'history',
     icon: 'History',
     component: './history',

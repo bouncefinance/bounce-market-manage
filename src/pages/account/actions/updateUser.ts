@@ -13,9 +13,9 @@ export const updateUserRole = async (param: { id: number | string; identity: Use
 
 export const updateUserDisplay = async (param: {
   id: number | string;
-  display: UserDisableType;
+  state: UserCreationType;
 }) => {
-  const result: any = await request.post('/api/bouadmin/main/auth/updateuserdisplay', {
+  const result: any = await request.post('/api/bouadmin/main/auth/updateuserstate', {
     data: param,
   });
   if (result.code === 1) {
@@ -26,9 +26,9 @@ export const updateUserDisplay = async (param: {
 
 export const updateUserCreation = async (param: {
   id: number | string;
-  state: UserCreationType;
+  display: UserDisableType;
 }) => {
-  const result: any = await request.post('/api/bouadmin/main/auth/updateuserstate', {
+  const result: any = await request.post('/api/bouadmin/main/auth/updateuserdisplay', {
     data: param,
   });
   if (result.code === 1) {

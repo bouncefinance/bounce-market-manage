@@ -32,7 +32,14 @@
   - 编辑 drop 返回的已选 pool 的顺序不对 [√]
   - 添加 nft 的 cover 和 color 的必填 [√]
   - cover 在只有 background color 时显示颜色 [√]
-  - 限制上传的图片大小小于 4M
+  - 限制上传的图片大小小于 4M [√]
+  - 在选择 NFT 的地方标记隐藏的 NFT [√]
+  - 勾选了的 pool 多于一页时，第一页以后的 pool 无法改变顺序 [√]
+  - hide creation 点击无效 [√]
+  - account 设为必选，加上校验规则 [√]
+  - 选择当前时间的下一小时后不限制分钟 [√]
+  - 添加视频 [√]
+  - 创建 drop 时，时间戳不对仍提示成功 [√]
 - NFT Management 板块
   - 一键复制的按钮改成 antd 自带的
 

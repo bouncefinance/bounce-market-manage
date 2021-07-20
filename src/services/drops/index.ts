@@ -5,25 +5,9 @@ import type {
   IAddDropParams,
   IGetDropDetailParams,
   IDropDetailResponse,
-  IPoolResponse,
   IUpdataDropParams,
 } from './types';
 
-export const getAllPoolsByCreatorAddress = (userAddress: string) => {
-  return post<IPoolResponse[]>(Apis.getauctionpoolsbyaccount, {
-    userAddress,
-  });
-};
-
-export const getPoolsByCreatorAddress = (
-  userAddress: string,
-  offset: number = 0,
-  limit: number,
-) => {
-  return post(Apis.getauctionpoolsbyaccount, {
-    data: { userAddress, offset, limit },
-  });
-};
 export const getOneDropDetail = ({ /* offset, limit,  */ dropsid }: IGetDropDetailParams) => {
   return post<IDropDetailResponse[]>(Apis.getonedropsdetail, {
     // offset,
@@ -58,11 +42,11 @@ export const closeOneDrop = (id: number) => {
 };
 
 export const showOneDrop = (id: number) => {
-  return post(Apis.updatedropsstate, { id, state: 1 });
+  return post(Apis.updatedropsdisplay, { id, display: 1 });
 };
 
 export const hideOneDrop = (id: number) => {
-  return post(Apis.updatedropsstate, { id, state: 2 });
+  return post(Apis.updatedropsdisplay, { id, display: 2 });
 };
 
 export const addOneDrop = ({
@@ -77,6 +61,7 @@ export const addOneDrop = ({
   poolids,
   ordernum,
   dropdate,
+  videourl,
 }: IAddDropParams) => {
   return post(Apis.addaccountdrops, {
     accountaddress,
@@ -90,6 +75,7 @@ export const addOneDrop = ({
     poolids,
     ordernum,
     dropdate,
+    videourl,
   });
 };
 
@@ -106,6 +92,7 @@ export const updateOneDrop = ({
   poolids,
   ordernum,
   dropdate,
+  videourl,
 }: IUpdataDropParams) => {
   return post(Apis.updatedrops, {
     id,
@@ -120,5 +107,6 @@ export const updateOneDrop = ({
     poolids,
     ordernum,
     dropdate,
+    videourl,
   });
 };

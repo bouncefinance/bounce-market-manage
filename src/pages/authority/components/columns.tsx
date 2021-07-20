@@ -1,6 +1,5 @@
 import React from 'react';
-import { Avatar, Image } from 'antd';
-import { ImgErrorUrl } from '@/tools/const';
+import { Avatar } from 'antd';
 import AuthorityRowEditNoteName from '../components/editNotName';
 import AuthorityRoleView from '../components/AuthorityRole';
 import AuthorityActionView from '../components/AuthorityAction';
@@ -9,6 +8,7 @@ import { AuthorityRoleEnum } from '../actions/apiType';
 import { AddressCopyView } from '@/components/Address';
 import { AdminIcon } from '@/components/svg/admin';
 import styles from '../index.less';
+import Image from '@/components/Image';
 
 type columnsType = {
   title: string;
@@ -25,7 +25,7 @@ const columns: (run: () => void, refresh: () => void) => columnsType = (run, ref
       width: 150,
       render: (url, record) => (
         <div className={styles.avatar}>
-          <Avatar shape="square" size={64} src={<Image src={url} fallback={ImgErrorUrl} />} />
+          <Avatar shape="square" size={64} src={<Image src={url} />} />
           {record.opRole === AuthorityRoleEnum.super && (
             <AdminIcon width={15} height={15} className={styles.verify} />
           )}

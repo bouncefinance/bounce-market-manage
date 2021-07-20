@@ -2,15 +2,8 @@ import { Table, Typography, Tooltip, Tag } from 'antd';
 import Image from '@/components/Image';
 import React from 'react';
 import { useRequest } from 'umi';
-import request from 'umi-request';
-import { Apis } from '@/services';
-import type { IPoolResponse, poolStateType } from '@/services/drops/types';
-
-const getPoolsByCreatorAddress = (userAddress: string, offset: number = 0, limit: number) => {
-  return request.post(Apis.getauctionpoolsbyaccount, {
-    data: { userAddress, offset, limit },
-  });
-};
+import type { IPoolResponse, poolStateType } from '@/services/pool/types';
+import { getPoolsByCreatorAddress } from '@/services/pool';
 
 interface IAddNftTableProps {
   userAddress: string;
@@ -44,7 +37,7 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
       }
     },
     getCheckboxProps: (record: IPoolResponse) => ({
-      disabled: record.state === 1, // Column configuration not to be checked
+      disabled: record.state === 1 || record.status === 1, // Column configuration not to be checked
     }),
     preserveSelectedRowKeys: true,
     hideSelectAll: true,
@@ -82,17 +75,20 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
     {
       dataIndex: 'itemname',
       title: 'Name',
-      width: 100,
+      // width: 100,
     },
     {
       dataIndex: 'state',
       title: 'State',
-      render: (state: poolStateType) =>
-        state === 0 ? <Tag color={'blue'}>live</Tag> : <Tag color={'red'}>closed</Tag>,
+      render: (_: any, item: IPoolResponse) => [
+        item.state === 0 ? <Tag color={'blue'}>live</Tag> : <Tag color={'red'}>closed</Tag>,
+        item.status === 0 ? <Tag color={'blue'}>on display</Tag> : <Tag color={'red'}>hiden</Tag>,
+      ],
     },
     {
       dataIndex: 'creator',
       title: 'Artist Account',
+      width: 122,
       render: (text: any) => (
         <Typography.Paragraph style={{ margin: 0, width: 120 }} copyable={{ text }}>
           <Tooltip title={text}>{text.replace(/^(.{6}).*(.{4})$/, '$1...$2')}</Tooltip>
@@ -100,11 +96,11 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
       ),
     },
     {
-      dataIndex: 'standard',
+      dataIndex: 'pooltype',
       title: 'Auction Type',
-      render: (standard: any) => (
+      render: (pooltype: poolStateType) => (
         <Typography.Paragraph style={{ margin: 0, width: 100 }}>
-          {standard === 0 ? 'Fixed Swap' : 'English Auction'}
+          {pooltype === 1 ? 'Fixed Swap' : 'English Auction'}
         </Typography.Paragraph>
       ),
     },

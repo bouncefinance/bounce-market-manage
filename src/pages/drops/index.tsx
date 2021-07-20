@@ -4,13 +4,12 @@ import ProTable from '@ant-design/pro-table';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditFilled, ExclamationCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, message, Space, Tooltip, Typography, Modal, Switch } from 'antd';
-import { getDrops, deleteOneDrop, closeOneDrop } from '@/services/drops';
+import { getDrops, deleteOneDrop, closeOneDrop, hideOneDrop, showOneDrop } from '@/services/drops';
 import type { DropsState, IDropsResponse } from '@/services/drops/types';
 import moment from 'moment';
 import { useState } from 'react';
 import { Link } from 'umi';
 import Image from '@/components/Image';
-import { ImgErrorUrl } from '@/tools/const';
 
 const { confirm } = Modal;
 
@@ -95,14 +94,20 @@ const DropsPage: React.FC = () => {
         </>
       ),
       onOk() {
-        closeOneDrop(dropId).then((res) => {
-          if (res.code === 1) {
-            message.success(
-              `${targetState === 'show' ? 'Showing this drop.' : 'Hid successfully.'} `,
-            );
-            ref?.current?.reload();
-          }
-        });
+        if (targetState === 'hide')
+          hideOneDrop(dropId).then((res) => {
+            if (res.code === 1) {
+              message.success('This drop has been hidden.');
+              ref?.current?.reload();
+            }
+          });
+        else
+          showOneDrop(dropId).then((res) => {
+            if (res.code === 1) {
+              message.success('This drop is on display.');
+              ref?.current?.reload();
+            }
+          });
       },
     });
   };
@@ -119,7 +124,7 @@ const DropsPage: React.FC = () => {
       render: (src: any, record) => {
         if (src === '-')
           return <div style={{ backgroundColor: record.bgcolor, width: 40, height: 40 }}></div>;
-        return <Image width={40} height={40} preview={false} src={src} fallback={ImgErrorUrl} />;
+        return <Image width={40} height={40} src={src} />;
       },
     },
     {

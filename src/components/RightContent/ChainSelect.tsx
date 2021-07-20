@@ -40,7 +40,7 @@ const ChainSelect: React.FC = () => {
       }}
     >
       {symbols.map((label) => (
-        <Option value={TokenSymbol[label]}>
+        <Option key={label} value={TokenSymbol[label]}>
           <div style={styles.option}>
             <div style={styles.iconBox}>
               <Image preview={false} src={`/tokens/${TokenSymbol[label]}.svg`} />

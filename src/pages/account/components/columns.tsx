@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Avatar, Image, Switch, message, Modal } from 'antd';
+import { Avatar, Switch, message, Modal } from 'antd';
 import { useIntl } from 'umi';
-import { ImgErrorUrl } from '@/tools/const';
 import UserRoleView from '../components/userRole';
 import { updateUserCreation, updateUserDisplay } from '../actions/updateUser';
 import { AddressCopyView } from '@/components/Address';
@@ -10,6 +9,7 @@ import styles from '../index.less';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import type { IUserItem, UserCreationType, UserDisableType } from '@/services/user/types';
 import { UserCreationEnum, UserDisableEnum, UserRoleEnum } from '@/services/user/types';
+import Image from '@/components/Image';
 
 const { confirm } = Modal;
 
@@ -28,7 +28,7 @@ const columns: (run: () => void, refresh: () => void) => columnsType = (run, ref
       key: 'imgurl',
       render: (url, record) => (
         <div className={styles.avatar}>
-          <Avatar shape="square" size={64} src={<Image src={url} fallback={ImgErrorUrl} />} />
+          <Avatar shape="square" size={64} src={<Image src={url} />} />
           {record.identity === UserRoleEnum.Verified && <VerifyIcon className={styles.verify} />}
         </div>
       ),
@@ -60,7 +60,7 @@ const columns: (run: () => void, refresh: () => void) => columnsType = (run, ref
       dataIndex: 'id',
       key: 'state',
       render: function Render(id, record) {
-        const [oldValue, setValue] = useState<UserCreationType>(record.state);
+        const [oldValue, setValue] = useState<UserCreationType>(record.display);
         const [loading, setLoading] = useState(false);
         const intl = useIntl();
         const onChange = (checked: boolean) => {
@@ -76,14 +76,14 @@ const columns: (run: () => void, refresh: () => void) => columnsType = (run, ref
             ),
             onOk: async () => {
               setLoading(true);
-              const state: UserCreationType = checked
+              const display: UserCreationType = checked
                 ? UserCreationEnum.Disable
                 : UserCreationEnum.Normal;
-              const isOk = await updateUserCreation({ id, state });
+              const isOk = await updateUserCreation({ id, display });
               setLoading(false);
               if (isOk) {
                 message.success('Set Success 🎉 🎉 🎉');
-                setValue(state);
+                setValue(display);
                 if (refresh) refresh();
                 return;
               }
@@ -105,7 +105,7 @@ const columns: (run: () => void, refresh: () => void) => columnsType = (run, ref
       dataIndex: 'id',
       key: 'display',
       render: function Render(id, record) {
-        const [oldValue, setValue] = useState<UserDisableType>(record.display);
+        const [oldValue, setValue] = useState<UserDisableType>(record.state);
         const [loading, setLoading] = useState(false);
         const intl = useIntl();
         const onChange = (checked: boolean) => {
@@ -121,14 +121,14 @@ const columns: (run: () => void, refresh: () => void) => columnsType = (run, ref
             ),
             onOk: async () => {
               setLoading(true);
-              const display: UserDisableType = checked
+              const state: UserDisableType = checked
                 ? UserDisableEnum.Disable
                 : UserDisableEnum.Normal;
-              const isOk = await updateUserDisplay({ id, display });
+              const isOk = await updateUserDisplay({ id, state });
               setLoading(false);
               if (isOk) {
                 message.success('Set Success 🎉 🎉 🎉');
-                setValue(display);
+                setValue(state);
                 if (refresh) refresh();
                 return;
               }

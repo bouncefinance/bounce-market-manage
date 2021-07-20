@@ -7,13 +7,13 @@ import { PlusOutlined } from '@ant-design/icons';
 // import 'antd/dist/antd.min.css';
 import { fileUploader } from '@/services/uploader';
 
-export interface IImageUploaderProps {
+export interface IVideoUploaderProps {
   value?: UploadFile;
   maxCount?: number;
   limit?: number;
   onChange: (file: UploadFile | null, items: UploadFile[]) => void;
 }
-const ImageUploader: React.FC<IImageUploaderProps> = ({
+const VideoUploader: React.FC<IVideoUploaderProps> = ({
   value,
   onChange,
   limit,
@@ -45,7 +45,7 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
   const handleBeforeUpload = async (file: RcFile) => {
     const size = file.size || 0;
     if (limit && size > limit) {
-      message.error(`Image must smaller than ${limit / 1024 / 1024}M`);
+      message.error(`Video must smaller than ${limit / 1024 / 1024}M`);
       return false;
     }
     // setLoading(true);
@@ -63,7 +63,7 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
     <Upload
       maxCount={maxCount}
       listType="picture-card"
-      accept="image/*"
+      accept="video/*"
       showUploadList={{ showPreviewIcon: false }}
       beforeUpload={handleBeforeUpload}
       onChange={handleChange}
@@ -75,4 +75,4 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
   );
 };
 
-export default ImageUploader;
+export default VideoUploader;

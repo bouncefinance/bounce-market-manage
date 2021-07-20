@@ -18,19 +18,17 @@ import {
 } from 'antd';
 import Image from '@/components/Image';
 import ImageUploader from '@/components/ImageUploader';
+import VideoUploader from '@/components/VideoUploader';
 import ColorPicker from '@/components/ColorPicker';
 import { useRequest, useLocation, history } from 'umi';
-import {
-  addOneDrop,
-  updateOneDrop,
-  getOneDropDetail,
-  getAllPoolsByCreatorAddress,
-} from '@/services/drops';
+import { addOneDrop, updateOneDrop, getOneDropDetail } from '@/services/drops';
+import { getAllPoolsByCreatorAddress } from '@/services/pool';
 import { getAccountByAddress } from '@/services/user';
 import type { IUserItem } from '@/services/user/types';
 import AddNftTable from '@/pages/drops/AddNftTable';
 import OperateNftTable from '@/pages/drops/OperateNftTable';
-import type { IPoolResponse } from '@/services/drops/types';
+import type { IPoolResponse } from '@/services/pool/types';
+import type { DropsState, IDropDetailResponse } from '@/services/drops/types';
 
 const { Option } = Select;
 
@@ -45,45 +43,56 @@ function range(start: any, end: any) {
 }
 const disabledDate = (currentDate: any) =>
   currentDate && currentDate < moment().subtract(1, 'day').endOf('day');
+
 const disabledTime = (date: any) => {
   const hours = moment().hours();
   const minutes = moment().minutes();
-  const seconds = moment().seconds();
   // 当日只能选择当前时间之后的时间点
   if (date && moment(date).date() === moment().date()) {
+    if (moment(date).hour() === moment().hour())
+      return {
+        disabledHours: () => range(0, 24).splice(0, hours),
+        disabledMinutes: () => range(0, 60).splice(0, minutes + 1),
+      };
     return {
       disabledHours: () => range(0, 24).splice(0, hours),
-      disabledMinutes: () => range(0, 60).splice(0, minutes + 1),
-      disabledSeconds: () => range(0, 60).splice(0, seconds + 1),
     };
   }
   return {
     disabledHours: () => [],
     disabledMinutes: () => [],
-    disabledSeconds: () => [],
   };
 };
 
 const DropEdit: React.FC = () => {
-  const [coverImage, setCoverImage] = useState<any>(null);
+  const [coverImage, setCoverImage] = useState<string>('');
+  const [videoUrl, setVideoUrl] = useState<string>('');
   const [selectedAccount, setSelectedAccount] = useState<IUserItem>();
   const [addNftModalVisible, setAddNftModalVisible] = useState(false);
   const [tempSelectedKeys, setTempSelectedKeys] = useState<number[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<number[]>([]);
   const [tempSelectedPoolList, setTempSelectedPoolList] = useState<IPoolResponse[]>([]);
   const [selectedPoolList, setSelectedPoolList] = useState<IPoolResponse[]>([]);
-  const [selectedAccountAddress, setSelectedAccountAddress] = useState('');
   const [backgroundType, setBackgroundType] = useState<BGType>('cover');
-  const [dropState, setDropState] = useState<1 | 2 | 3>();
+  const [dropState, setDropState] = useState<DropsState>();
 
   const [form] = Form.useForm();
   const location = useLocation();
   const currentDropId = location['query']?.id || '';
 
-  console.log('currentDropId: ', currentDropId);
+  // eslint-disable-next-line no-template-curly-in-string
+  const typeTemplate = 'Please input a valid ${type}';
+  /* eslint-disable no-template-curly-in-string */
+  const validateMessages = {
+    // required: '${label} is required!',
+    types: {
+      url: typeTemplate,
+    },
+  };
 
   useEffect(() => {
     setSelectedPoolList([]);
+    setTempSelectedPoolList([]);
   }, [selectedAccount]);
 
   // getAccountByAddress
@@ -132,24 +141,34 @@ const DropEdit: React.FC = () => {
       const selecteds = list.map((drop: any) => {
         return drop.auctionpoolid;
       });
-      // console.log('selecteds: ', selecteds)
 
       setTempSelectedKeys(selecteds);
       setSelectedKeys(selecteds);
 
-      const item = list?.[0] || {};
+      const item: IDropDetailResponse = list?.[0] || {};
 
       setDropState(item.state);
 
       const image = {
         uid: 0,
-        name: item.title,
+        name: 'image file',
         status: 'done',
         thumbUrl: item?.coverimgurl || '',
-        src: item?.coverimgurl || '',
+        url: item?.coverimgurl || '',
       };
+
+      const video = {
+        uid: 0,
+        name: 'video file',
+        status: 'done',
+        // thumbUrl: item?.coverimgurl || '',
+        url: item?.videourl || '',
+      };
+
       setBackgroundType(item?.coverimgurl ? 'cover' : 'bgcolor');
-      setCoverImage(image);
+      setCoverImage(item?.coverimgurl || '');
+      setVideoUrl(item?.videourl || '');
+
       form.setFieldsValue({
         title: item.title,
         description: item.description,
@@ -157,7 +176,8 @@ const DropEdit: React.FC = () => {
         twitter: item.twitter,
         instagram: item.instagram,
         bgcolor: item?.bgcolor,
-        coverimgurl: image,
+        coverimgurl: item?.coverimgurl ? image : null,
+        videourl: item?.videourl ? video : null,
         dropdate: moment(item.dropdate * 1000),
       });
 
@@ -165,12 +185,7 @@ const DropEdit: React.FC = () => {
         setSelectedAccount(res.list[0] || null);
       });
 
-      setSelectedAccountAddress(item.accountaddress);
       getAllPoolsByCreatorAddress(item.accountaddress).then((res) => {
-        // const selectedPools = res?.data?.filter((pool: IPoolResponse) =>
-        //   selecteds.find((selectedKey: number) => selectedKey === pool.id),
-        // );
-
         const selectedPools = selecteds.map((selectedKey: number) => {
           return res?.data?.find((pool) => {
             return selectedKey === pool.id;
@@ -184,6 +199,8 @@ const DropEdit: React.FC = () => {
   }, [currentDropId, dropData, dropDataLoading]);
 
   const handleEdit = (data: any) => {
+    // console.log('data: ', data);
+
     if (!selectedAccount) return;
 
     let bgcolor;
@@ -205,6 +222,7 @@ const DropEdit: React.FC = () => {
       description: data.description,
       bgcolor,
       coverimgurl,
+      videourl: data.videourl?.url || '',
       poolids: selectedPoolList.map((nft) => {
         return nft.id;
       }),
@@ -214,10 +232,13 @@ const DropEdit: React.FC = () => {
       dropdate: data.dropdate.unix(),
     };
 
+    // console.log('params: ', params);
+
     if (currentDropId) {
       updateOneDrop({ ...params, id: Number(currentDropId) }).then((res) => {
         if (res.code === 1) {
           message.success('Updated Successfully');
+          history.push('/drops');
         } else if (res.msg?.includes('timestamp')) message.error('Drop time is over due');
         else message.error('Update failed');
       });
@@ -225,17 +246,16 @@ const DropEdit: React.FC = () => {
       addOneDrop(params).then((res) => {
         if (res.code === 1) {
           message.success('Added Successfully');
+          history.push('/drops');
         } else if (res.msg?.includes('timestamp')) message.error('Drop time is over due');
         else message.error('Add failed');
       });
     }
-
-    history.push('/drops');
   };
 
   const handleReset = () => {
     setSelectedPoolList([]);
-    setCoverImage(null);
+    setCoverImage('');
     setSelectedAccount(undefined);
     setSelectedKeys([]);
     form.resetFields();
@@ -265,8 +285,14 @@ const DropEdit: React.FC = () => {
   return (
     <PageContainer>
       <Card>
-        <Form form={form} labelCol={{ span: 6 }} wrapperCol={{ span: 14 }} onFinish={handleEdit}>
-          <Form.Item label="Account">
+        <Form
+          form={form}
+          labelCol={{ span: 6 }}
+          wrapperCol={{ span: 14 }}
+          onFinish={handleEdit}
+          validateMessages={validateMessages}
+        >
+          <Form.Item label="Account" required>
             {!currentDropId && (
               <Select
                 // open
@@ -274,13 +300,12 @@ const DropEdit: React.FC = () => {
                 optionLabelProp={'value'}
                 defaultActiveFirstOption={false}
                 showSearch
-                value={selectedAccountAddress}
+                value={selectedAccount?.accountaddress}
                 placeholder="Input Address"
                 onSearch={(value) => {
                   if (value) searchAccount(value);
                 }}
                 onChange={(value) => {
-                  setSelectedAccountAddress(value);
                   setSelectedAccount(
                     accountData?.list?.find((account: IUserItem) => {
                       return account.accountaddress === value;
@@ -310,7 +335,7 @@ const DropEdit: React.FC = () => {
             ) : null}
           </Form.Item>
 
-          <Form.Item label="Background">
+          <Form.Item label="Background" required>
             <Space direction="vertical">
               <Select
                 style={{ width: 160 }}
@@ -324,44 +349,28 @@ const DropEdit: React.FC = () => {
                 <Option value="bgcolor">Background Color</Option>
               </Select>
               {backgroundType === 'cover' && (
-                <Form.Item
-                  name="coverimgurl"
-                  noStyle
-                  rules={[
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (value || getFieldValue('cover')) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(new Error('Cover cannot be empty'));
-                      },
-                    }),
-                  ]}
-                >
-                  <ImageUploader
-                    maxCount={1}
-                    onChange={(file) => {
-                      setCoverImage(file);
-                    }}
-                    limit={4 * 1024 * 1024}
-                  />
+                <>
+                  <Form.Item
+                    name="coverimgurl"
+                    noStyle
+                    rules={[{ required: true, message: 'Cover cannot be empty' }]}
+                  >
+                    <ImageUploader
+                      maxCount={1}
+                      onChange={(file) => {
+                        setCoverImage(file?.thumbUrl || file?.url || '');
+                      }}
+                      limit={4 * 1024 * 1024}
+                    />
+                  </Form.Item>
                   <span>Support PNG, JPG, GIF, WEBP, etc. Max size: 4MB.</span>
-                </Form.Item>
+                </>
               )}
               {backgroundType === 'bgcolor' && (
                 <Form.Item
                   name="bgcolor"
                   noStyle
-                  rules={[
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (value || getFieldValue('bgcolor')) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(new Error('Background color cannot be empty'));
-                      },
-                    }),
-                  ]}
+                  rules={[{ required: true, message: 'Background color cannot be empty' }]}
                 >
                   <ColorPicker value="#FFF" />
                 </Form.Item>
@@ -369,20 +378,18 @@ const DropEdit: React.FC = () => {
             </Space>
           </Form.Item>
 
-          {backgroundType === 'cover' && (
-            <Form.Item label="Preview">
-              {coverImage && (
-                <div className={styles['cover-image']}>
-                  <div className={styles.preview}>
-                    <Image width={240} height={100} src={coverImage?.thumbUrl || coverImage?.url} />
-                    <span>On PC</span>
-                  </div>
-                  <div className={styles.preview}>
-                    <Image width={73} height={100} src={coverImage?.thumbUrl || coverImage?.url} />
-                    <span>On phone</span>
-                  </div>
+          {backgroundType === 'cover' && coverImage && (
+            <Form.Item label="Image Preview">
+              <div className={styles['cover-image']}>
+                <div className={styles.preview}>
+                  <Image width={240} height={100} src={coverImage} />
+                  <span>On PC</span>
                 </div>
-              )}
+                <div className={styles.preview}>
+                  <Image width={73} height={100} src={coverImage} />
+                  <span>On phone</span>
+                </div>
+              </div>
             </Form.Item>
           )}
           <Form.Item
@@ -408,26 +415,46 @@ const DropEdit: React.FC = () => {
               disabled={dropState === 2 || dropState === 3}
               inputReadOnly
               format={'YYYY-MM-DD HH:mm'}
-              showTime
+              showTime={{ defaultValue: moment().add(1, 'minute') }}
               showNow={false}
               disabledDate={disabledDate}
               disabledTime={disabledTime}
             />
           </Form.Item>
+          <Form.Item label="Video">
+            <Form.Item name="videourl" noStyle>
+              <VideoUploader
+                maxCount={1}
+                onChange={(file) => {
+                  setVideoUrl(file?.url || '');
+                }}
+                limit={30 * 1024 * 1024}
+              />
+            </Form.Item>
+            <span>Support AVI, rmvb, rm, FLV, mp4, etc. Max size: 30M.</span>
+          </Form.Item>
+
+          {videoUrl && (
+            <Form.Item label="Video Preview">
+              <video height={160} src={videoUrl} controls preload={'metadata'} />
+            </Form.Item>
+          )}
+
           <Form.Item label="Links">
-            <Form.Item name="instagram">
+            <Form.Item name="instagram" rules={[{ type: 'url' }]}>
               <Input addonBefore="Instagram" />
             </Form.Item>
-            <Form.Item name="twitter">
+            <Form.Item name="twitter" rules={[{ type: 'url' }]}>
               <Input addonBefore="Twitter" />
             </Form.Item>
-            <Form.Item name="website">
+            <Form.Item name="website" rules={[{ type: 'url' }]}>
               <Input addonBefore="Website" />
             </Form.Item>
           </Form.Item>
           <Form.Item
             name="nfts"
             label="NFTs List"
+            required
             rules={[
               () => ({
                 validator() {
@@ -440,7 +467,7 @@ const DropEdit: React.FC = () => {
             ]}
           >
             <Space direction="vertical">
-              {(!currentDropId || dropState === 1) && (
+              {(!currentDropId || dropState !== 3) && (
                 <Button
                   onClick={() => {
                     setAddNftModalVisible(true);
@@ -497,7 +524,7 @@ const DropEdit: React.FC = () => {
         >
           <AddNftTable
             // userAddress={selectedAccount?.accountaddress || ''}
-            userAddress={selectedAccountAddress || ''}
+            userAddress={selectedAccount?.accountaddress || ''}
             tempSelectedPoolList={tempSelectedPoolList}
             setTempSelectedPoolList={setTempSelectedPoolList}
             tempSelectedKeys={tempSelectedKeys}

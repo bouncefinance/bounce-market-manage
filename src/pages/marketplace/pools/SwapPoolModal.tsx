@@ -1,10 +1,11 @@
-import type { ITopPool } from '@/services/pool/types';
-import { Modal, Table } from 'antd';
+import type { IPoolInfo } from '@/services/pool/types';
+import { poolSaleEnum } from '@/services/pool/types';
+import { Modal, Table, Tooltip, Typography } from 'antd';
 import React, { useState } from 'react';
 import Image from '@/components/Image';
 
 interface poolModalProps {
-  data: ITopPool[] | undefined;
+  data: IPoolInfo[] | undefined;
   loading: boolean;
   clickedIndex: number;
   clickedPoolId: number | undefined;
@@ -22,25 +23,44 @@ const PoolModal: React.FC<poolModalProps> = ({
   onOk,
   onCancel,
 }) => {
-  const [selectedPool, setSelectedPool] = useState<ITopPool>();
+  const [selectedPool, setSelectedPool] = useState<IPoolInfo>();
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>();
 
   const columns = [
     {
-      dataIndex: 'id',
-      title: 'ID',
-      width: 20,
+      dataIndex: 'fileurl',
+      title: 'fileurl',
+      width: 60,
+      render: (url: any) => <Image width={40} height={40} preview src={url} />,
+    },
+    {
+      dataIndex: 'poolid',
+      title: 'Pool ID',
+    },
+    {
+      dataIndex: 'pooltype',
+      title: 'Type',
+      render: (text: any) => poolSaleEnum[text],
+    },
+    {
+      dataIndex: 'creator',
+      title: 'Creator Address',
+      render: (text: any) => (
+        <Typography.Paragraph style={{ margin: 0 }} copyable={{ text }}>
+          <Tooltip title={text}>{text.replace(/^(.{6}).*(.{4})$/, '$1...$2')}</Tooltip>
+        </Typography.Paragraph>
+      ),
     },
   ];
 
   const rowSelection = {
     selectedRowKeys: selectedKeys,
-    onChange: (selectedRowKeys: React.Key[], selectedRows: ITopPool[]) => {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: IPoolInfo[]) => {
       setSelectedKeys(selectedRowKeys);
       setSelectedPool(selectedRows[0]);
     },
     columnWidth: 14,
-    getCheckboxProps: (record: ITopPool) => ({
+    getCheckboxProps: (record: IPoolInfo) => ({
       disabled: record.id === clickedPoolId, // Column configuration not to be checked
     }),
   };
@@ -55,9 +75,12 @@ const PoolModal: React.FC<poolModalProps> = ({
       onOk={() => {
         onOk(selectedPool);
         setSelectedKeys([]);
-        // refresh();
       }}
-      onCancel={onCancel}
+      onCancel={() => {
+        onCancel();
+        setSelectedPool(undefined);
+        setSelectedKeys([]);
+      }}
     >
       <Table
         loading={loading}
@@ -66,9 +89,10 @@ const PoolModal: React.FC<poolModalProps> = ({
           type: 'radio',
           ...rowSelection,
         }}
-        rowKey="id"
+        rowKey={(record) => record.poolid! + record.pooltype!}
         columns={columns}
         dataSource={data}
+        pagination={false}
       />
     </Modal>
   );

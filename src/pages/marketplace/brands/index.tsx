@@ -65,10 +65,10 @@ const Collections: React.FC = () => {
   const resetBrandWeight = async (id: number) => {
     const res = await updateBrandWeight({ id, popularweight: 0 });
     if (res.code === 1) {
-      message.success('reset brand success');
+      message.success('Success');
       reloadTopBrands();
     } else {
-      message.error('reset brand error');
+      message.error('Error');
     }
   };
 
@@ -87,10 +87,10 @@ const Collections: React.FC = () => {
 
     const res = await updateBrandWeight({ id: brand.id, popularweight: targetWeight });
     if (res.code === 1) {
-      message.success('reset brand success');
+      message.success('Success');
       reloadTopBrands();
     } else {
-      message.error('reset brand error');
+      message.error('Error');
     }
 
     setModalVisible(false);
@@ -121,7 +121,6 @@ const Collections: React.FC = () => {
 
   const handleSwapBrand = (targetBrand: IBrandResponse) => {
     if (!clickedBrandId || !targetWeight) return;
-    console.log('targetBrand: ', targetBrand);
 
     confirm({
       icon: <ExclamationCircleOutlined />,
@@ -147,7 +146,7 @@ const Collections: React.FC = () => {
 
   return (
     <PageContainer>
-      <Card style={{ height: '80vh' }}>
+      <Card>
         <Row gutter={[18, 24]}>
           {brandResultList.map((item: IBrandResponse | 0, index) => (
             <Col className="gutter-row" flex="0 0 230px">

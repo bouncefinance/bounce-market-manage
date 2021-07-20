@@ -1,22 +1,22 @@
-export type poolStateType = 0 | 1; // 0：live，1：closed
-
 /**
- * Pool Info Standard
- * 0 fixed swap
- * 1 English auction
+ * Pool Sale Type
+ * 0 live
+ * 1 closed
  */
-export type poolInfoStandard = 0 | 1; // 0：fixed swap 1：English auction
-export enum poolInfoEnum {
-  fixed_swap = 0,
-  English_auction = 1,
+export type poolStateType = 0 | 1;
+export enum poolStateEnum {
+  live = 0,
+  closed = 1,
 }
 
 /**
  * Pool Sale Type
  * 1 fixed swap
  * 2 English auction
+ * 3 Timed fixed swap
+ * 4 Timed English auction
  */
-export type poolSaleType = 1 | 2 | 3 | 4; // 1：fixed swap 2：English auction
+export type poolSaleType = 1 | 2 | 3 | 4;
 export enum poolSaleEnum {
   fixed_swap = 1,
   English_auction = 2,
@@ -46,6 +46,7 @@ export interface IUpdatePoolWeightParams {
 }
 
 export interface IPoolInfo {
+  id?: number;
   poolid?: number;
   tokenid?: number;
   itemname: string;

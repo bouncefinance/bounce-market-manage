@@ -1,5 +1,5 @@
-import type { IPoolInfo } from '@/services/pool/types';
-import { Input, Modal, Select, Space, Table, Tooltip, Typography } from 'antd';
+import { IPoolInfo, poolStateEnum } from '@/services/pool/types';
+import { Input, Modal, Select, Space, Table, Tag, Tooltip, Typography } from 'antd';
 import { PoolFilterEnum } from '@/services/pool/types';
 import React, { useState } from 'react';
 import Image from '@/components/Image';
@@ -13,8 +13,6 @@ interface poolModalProps {
   setSearchType: any;
   clickedIndex: number;
   visible: boolean;
-  // oldPoolId: number;
-  // oldPoolStandard: number;
   onOk: any;
   onCancel: any;
 }
@@ -25,8 +23,6 @@ const PoolModal: React.FC<poolModalProps> = ({
   setSearchType,
   clickedIndex,
   visible,
-  // oldPoolId,
-  // oldPoolStandard,
   onOk,
   onCancel,
 }) => {
@@ -43,6 +39,17 @@ const PoolModal: React.FC<poolModalProps> = ({
       title: 'Cover',
       width: 20,
       render: (url: any) => <Image width={30} height={30} src={url} />,
+    },
+    {
+      dataIndex: 'state',
+      title: 'State',
+      width: 50,
+      render: (state: any) =>
+        state === poolStateEnum.closed ? (
+          <Tag color="red">Closed</Tag>
+        ) : (
+          <Tag color="green">Live</Tag>
+        ),
     },
     {
       dataIndex: 'itemname',
@@ -80,9 +87,9 @@ const PoolModal: React.FC<poolModalProps> = ({
       setSelectedPool(selectedRows[0]);
     },
     columnWidth: 14,
-    // getCheckboxProps: (record: IPoolResponse) => ({
-      // disabled: record.popularweight > 10000,
-    // }),
+    getCheckboxProps: (record: IPoolInfo) => ({
+      disabled: record.state === poolStateEnum.closed,
+    }),
   };
 
   return (

@@ -9,17 +9,15 @@ import type {
   poolSaleType,
 } from '@/services/pool/types';
 import { PoolFilterEnum } from '@/services/pool/types';
-// import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Col, Row, Modal, message, Typography, Tooltip } from 'antd';
 
 import SkeletonCard from '@/components/Cards/SkeletonCard';
 import AddItemCard from '@/components/Cards/AddItemCard';
 import ItemCard from '@/components/Cards/ItemCard';
-// import SwapBrandModal from './SwapBrandModal';
 import { getOnePoolInfo, getPoolsByFilter, getTopPools, updatePoolWeight } from '@/services/pool';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-// import SwapPoolModal from './SwapPoolModal';
+import SwapPoolModal from './SwapPoolModal';
 import { RECOMMEND_POOLS_AMOUNT } from '@/tools/const';
 import PoolModal from './PoolModal';
 import { ToOffset } from '@/services';
@@ -31,14 +29,13 @@ let targetWeight: number;
 let modalAction: 'swap' | 'add' | 'edit';
 let oldPoolId: number;
 let oldPoolStandard: poolSaleType;
-// let oldPoolWeight: number;
+const fullTopPools: IPoolInfo[] = [];
 
 interface IRecommendItemProps {
   item: ITopPool;
   index: number;
   refreshTopPools: any;
   setModalVisible: any;
-  // handleAddClicked: any;
 }
 
 const RecommendItem: React.FC<IRecommendItemProps> = ({
@@ -48,6 +45,8 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
   setModalVisible,
   // handleAddClicked,
 }) => {
+  console.log(index, 'item: ', item);
+
   const handleReset = ({ poolid, standard }: IUpdatePoolWeightParams) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
@@ -65,7 +64,7 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
     });
   };
 
-  const { data, run } = useRequest(
+  const { data, run, loading } = useRequest(
     () => getOnePoolInfo({ poolId: item.poolid, poolType: item.standard }),
     {
       manual: true,
@@ -76,14 +75,20 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
     if (item.poolid) {
       run();
     }
-  }, [item.poolid, run]);
+  }, [item.poolid]);
+
+  useEffect(() => {
+    if (data && !loading) {
+      fullTopPools.push({ ...data, poolweight: item.poolweight });
+    }
+  }, [data, loading]);
 
   // 加载中
-  if (!item.poolid && item.poolid !== 0) {
+  if (!item.poolid && item.poolid !== 0 && JSON.stringify(item) !== '{}') {
     return <SkeletonCard />;
   }
   // 未设置
-  if (!item.poolweight) {
+  if (JSON.stringify(item) === '{}') {
     return (
       <AddItemCard
         height={427}
@@ -109,7 +114,7 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
         oldPoolStandard = item.standard;
         targetWeight = RECOMMEND_POOLS_AMOUNT - index;
         modalAction = 'swap';
-        // oldPoolWeight = item.poolweight;
+        setModalVisible(true);
       }}
       onEdit={() => {
         clickedIndex = index;
@@ -147,7 +152,6 @@ const RecommendPools: React.FC = () => {
   const [resultPools, setResultPools] = useState<ITopPool[]>(new Array(recommendCount).fill({}));
   const [modalVisible, setModalVisible] = useState(false);
   const [searchType, setSearchType] = useState<PoolFilterType>(PoolFilterEnum.likestr);
-  // const [selectedPool, setSelectedPool] = useState<IPoolInfo>();
 
   const {
     data: topPools,
@@ -176,21 +180,20 @@ const RecommendPools: React.FC = () => {
 
   useEffect(() => {
     if (!topPoolsLoading && topPools) {
-      const pools = [...resultPools];
+      const pools = new Array(recommendCount).fill({});
       topPools
         ?.sort((a, b) => {
           return b.poolweight - a.poolweight;
         })
-        .forEach((item, index) => {
-          pools[index] = item;
+        .forEach((item) => {
+          if (item.poolweight > 0) {
+            pools[recommendCount - item.poolweight] = item;
+          }
         });
+      console.log('pools: ', pools);
       setResultPools(pools);
     }
   }, [topPools, topPoolsLoading]);
-
-  // useEffect(() => {
-
-  // }, [modalVisible])
 
   const handleAdd = (pool: IPoolInfo) => {
     confirm({
@@ -246,38 +249,38 @@ const RecommendPools: React.FC = () => {
     });
   };
 
-  // const handleSwap = (pool: ITopPool) => {
-  //   confirm({
-  //     icon: <ExclamationCircleOutlined />,
-  //     title: 'Do you want to add this brand?',
-  //     onOk() {
-  //       setModalVisible(false);
-  //       updatePoolWeight({
-  //         poolid: oldPoolId,
-  //         standard: oldPoolStandard,
-  //         weight: pool.poolweight,
-  //       }).then((res1) => {
-  //         if (res1.code === 1) {
-  //           updatePoolWeight({
-  //             poolid: pool.poolid!,
-  //             standard: pool.standard!,
-  //             weight: oldPoolWeight,
-  //           }).then((res2) => {
-  //             if (res2.code === 1) {
-  //               message.success('Success');
-  //               refreshTopPools();
-  //               searchAllPools({ pageSize: 6, current: 1 });
-  //             } else {
-  //               message.error('Error');
-  //             }
-  //           });
-  //         } else {
-  //           message.error('Error');
-  //         }
-  //       });
-  //     },
-  //   });
-  // };
+  const handleSwap = (pool: IPoolInfo) => {
+    confirm({
+      icon: <ExclamationCircleOutlined />,
+      title: 'Do you want to Swap this brand?',
+      onOk() {
+        setModalVisible(false);
+        updatePoolWeight({
+          poolid: oldPoolId,
+          standard: oldPoolStandard,
+          weight: pool.poolweight,
+        }).then((res1) => {
+          if (res1.code === 1) {
+            updatePoolWeight({
+              poolid: pool.poolid!,
+              standard: pool.pooltype!,
+              weight: targetWeight,
+            }).then((res2) => {
+              if (res2.code === 1) {
+                message.success('Success');
+                refreshTopPools();
+                searchAllPools({ pageSize: 6, current: 1 });
+              } else {
+                message.error('Error');
+              }
+            });
+          } else {
+            message.error('Error');
+          }
+        });
+      },
+    });
+  };
 
   return (
     <PageContainer>
@@ -295,31 +298,31 @@ const RecommendPools: React.FC = () => {
           ))}
         </Row>
       </Card>
-      {/* <SwapPoolModal
-        data={topPools}
-        loading={topPoolsLoading}
-        clickedIndex={1}
-        clickedPoolId={clickedPoolId}
-        visible={modalVisible}
-        onOk={()=>{}}
-        onCancel={() => {
-          setModalVisible(false);
-        }}
-      /> */}
-      <PoolModal
-        tableProps={tableProps}
-        searchAllPools={searchAllPools}
-        setSearchType={setSearchType}
-        clickedIndex={clickedIndex}
-        visible={modalVisible}
-        onOk={modalAction === 'add' ? handleAdd : handleEdit}
-        // oldPoolId={oldPoolId}
-        // oldPoolStandard={oldPoolStandard}
-        // onOk={handleEdit}
-        onCancel={() => {
-          setModalVisible(false);
-        }}
-      />
+      {modalAction === 'swap' ? (
+        <SwapPoolModal
+          data={fullTopPools}
+          loading={topPoolsLoading}
+          clickedIndex={clickedIndex}
+          clickedPoolId={oldPoolId}
+          visible={modalVisible}
+          onOk={handleSwap}
+          onCancel={() => {
+            setModalVisible(false);
+          }}
+        />
+      ) : (
+        <PoolModal
+          tableProps={tableProps}
+          searchAllPools={searchAllPools}
+          setSearchType={setSearchType}
+          clickedIndex={clickedIndex}
+          visible={modalVisible}
+          onOk={modalAction === 'add' ? handleAdd : handleEdit}
+          onCancel={() => {
+            setModalVisible(false);
+          }}
+        />
+      )}
     </PageContainer>
   );
 };

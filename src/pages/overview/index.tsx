@@ -28,7 +28,7 @@ const Overview: React.FC = () => {
       <>
         <h2>Transaction data statistics(BSC)</h2>
         <Row gutter={[18, 24]}>
-          <Col flex="0 0 auto">
+          <Col flex="0 0 260px">
             <Card>
               <Statistic
                 style={{ height: 63 }}
@@ -38,7 +38,7 @@ const Overview: React.FC = () => {
               />
             </Card>
           </Col>
-          <Col flex="0 0 auto">
+          <Col flex="0 0 260px">
             <Card>
               <Statistic
                 style={{ height: 63 }}
@@ -48,7 +48,7 @@ const Overview: React.FC = () => {
               />
             </Card>
           </Col>
-          <Col flex="0 0 auto">
+          <Col flex="0 0 260px">
             <Card>
               <Statistic
                 style={{ height: 63 }}
@@ -58,7 +58,7 @@ const Overview: React.FC = () => {
               />
             </Card>
           </Col>
-          <Col flex="0 0 auto">
+          <Col flex="0 0 260px">
             <Card>
               <Statistic
                 prefix={'$'}
@@ -69,7 +69,7 @@ const Overview: React.FC = () => {
               />
             </Card>
           </Col>
-          <Col flex="0 0 auto">
+          <Col flex="0 0 260px">
             <Card>
               <Statistic
                 prefix={'$'}

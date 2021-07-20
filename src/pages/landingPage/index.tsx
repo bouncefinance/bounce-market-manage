@@ -7,11 +7,17 @@ import {
   updataOneTopArtist,
   getVerfiedUsersByName,
 } from '@/services/user';
-import type { ITopArtist, IUserItem, modalActionType } from '@/services/user/types';
+import {
+  ITopArtist,
+  IUserItem,
+  modalActionType,
+  UserDisableEnum,
+  UserRoleEnum,
+} from '@/services/user/types';
 
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Col, Row, Modal, message, Tooltip } from 'antd';
+import { Card, Col, Row, Modal, message, Tooltip, Typography, Tag, Space } from 'antd';
 
 import SkeletonCard from '@/components/Cards/SkeletonCard';
 import AddItemCard from '@/components/Cards/AddItemCard';
@@ -118,7 +124,7 @@ const TopArtists: React.FC = () => {
 
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you want to Change this brand?',
+      title: 'Do you want to Change this top artist?',
       onOk() {
         deleteOneTopArtist({ username: clickedArtistName }).then((res1) => {
           if (res1.code === 1) {
@@ -168,34 +174,43 @@ const TopArtists: React.FC = () => {
                 <ItemCard
                   title={`No. ${index + 1}`}
                   imgSrc={item.imgurl}
-                  handleSwap={() => {
+                  onSwap={() => {
                     setClickedIndex(index);
                     setTargetWeight(RECOMMEND_TOP_ARTISTS_AMOUNT - index);
                     setClickedArtistName(item.username);
                     setModalAction('swap');
                     setModalVisible(true);
                   }}
-                  handleEdit={() => {
+                  onEdit={() => {
                     setClickedIndex(index);
                     setTargetWeight(RECOMMEND_TOP_ARTISTS_AMOUNT - index);
                     setClickedArtistName(item.username);
                     setModalAction('edit');
                     setModalVisible(true);
                   }}
-                  handleReset={() => {
+                  onReset={() => {
                     handleDelete(item.username);
                   }}
                   description={
-                    <>
-                      <p>id: {item.id} </p>
+                    <Space direction="vertical">
+                      <Typography.Paragraph>
+                        {`id: ${item.id} `}
+                        {(item.identity !== UserRoleEnum.Verified ||
+                          item.state !== UserDisableEnum.Normal) && <Tag color="red">Invalid</Tag>}
+                      </Typography.Paragraph>
+
                       {item.username.length > 14 ? (
                         <Tooltip title={item.username}>
-                          <p>name: {`${item.username.slice(0, 14)}...`}</p>
+                          <Typography.Paragraph>
+                            name: {`${item.username.slice(0, 14)}...`}
+                          </Typography.Paragraph>
                         </Tooltip>
                       ) : (
-                        <p style={{}}>name: {item.username}</p>
+                        <Typography.Paragraph style={{}}>
+                          name: {item.username}
+                        </Typography.Paragraph>
                       )}
-                    </>
+                    </Space>
                   }
                 />
               )}

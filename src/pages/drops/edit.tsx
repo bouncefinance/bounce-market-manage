@@ -28,7 +28,7 @@ import type { IUserItem } from '@/services/user/types';
 import AddNftTable from '@/pages/drops/AddNftTable';
 import OperateNftTable from '@/pages/drops/OperateNftTable';
 import type { IPoolResponse } from '@/services/pool/types';
-import { DropsState, IDropDetailResponse } from '@/services/drops/types';
+import type { DropsState, IDropDetailResponse } from '@/services/drops/types';
 
 const { Option } = Select;
 
@@ -79,6 +79,16 @@ const DropEdit: React.FC = () => {
   const [form] = Form.useForm();
   const location = useLocation();
   const currentDropId = location['query']?.id || '';
+
+  // eslint-disable-next-line no-template-curly-in-string
+  const typeTemplate = 'Please input a valid ${type}';
+  /* eslint-disable no-template-curly-in-string */
+  const validateMessages = {
+    // required: '${label} is required!',
+    types: {
+      url: typeTemplate,
+    },
+  };
 
   useEffect(() => {
     setSelectedPoolList([]);
@@ -275,7 +285,13 @@ const DropEdit: React.FC = () => {
   return (
     <PageContainer>
       <Card>
-        <Form form={form} labelCol={{ span: 6 }} wrapperCol={{ span: 14 }} onFinish={handleEdit}>
+        <Form
+          form={form}
+          labelCol={{ span: 6 }}
+          wrapperCol={{ span: 14 }}
+          onFinish={handleEdit}
+          validateMessages={validateMessages}
+        >
           <Form.Item label="Account" required>
             {!currentDropId && (
               <Select
@@ -425,13 +441,13 @@ const DropEdit: React.FC = () => {
           )}
 
           <Form.Item label="Links">
-            <Form.Item name="instagram">
+            <Form.Item name="instagram" rules={[{ type: 'url' }]}>
               <Input addonBefore="Instagram" />
             </Form.Item>
-            <Form.Item name="twitter">
+            <Form.Item name="twitter" rules={[{ type: 'url' }]}>
               <Input addonBefore="Twitter" />
             </Form.Item>
-            <Form.Item name="website">
+            <Form.Item name="website" rules={[{ type: 'url' }]}>
               <Input addonBefore="Website" />
             </Form.Item>
           </Form.Item>

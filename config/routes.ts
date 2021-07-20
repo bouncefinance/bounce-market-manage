@@ -31,7 +31,7 @@ const routes: MenuDataItem[] = [
 
   {
     path: '/',
-    redirect: './overview',
+    redirect: './overview/statstics',
   },
   {
     name: 'Overview',

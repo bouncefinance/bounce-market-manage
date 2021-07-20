@@ -8,9 +8,9 @@ import type {
   PoolFilterType,
   poolSaleType,
 } from '@/services/pool/types';
-import { PoolFilterEnum } from '@/services/pool/types';
+import { poolStateEnum, PoolFilterEnum } from '@/services/pool/types';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Col, Row, Modal, message, Typography, Tooltip } from 'antd';
+import { Card, Col, Row, Modal, message, Typography, Tooltip, Tag, Space } from 'antd';
 
 import SkeletonCard from '@/components/Cards/SkeletonCard';
 import AddItemCard from '@/components/Cards/AddItemCard';
@@ -45,8 +45,6 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
   setModalVisible,
   // handleAddClicked,
 }) => {
-  console.log(index, 'item: ', item);
-
   const handleReset = ({ poolid, standard }: IUpdatePoolWeightParams) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
@@ -130,7 +128,14 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
       }}
       description={
         <>
-          <Typography.Paragraph>id: {item.poolid}</Typography.Paragraph>
+          <Space>
+            <Typography.Paragraph>{`id: ${item.poolid}`}</Typography.Paragraph>
+
+            <Typography.Paragraph>
+              {data?.state === poolStateEnum.closed && <Tag color="red">Closed</Tag>}
+            </Typography.Paragraph>
+          </Space>
+
           <Typography.Paragraph style={{ margin: 0 }}>
             {data && data?.itemname?.length > 16 ? (
               <Tooltip title={data?.itemname}>
@@ -190,7 +195,6 @@ const RecommendPools: React.FC = () => {
             pools[recommendCount - item.poolweight] = item;
           }
         });
-      console.log('pools: ', pools);
       setResultPools(pools);
     }
   }, [topPools, topPoolsLoading]);

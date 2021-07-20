@@ -4,8 +4,6 @@ import Image from '@/components/Image';
 import type { IPoolResponse } from '@/services/pool/types';
 import { CaretDownOutlined, CaretUpOutlined, DeleteOutlined } from '@ant-design/icons';
 
-import { ImgErrorUrl } from '@/tools/const';
-
 interface IOperateNftTableProps {
   selectedPoolList: IPoolResponse[];
   setTempSelectedPoolList: any;
@@ -80,14 +78,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
       title: 'Cover',
       width: 80,
       render: (src: any) => (
-        <Image
-          height={60}
-          width={60}
-          style={{ objectFit: 'contain' }}
-          preview={false}
-          src={src}
-          fallback={ImgErrorUrl}
-        />
+        <Image height={60} width={60} style={{ objectFit: 'contain' }} src={src} />
       ),
     },
     {

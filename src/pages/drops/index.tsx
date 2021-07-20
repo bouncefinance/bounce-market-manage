@@ -10,7 +10,6 @@ import moment from 'moment';
 import { useState } from 'react';
 import { Link } from 'umi';
 import Image from '@/components/Image';
-import { ImgErrorUrl } from '@/tools/const';
 
 const { confirm } = Modal;
 
@@ -125,7 +124,7 @@ const DropsPage: React.FC = () => {
       render: (src: any, record) => {
         if (src === '-')
           return <div style={{ backgroundColor: record.bgcolor, width: 40, height: 40 }}></div>;
-        return <Image width={40} height={40} preview={false} src={src} fallback={ImgErrorUrl} />;
+        return <Image width={40} height={40} src={src} />;
       },
     },
     {

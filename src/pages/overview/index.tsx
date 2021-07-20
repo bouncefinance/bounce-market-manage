@@ -38,7 +38,7 @@ const Overview: React.FC = () => {
               />
             </Card>
           </Col>
-          <Col flex="0 0 260px">
+          {/* <Col flex="0 0 260px">
             <Card>
               <Statistic
                 style={{ height: 63 }}
@@ -47,7 +47,7 @@ const Overview: React.FC = () => {
                 value={overviewData?.nftnum}
               />
             </Card>
-          </Col>
+          </Col> */}
           <Col flex="0 0 260px">
             <Card>
               <Statistic

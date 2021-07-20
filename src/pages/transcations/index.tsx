@@ -62,77 +62,39 @@ const Transactions: React.FC = () => {
       dataIndex: 'price',
       align: 'center',
       title: 'Price (BNB)',
-      render: (text: any) => (
-        `${text/1e18}`
-      ),
+      render: (text: any) => `${text / 1e18}`,
     },
     {
       dataIndex: 'quantity',
       align: 'center',
       title: 'Quantity',
-      render: (_: any, record: any) => (
-        `${record.quantity}/${record.supply}`
+      render: (_: any, record: any) => `${record.quantity}/${record.supply}`,
+    },
+    {
+      dataIndex: 'from',
+      align: 'center',
+      title: 'From',
+      render: (text: any) => (
+        <Typography.Paragraph style={{ margin: 0 }} copyable={{ text }}>
+          <Tooltip title={text}>{text.replace(/^(.{6}).*(.{4})$/, '$1...$2')}</Tooltip>
+        </Typography.Paragraph>
       ),
     },
     {
-      title: 'From',
+      dataIndex: 'to',
       align: 'center',
-      children: [
-        {
-          dataIndex: 'fromurl',
-          align: 'center',
-          title: 'Avator',
-          render: (url: any) => <Image width={50} height={50} preview src={url} />,
-        },
-        {
-          dataIndex: 'fromname',
-          align: 'center',
-          title: 'Name',
-          render: (text: any) => (
-            <Typography.Paragraph style={{ margin: 0 }}>
-              {text.length > 20 ? (
-                <Tooltip title={text}>{text.replace(/^(.{20}).*$/, '$1...')}</Tooltip>
-              ) : (
-                text
-              )}
-            </Typography.Paragraph>
-          ),
-        },
-        {
-          dataIndex: 'from',
-          align: 'center',
-          title: 'Address',
-          render: (text: any) => (
-            <Typography.Paragraph style={{ margin: 0 }} copyable={{ text }}>
-              <Tooltip title={text}>{text.replace(/^(.{6}).*(.{4})$/, '$1...$2')}</Tooltip>
-            </Typography.Paragraph>
-          ),
-        },
-      ],
-    },
-    {
       title: 'To',
-      align: 'center',
-      children: [
-        {
-          dataIndex: 'to',
-          align: 'center',
-          title: 'Address',
-          render: (text: any) => (
-            <Typography.Paragraph style={{ margin: 0 }} copyable={{ text }}>
-              <Tooltip title={text}>{text.replace(/^(.{6}).*(.{4})$/, '$1...$2')}</Tooltip>
-            </Typography.Paragraph>
-          ),
-        },
-      ],
+      render: (text: any) => (
+        <Typography.Paragraph style={{ margin: 0 }} copyable={{ text }}>
+          <Tooltip title={text}>{text.replace(/^(.{6}).*(.{4})$/, '$1...$2')}</Tooltip>
+        </Typography.Paragraph>
+      ),
     },
     {
       dataIndex: 'ctime',
       align: 'center',
       title: 'Date',
-      render: (ctime: any) => (
-        moment(ctime * 1000).format("dddd, MMM Do YYYY, h:mm:ss a")
-      ),
+      render: (ctime: any) => moment(ctime * 1000).format('YYYY-MM-DD HH:mm:ss'),
     },
   ];
 
@@ -179,6 +141,7 @@ const Transactions: React.FC = () => {
     <PageContainer>
       <Card>
         <Space style={{ width: '100%' }} direction="vertical">
+          <Typography.Paragraph>{}</Typography.Paragraph>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Input.Group>
               <Select
@@ -211,7 +174,7 @@ const Transactions: React.FC = () => {
               onOk={onOk}
             />
           </div>
-          <Table {...tableProps} columns={columns} bordered />
+          <Table rowKey="ctime" {...tableProps} columns={columns} bordered />
         </Space>
       </Card>
     </PageContainer>

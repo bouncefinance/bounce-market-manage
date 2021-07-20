@@ -60,7 +60,6 @@ const routes: MenuDataItem[] = [
     name: 'marketplace',
     path: '/marketplace',
     icon: 'Shop',
-    // component: './recommend',
     routes: [
       {
         name: 'pools',

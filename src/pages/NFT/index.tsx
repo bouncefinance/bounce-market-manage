@@ -3,7 +3,6 @@ import {
   Card,
   Table,
   Button,
-  Image,
   Tooltip,
   Switch,
   Input,
@@ -13,19 +12,18 @@ import {
   Tabs,
   Select,
 } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRequest } from 'umi';
 import request from 'umi-request';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { CopyOutlined, ExclamationCircleOutlined, StarFilled } from '@ant-design/icons';
+import Image from '@/components/Image';
 
 const { Column } = Table;
 const { Search } = Input;
 const { confirm } = Modal;
 const { TabPane } = Tabs;
 const { Option } = Select;
-
-import placeholderImg from '@/assets/images/placeholderImg.svg';
-import { CopyOutlined, ExclamationCircleOutlined, StarFilled } from '@ant-design/icons';
 
 interface INftItem {
   artistpoolweight: number;
@@ -52,13 +50,14 @@ interface INftItem {
   updated_at: string;
 }
 
-const getPoolsListByFilter = function (
+const getPoolsListByFilter = (
   filterType: 'likestr' | 'creator' | 'tokenid' = 'likestr',
   searchText: string = '',
   offset: number,
   limit: number = 7,
-) {
-  let filter, data;
+) => {
+  let filter;
+  let data;
   switch (filterType) {
     case 'likestr':
       filter = 1;
@@ -84,7 +83,7 @@ const getPoolsListByFilter = function (
       filter = 3;
       data = {
         filter,
-        tokenid: searchText === '' ? 0 : parseInt(searchText),
+        tokenid: Number(searchText),
         limit,
         offset,
       };
@@ -106,16 +105,12 @@ const getPoolsListByFilter = function (
   });
 };
 
-const handleDeleteItem = async function (
-  contractaddress: string,
-  tokenid: number,
-  reload: () => void,
-) {
-  const deleteItem = async (contractaddress: string, tokenid: number) => {
+const handleDeleteItem = async (contractaddress: string, tokenid: number, reload: () => void) => {
+  const deleteItem = async (_contractaddress: string, _tokenid: number) => {
     const res = await request.post('/api/bouadmin/main/auth/delpoolitem', {
       data: {
-        contractaddress,
-        tokenid,
+        _contractaddress,
+        _tokenid,
       },
     });
     if (res.code === 1) {
@@ -138,32 +133,32 @@ const handleDeleteItem = async function (
   });
 };
 
-const handleHideItem = async function (
+const handleHideItem = async (
   contractaddress: string,
   tokenid: number,
   actionType: 'hide' | 'show',
   reload: () => void,
-) {
+) => {
   const status = actionType === 'hide' ? 1 : 0;
 
-  const hideItem = async (
-    contractaddress: string,
-    tokenid: number,
-    actionType: 'hide' | 'show',
-  ) => {
+  const hideItem = async (_contractaddress: string, _tokenid: number) => {
     const res = await request.post('/api/bouadmin/main/auth/updatepoolitem', {
       data: {
-        contractaddress,
-        tokenid,
+        _contractaddress,
+        _tokenid,
         status, // status: 1:to hide, 2:to show
       },
     });
     if (res.code === 1) {
-      actionType === 'hide'
-        ? message.success('Hide successfully')
-        : message.success('Show successfully');
+      if (actionType === 'hide') {
+        message.success('Hide successfully');
+      } else {
+        message.success('Show successfully');
+      }
+    } else if (actionType === 'hide') {
+      message.error('Failed to hide');
     } else {
-      actionType === 'hide' ? message.error('Failed to hide') : message.error('Failed to show');
+      message.error('Failed to show');
     }
   };
 
@@ -172,7 +167,7 @@ const handleHideItem = async function (
     icon: <ExclamationCircleOutlined />,
     title: `Do you Want to ${actionType} this item?`,
     onOk() {
-      hideItem(contractaddress, tokenid, actionType).then(() => {
+      hideItem(contractaddress, tokenid).then(() => {
         reload();
       });
     },
@@ -200,7 +195,7 @@ interface IBrandInfo {
 }
 
 // get brands weight
-const getRecommendBrands = function () {
+const getRecommendBrands = () => {
   return request.post('[FGB_V2]/api/v2/main/getpopularbrands', {
     data: {
       accountaddress: '',
@@ -214,7 +209,8 @@ const getBrandsListByFilter = (
   offset: number,
   limit: number = 7,
 ) => {
-  let filter, data;
+  let filter;
+  let data;
   switch (filterType) {
     case 'likestr':
       filter = 1;
@@ -240,7 +236,7 @@ const getBrandsListByFilter = (
       filter = 3;
       data = {
         filter,
-        brandid: parseInt(searchText),
+        brandid: Number(searchText),
         limit,
         offset,
       };
@@ -263,10 +259,10 @@ const getBrandsListByFilter = (
 };
 
 const handleDeleteBrand = async (id: number, reload: () => void) => {
-  const deleteBrand = async (id: number) => {
+  const deleteBrand = async (_id: number) => {
     const res = await request.post('/api/bouadmin/main/auth/delbrand', {
       data: {
-        id,
+        _id,
       },
     });
     if (res.code === 1) {
@@ -325,21 +321,13 @@ const handleDeleteBrand = async (id: number, reload: () => void) => {
 //   });
 // };
 
-const index: React.FC = () => {
+const NFT: React.FC = () => {
   const [itemSearchType, setItemSearchType] = useState<'likestr' | 'creator' | 'tokenid'>(
     'likestr',
   );
   const [brandSearchType, setBrandSearchType] = useState<'likestr' | 'creator' | 'brandid'>(
     'likestr',
   );
-
-  useEffect(() => {
-    console.log('itemSearchType: ', itemSearchType);
-  }, [itemSearchType]);
-
-  useEffect(() => {
-    console.log('brandSearchType: ', brandSearchType);
-  }, [brandSearchType]);
 
   const {
     // data: itemData,
@@ -436,7 +424,6 @@ const index: React.FC = () => {
                         style={{ objectFit: 'contain' }}
                         width={64}
                         height={64}
-                        fallback={placeholderImg}
                       />
                     ) : (
                       <video src={fileurl} width={70} height={70} controls={false} />
@@ -472,7 +459,7 @@ const index: React.FC = () => {
                   dataIndex="contractaddress"
                   key="contractaddress"
                   align={'center'}
-                  render={(contractaddress, record) => {
+                  render={(contractaddress) => {
                     return (
                       <Space>
                         <Tooltip placement="top" title={<span>{contractaddress}</span>}>
@@ -493,7 +480,7 @@ const index: React.FC = () => {
                   dataIndex="creator"
                   key="creator"
                   align={'center'}
-                  render={(creator, record) => {
+                  render={(creator) => {
                     return (
                       <Space>
                         <Tooltip placement="top" title={<span>{creator}</span>}>
@@ -516,23 +503,25 @@ const index: React.FC = () => {
                   align={'center'}
                   render={(record: INftItem) => (
                     <Switch
-                      checked={record.status === 1 ? true : false}
+                      checked={record.status === 1}
                       checkedChildren="Hide"
                       unCheckedChildren="Show"
                       onChange={(checked: boolean) => {
-                        checked
-                          ? handleHideItem(
-                              record.contractaddress,
-                              record.tokenid,
-                              'hide',
-                              reloadItem,
-                            )
-                          : handleHideItem(
-                              record.contractaddress,
-                              record.tokenid,
-                              'show',
-                              reloadItem,
-                            );
+                        if (checked) {
+                          handleHideItem(
+                            record.contractaddress,
+                            record.tokenid,
+                            'hide',
+                            reloadItem,
+                          );
+                        } else {
+                          handleHideItem(
+                            record.contractaddress,
+                            record.tokenid,
+                            'show',
+                            reloadItem,
+                          );
+                        }
                       }}
                     />
                   )}
@@ -591,16 +580,9 @@ const index: React.FC = () => {
                   key="imgurl"
                   width={110}
                   align={'center'}
-                  render={(imgurl, record: IBrandInfo) => {
-                    // console.log('record: ', record);
+                  render={(imgurl) => {
                     return (
-                      <Image
-                        src={imgurl}
-                        style={{ objectFit: 'contain' }}
-                        width={64}
-                        height={64}
-                        fallback={placeholderImg}
-                      />
+                      <Image src={imgurl} style={{ objectFit: 'contain' }} width={64} height={64} />
                     );
                   }}
                 />
@@ -649,7 +631,7 @@ const index: React.FC = () => {
                   key="ownername"
                   width={130}
                   align={'center'}
-                  render={(ownername, record) => {
+                  render={(ownername) => {
                     return ownername ? (
                       <Tooltip placement="top" title={<span>{ownername}</span>}>
                         {ownername}
@@ -665,7 +647,7 @@ const index: React.FC = () => {
                   dataIndex="owneraddress"
                   key="owneraddress"
                   align={'center'}
-                  render={(owneraddress, record) => {
+                  render={(owneraddress) => {
                     return (
                       <Space>
                         <Tooltip placement="top" title={<span>{owneraddress}</span>}>
@@ -697,13 +679,13 @@ const index: React.FC = () => {
                         danger
                         key="list-loadmore-delete"
                         disabled={
-                          record.id === 10 ||
-                          record.id === 11 ||
-                          recommendBrands?.find((recommendBrand: IBrandInfo) => {
-                            return recommendBrand.id === record.id;
-                          })
-                            ? true
-                            : false
+                          !!(
+                            record.id === 10 ||
+                            record.id === 11 ||
+                            recommendBrands?.find((recommendBrand: IBrandInfo) => {
+                              return recommendBrand.id === record.id;
+                            })
+                          )
                         }
                         onClick={() => {
                           handleDeleteBrand(record.id, reloadBrand);
@@ -723,4 +705,4 @@ const index: React.FC = () => {
   );
 };
 
-export default index;
+export default NFT;

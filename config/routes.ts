@@ -89,7 +89,19 @@ const routes: MenuDataItem[] = [
     name: 'nft',
     path: '/nft',
     icon: 'icon-cube',
-    component: './nft',
+    routes: [
+      {
+        name: 'items',
+        path: 'item',
+        component: './nft/items',
+      },
+      {
+        name: 'brands',
+        path: 'brands',
+        // icon: 'History',
+        component: './nft/brands',
+      },
+    ],
   },
   {
     name: 'users',
@@ -99,15 +111,21 @@ const routes: MenuDataItem[] = [
   },
   {
     name: 'administrator',
-    path: 'administrator',
+    path: 'admin',
     icon: 'Key',
-    component: './authority',
-  },
-  {
-    name: 'history',
-    path: 'history',
-    icon: 'History',
-    component: './history',
+    routes: [
+      {
+        name: 'administrator',
+        path: 'admin',
+        component: './authority',
+      },
+      {
+        name: 'history',
+        path: 'history',
+        icon: 'History',
+        // component: './history',
+      },
+    ],
   },
   // {
   //     name: 'box',

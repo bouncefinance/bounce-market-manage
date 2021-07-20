@@ -16,9 +16,8 @@ export default {
 
   'menu.users': 'Users',
 
-  'menu.administrator': 'Administrator',
-
-  'menu.history': 'History',
+  'menu.administrator.administrator': 'Administrator',
+  'menu.administrator.history': 'History',
 
   'menu.Authority': 'Authority',
   'menu.Authority.User': 'User',

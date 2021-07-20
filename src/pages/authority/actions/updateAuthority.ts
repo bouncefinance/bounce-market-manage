@@ -1,3 +1,4 @@
+import { Apis } from '@/services';
 import { message } from 'antd';
 import request from 'umi-request';
 import type { AuthorityRoleStatus, AuthorityRoleType } from './apiType';
@@ -12,7 +13,7 @@ export interface IUpdateAuthorityParams {
   username?: string;
 }
 const updateAuthority = async (param: IUpdateAuthorityParams) => {
-  const result: any = await request.post('/api/bouadmin/main/auth/updateoperatorinfo', {
+  const result: any = await request.post(Apis.updateoperatorinfo, {
     data: param,
   });
   if (result.code === 1) {
@@ -24,7 +25,7 @@ const updateAuthority = async (param: IUpdateAuthorityParams) => {
 export default updateAuthority;
 
 export const deleteAuthority = async (param: { id: number; address: string }) => {
-  const result: any = await request.post('/api/bouadmin/main/auth/deleteoperators', {
+  const result: any = await request.post(Apis.deleteoperators, {
     data: param,
   });
   if (result.code === 1) {

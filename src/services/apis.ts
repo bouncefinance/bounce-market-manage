@@ -16,6 +16,16 @@ export const Apis = {
   // brand
   getbrandsbylikename: '/api/bouadmin/main/auth/getbrandsbylikename', // // 查询brand信息 filter: 1:likestr, 2:creator, 3:Id
   updatbrandeweight: '/api/bouadmin/main/auth/updateweight', // 修改brand的权重
+  delbrand: '/api/bouadmin/main/auth/delbrand', // 修改brand的权重
+  updateuseridentity: '/api/bouadmin/main/auth/updateuseridentity', // 修改brand的权重
+  updateuserstate: '/api/bouadmin/main/auth/updateuserstate', // 修改brand的权重
+  updateuserdisplay: '/api/bouadmin/main/auth/updateuserdisplay', // 修改brand的权重
+
+  // authority
+  addoperators: '/api/bouadmin/main/auth/addoperators', // 修改brand的权重
+  getoperatorlist: '/api/bouadmin/main/auth/getoperatorlist', // 修改brand的权重
+  updateoperatorinfo: '/api/bouadmin/main/auth/updateoperatorinfo', // 修改brand的权重
+  deleteoperators: '/api/bouadmin/main/auth/deleteoperators', // 修改brand的权重
 
   // drop
   searchdrops: '/api/bouadmin/main/auth/searchdrops', // 获取Drops List
@@ -31,8 +41,10 @@ export const Apis = {
   getpoolsinfobypage: '/api/bouadmin/main/auth/getpoolsinfobypage', // 查询带poolweight的记录
   getonepoolinfo: '/api/bouadmin/main/auth/getonepoolinfo', // 查询一个pool的信息
   dealpoolinfo: '/api/bouadmin/main/auth/dealpoolinfo', // 更改一个pool的权重信息
-  getpoolsbylikename: '/api/bouadmin/main/auth/getpoolsbylikename', 
-  getauctionpoolsbyfilter: '/api/bouadmin/main/auth/getauctionpoolsbyfilter', 
+  getpoolsbylikename: '/api/bouadmin/main/auth/getpoolsbylikename',
+  getauctionpoolsbyfilter: '/api/bouadmin/main/auth/getauctionpoolsbyfilter',
+  delpoolitem: '/api/bouadmin/main/auth/delpoolitem',
+  updatepoolitem: '/api/bouadmin/main/auth/updatepoolitem',
 
   // overview
   get_overviews: '/api/bouadmin/main/auth/get_overviews', // 获取统计数据

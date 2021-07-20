@@ -45,6 +45,8 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
   setModalVisible,
   // handleAddClicked,
 }) => {
+  // const [ran, setRan] = useState(false);
+
   const handleReset = ({ poolid, standard }: IUpdatePoolWeightParams) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
@@ -82,11 +84,11 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
   }, [data, loading]);
 
   // 加载中
-  if (!item.poolid && item.poolid !== 0 && JSON.stringify(item) !== '{}') {
+  if ((!data && item.poolid) || loading) {
     return <SkeletonCard />;
   }
   // 未设置
-  if (JSON.stringify(item) === '{}') {
+  if (!item.poolid) {
     return (
       <AddItemCard
         height={427}
@@ -184,7 +186,7 @@ const RecommendPools: React.FC = () => {
   );
 
   useEffect(() => {
-    if (!topPoolsLoading && topPools) {
+    if (topPools && !topPoolsLoading && topPools?.length > 0) {
       const pools = new Array(recommendCount).fill({});
       topPools
         ?.sort((a, b) => {

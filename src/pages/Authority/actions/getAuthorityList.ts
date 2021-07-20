@@ -1,10 +1,10 @@
-import { ToOffset } from '@/services';
+import { Apis, ToOffset } from '@/services';
 import request from 'umi-request';
-import { IAuthorityItem } from './apiType';
+import type { IAuthorityItem } from './apiType';
 
 interface IResult {
   code: number;
-  data: Array<IAuthorityItem>;
+  data: IAuthorityItem[];
   total: number;
 }
 export interface IAuthorityListParma {
@@ -14,22 +14,23 @@ export interface IAuthorityListParma {
   userId?: string;
 }
 export const getAuthorityList: (parma: IAuthorityListParma, address: string) => Promise<IResult> = (
-  {
-    pageSize: limit,
-    current: offset,
-    userId
-  }: IAuthorityListParma, address: string) => {
-  return request.post('/api/bouadmin/main/auth/getoperatorlist', {
+  { pageSize: limit, current: offset, userId }: IAuthorityListParma,
+  address: string,
+) => {
+  return request.post(Apis.getoperatorlist, {
     data: {
-      inputinfo: address, limit, offset: ToOffset(offset, limit), userId
-    }
-  })
-}
+      inputinfo: address,
+      limit,
+      offset: ToOffset(offset, limit),
+      userId,
+    },
+  });
+};
 export const getAuthorityListFormatResult = (data: IResult) => {
   return {
     total: data.total,
-    list: data.data
-  }
-}
+    list: data.data,
+  };
+};
 
-export const defaultAuthorityPageParams = { current: 1, pageSize: 7 }
+export const defaultAuthorityPageParams = { current: 1, pageSize: 7 };

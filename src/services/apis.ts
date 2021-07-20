@@ -1,11 +1,11 @@
 export const ApiServiceUrl = {
-  PRO: 'https://bounce-market.bounce.finance', // 生产环境
-  DEV: 'https://market-test.bounce.finance', // 开发&测试环境
+  PRO: 'https://api-admin-mcje1x67tc.fangible.com/v2/', // 生产环境
+  DEV: 'https://api-test-admin-ur1uoyrf8r.fangible.com/v2/', // 开发&测试环境
 };
 
 export const Apis = {
   // login
-  jwtauth: '/api/bouadmin/main/jwtauth', 
+  jwtauth: '/api/bouadmin/main/jwtauth',
 
   // transcation
   gettxsbyfilter: '/api/bouadmin/main/auth/gettxsbyfilter', // 查询交易记录 filter: 1:from, 2:to
@@ -29,14 +29,14 @@ export const Apis = {
   getonedropsdetail: '/api/bouadmin/main/auth/getonedropsdetail', // 获取一条drop的信息
   updatedropsdisplay: '/api/bouadmin/main/auth/updatedropsdisplay', // 更新一条drop的显示状态
   getoperatorsinfo: '/api/bouadmin/main/auth/getoperatorsinfo', // 获取角色信息
-  
+
   // pool
   getauctionpoolsbyaccount: '/api/bouadmin/main/auth/getauctionpoolsbyaccount', // 查询一个账户地址下的pools。  返回：state 0：live，1：closed； status 0：show，1：hide
   getpoolsinfobypage: '/api/bouadmin/main/auth/getpoolsinfobypage', // 查询带poolweight的记录
   getonepoolinfo: '/api/bouadmin/main/auth/getonepoolinfo', // 查询一个pool的信息
   dealpoolinfo: '/api/bouadmin/main/auth/dealpoolinfo', // 更改一个pool的权重信息
-  getpoolsbylikename: '/api/bouadmin/main/auth/getpoolsbylikename', 
-  getauctionpoolsbyfilter: '/api/bouadmin/main/auth/getauctionpoolsbyfilter', 
+  getpoolsbylikename: '/api/bouadmin/main/auth/getpoolsbylikename',
+  getauctionpoolsbyfilter: '/api/bouadmin/main/auth/getauctionpoolsbyfilter',
 
   // overview
   get_overviews: '/api/bouadmin/main/auth/get_overviews', // 获取统计数据

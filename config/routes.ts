@@ -113,19 +113,14 @@ const routes: MenuDataItem[] = [
     name: 'administrator',
     path: 'admin',
     icon: 'Key',
-    routes: [
-      {
-        name: 'administrator',
-        path: 'admin',
-        component: './authority',
-      },
-      {
-        name: 'history',
-        path: 'history',
-        icon: 'History',
-        // component: './history',
-      },
-    ],
+    access: 'canAdmin', // 权限定义返回值的某个 key
+    component: './authority',
+  },
+  {
+    name: 'history',
+    path: 'history',
+    icon: 'History',
+    component: './history',
   },
   // {
   //     name: 'box',

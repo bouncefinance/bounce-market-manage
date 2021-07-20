@@ -2,123 +2,33 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Table, Button, Tooltip, Input, Modal, message, Space, Select } from 'antd';
 import React, { useState } from 'react';
 import { useRequest } from 'umi';
-import request from 'umi-request';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { CopyOutlined, ExclamationCircleOutlined, StarFilled } from '@ant-design/icons';
 import Image from '@/components/Image';
-import { Apis } from '@/services';
-import { RECOMMEND_BRANDS_AMOUNT } from '@/tools/const';
+import type { BrandFilterType, IBrandResponse } from '@/services/brand/types';
+import { BrandFilterEnum } from '@/services/brand/types';
+import { deleteBrand, getBrandsListByFilter, getRecommendBrands } from '@/services/brand';
 
 const { Column } = Table;
 const { Search } = Input;
 const { confirm } = Modal;
 const { Option } = Select;
 
-interface IBrandInfo {
-  auditor: string;
-  bandimgurl: string;
-  brandname: string;
-  brandsymbol: string;
-  contractaddress: string;
-  created_at: string;
-  description: string;
-  faildesc: string;
-  id: number;
-  imgurl: string;
-  owneraddress: string;
-  ownername: string;
-  popularweight: number;
-  standard: number;
-  status: number;
-  updated_at: string;
-}
-
 // get brands weight
-const getRecommendBrands = () => {
-  return request.post(Apis.getbrandsbylikename, {
-    data: {
-      offset: 0,
-      limit: RECOMMEND_BRANDS_AMOUNT,
-    },
-  });
-};
-
-const getBrandsListByFilter = (
-  filterType: 'likestr' | 'creator' | 'brandid' = 'likestr',
-  searchText: string = '',
-  offset: number,
-  limit: number = 7,
-) => {
-  let filter;
-  let data;
-  switch (filterType) {
-    case 'likestr':
-      filter = 1;
-      data = {
-        filter,
-        likestr: searchText,
-        limit,
-        offset,
-      };
-      break;
-
-    case 'creator':
-      filter = 2;
-      data = {
-        filter,
-        creator: searchText,
-        limit,
-        offset,
-      };
-      break;
-
-    case 'brandid':
-      filter = 3;
-      data = {
-        filter,
-        brandid: Number(searchText),
-        limit,
-        offset,
-      };
-      break;
-
-    default:
-      filter = 1;
-      data = {
-        filter,
-        likestr: searchText,
-        limit,
-        offset,
-      };
-      break;
-  }
-
-  return request.post(Apis.getbrandsbylikename, {
-    data,
-  });
-};
 
 const handleDeleteBrand = async (id: number, reload: () => void) => {
-  const deleteBrand = async (_id: number) => {
-    const res = await request.post(Apis.delbrand, {
-      data: {
-        _id,
-      },
-    });
-    if (res.code === 1) {
-      message.success('Deleted successfully');
-    } else {
-      message.error('Delete failed');
-    }
-  };
-
   confirm({
     // title: 'Delete',
     icon: <ExclamationCircleOutlined />,
     title: 'Do you Want to delete this brand?',
     onOk() {
-      deleteBrand(id).then(() => {
-        reload();
+      deleteBrand({ id }).then((res) => {
+        if (res.code === 1) {
+          message.success('Deleted successfully');
+          reload();
+        } else {
+          message.error('Delete failed');
+        }
       });
     },
     onCancel() {},
@@ -126,28 +36,19 @@ const handleDeleteBrand = async (id: number, reload: () => void) => {
 };
 
 const NFT: React.FC = () => {
-  const [brandSearchType, setBrandSearchType] = useState<'likestr' | 'creator' | 'brandid'>(
-    'likestr',
-  );
+  const [brandSearchType, setBrandSearchType] = useState<BrandFilterType>(BrandFilterEnum.likestr);
 
   const {
     data: recommendBrands,
-    // loading: recommendBrandsLoading,
-    // refresh: brandRefresh,
-  } = useRequest(() => {
-    return getRecommendBrands();
-  });
+  } = useRequest(() => getRecommendBrands());
 
   const {
-    // data: brandData,
-    // loading: brandLoading,
-    // pagination: brandPagination,
     tableProps: brandTableProps,
     run: searchBrand,
     refresh: reloadBrand,
   } = useRequest(
     ({ pageSize: limit, current: offset }, searchText) =>
-      getBrandsListByFilter(brandSearchType, searchText, (offset - 1) * limit, limit), // Filter out brand which id = 10 and which id =11
+      getBrandsListByFilter(brandSearchType, searchText, (offset - 1) * limit, limit), 
     {
       paginated: true,
       cacheKey: 'brands',
@@ -166,14 +67,14 @@ const NFT: React.FC = () => {
       <Space direction={'vertical'} style={{ width: '100%' }}>
         <Input.Group>
           <Select
-            defaultValue="likestr"
+            defaultValue={BrandFilterEnum.likestr}
             onChange={(value) => {
               setBrandSearchType(value);
             }}
           >
-            <Option value="likestr">Brand Name</Option>
-            <Option value="creator">Creator Address</Option>
-            <Option value="brandid">Brand ID</Option>
+            <Option value={BrandFilterEnum.likestr}>Brand Name</Option>
+            <Option value={BrandFilterEnum.creator}>Creator Address</Option>
+            <Option value={BrandFilterEnum.brandid}>Brand ID</Option>
           </Select>
           <Search
             placeholder="input search text"
@@ -281,8 +182,8 @@ const NFT: React.FC = () => {
               key="delete"
               width={110}
               align={'center'}
-              render={(record: IBrandInfo) => {
-                return recommendBrands?.find((recommendBrand: IBrandInfo) => {
+              render={(record: IBrandResponse) => {
+                return recommendBrands?.find((recommendBrand: IBrandResponse) => {
                   // console.log(recommendBrand.id, record.id, recommendBrand.id === record.id);
                   return recommendBrand.id === record.id;
                 }) ? (
@@ -295,7 +196,7 @@ const NFT: React.FC = () => {
                       !!(
                         record.id === 10 ||
                         record.id === 11 ||
-                        recommendBrands?.find((recommendBrand: IBrandInfo) => {
+                        recommendBrands?.find((recommendBrand: IBrandResponse) => {
                           return recommendBrand.id === record.id;
                         })
                       )

@@ -97,8 +97,8 @@ const handleDeleteItem = async (contractaddress: string, tokenid: number, reload
   const deleteItem = async (_contractaddress: string, _tokenid: number) => {
     const res = await request.post(Apis.delpoolitem, {
       data: {
-        _contractaddress,
-        _tokenid,
+        contractaddress: _contractaddress,
+        tokenid: _tokenid,
       },
     });
     if (res.code === 1) {
@@ -132,8 +132,8 @@ const handleHideItem = async (
   const hideItem = async (_contractaddress: string, _tokenid: number) => {
     const res = await request.post(Apis.updatepoolitem, {
       data: {
-        _contractaddress,
-        _tokenid,
+        contractaddress: _contractaddress,
+        tokenid: _tokenid,
         status, // status: 1:to hide, 2:to show
       },
     });

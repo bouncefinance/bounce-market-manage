@@ -1,157 +1,61 @@
-import React, { useEffect, useState } from 'react';
-import { message, Button } from 'antd';
-import { FormattedMessage, SelectLang, useHistory, useIntl, useModel } from 'umi';
 import styles from './index.less';
-import request from 'umi-request';
-import { getMetaMskAccount, myweb3 } from '@/tools/conenct';
+import { message, Button } from 'antd';
+import React, { useState } from 'react';
+import { FormattedMessage, SelectLang, useHistory, useIntl, useModel } from 'umi';
 
-const dataToSign = 'Welcome to Bounce!';
-const password = 'xxx';
+type ILoadingStatusType = 'await' | 'account-fail' | 'login-success' | 'loading' | 'login-fail';
+interface ILoadingStatus {
+  type: ILoadingStatusType;
+  message: string;
+}
 
 const Login: React.FC = () => {
   const history = useHistory();
-  const [_, setAccount] = useState<string | null>();
   const intl = useIntl();
-
-  const { initialState, setInitialState } = useModel('@@initialState');
-  const [loadingStatus, setLoadingStatus] = useState({
+  const {
+    reducers: { onChainLogin, onSignature },
+  } = useModel('login');
+  const { setInitialState } = useModel('@@initialState');
+  const [loadingStatus, setLoadingStatus] = useState<ILoadingStatus>({
     type: 'await',
     message: intl.formatMessage({
       id: 'pages.login.loadingStatusMessge.await',
     }),
   });
-
-  useEffect(() => {
-    console.log('loadingStatus: ', loadingStatus);
-  }, [loadingStatus]);
-
-  const init = async () => {
+  const setLoginLoading = (type: ILoadingStatusType) => {
     setLoadingStatus({
-      type: 'loading',
+      type,
       message: intl.formatMessage({
-        id: 'pages.login.loadingStatusMessge.loading',
+        id: `pages.login.loadingStatusMessge.${type}`,
       }),
     });
-
-    // const _account = await getMetaMskAccount()
-    let _account;
-    await getMetaMskAccount().then(
-      (res) => {
-        console.log('successed', res);
-        _account = res;
-      },
-      (res) => {
-        console.log('failed', res);
-        _account = undefined;
-      },
-    );
-
-    // setLoadingStatus({
-    //   type: 'login-success',
-    //   message: intl.formatMessage({
-    //     id: 'pages.login.loadingStatusMessge.loading',
-    //   }),
-    // });
-
-    // await new Promise((resolve) => setTimeout(resolve, 300));
-
-    setAccount(_account);
-
-    if (_account) {
-      const token = await getNewToken(_account ?? '444');
-      console.log('token: ', token);
-      if (token) {
-        // console.log('登录成功', token)
-        setLoadingStatus({
-          type: 'login-success',
-          message: intl.formatMessage({
-            id: 'pages.login.loadingStatusMessge.login-success',
-          }),
-        });
-        localStorage.token = token;
-        setInitialState({
-          token,
-        });
-        history.replace('/');
-      } else {
-        setLoadingStatus({
-          type: 'login-fail',
-          message: intl.formatMessage({
-            id: 'pages.login.loadingStatusMessge.login-fail',
-          }),
-        });
-        setTimeout(() => {
-          setLoadingStatus({
-            type: 'await',
-            message: intl.formatMessage({
-              id: 'pages.login.loadingStatusMessge.await',
-            }),
-          });
-        }, 1e3);
-      }
-    } else {
-      setLoadingStatus({
-        type: 'account-fail',
-        message: intl.formatMessage({
-          id: 'pages.login.loadingStatusMessge.account-fail',
-        }),
-      });
-      setTimeout(() => {
-        setLoadingStatus({
-          type: 'await',
-          message: intl.formatMessage({
-            id: 'pages.login.loadingStatusMessge.await',
-          }),
-        });
-      }, 1e3);
-    }
   };
-
-  useEffect(() => {
-    loadingStatus.type !== 'await' && init();
-  }, []);
-
-  const getNewToken = async (account: string) => {
-    if (typeof account === 'string') {
-      const web3 = myweb3();
-      const signature = await web3.eth.personal.sign(dataToSign, account, password).then(
-        (res) => {
-          console.log('Signing succeeded');
-          return res
-        },
-        (res) => {
-          console.log('Signing failed', res);
-        },
-      );
-
-      const params = {
-        accountaddress: account,
-        message: dataToSign,
-        signature: signature,
-      };
-
-      try {
-        const res_getSignToken = await request.post('/api/bouadmin/main/jwtauth', { data: params });
-        console.log(res_getSignToken);
-        if (res_getSignToken.code === 200) {
-          const { token } = res_getSignToken.data;
-          return token;
-        } else {
-          message.error(res_getSignToken.msg || 'error');
-          return '';
-        }
-      } catch (err) {
-        setLoadingStatus({
-          type: 'await',
-          message: intl.formatMessage({
-            id: 'pages.login.loadingStatusMessge.await',
-          }),
-        });
-        message.error('error');
-      }
-    } else {
-      console.log('connect..');
-    }
+  /**
+   * 链接钱包
+   */
+  const onConnectWallet = async () => {
+    setLoginLoading('loading');
+    const handleLoginFail = (err: any) => {
+      message.error(err);
+      setLoginLoading('login-fail');
+      setTimeout(() => setLoginLoading('await'), 1e3);
+    };
+    onSignature()
+      .then(() => {
+        onChainLogin()
+          .then((res) => {
+            setInitialState({
+              currentUser: { ...res },
+            });
+            setLoginLoading('login-success');
+            history.replace('/');
+          })
+          .catch((err) => {
+            setLoginLoading('await');
+            message.error(`Login failed ${err}`);
+          });
+      })
+      .catch(handleLoginFail);
   };
 
   return (
@@ -169,14 +73,14 @@ const Login: React.FC = () => {
         <div className={styles.loadingStatus}>{loadingStatus.message}</div>
         {loadingStatus.type === 'await' && (
           <div className={styles.retry}>
-            <Button onClick={init}>
+            <Button onClick={onConnectWallet}>
               <FormattedMessage id="pages.login.address.submit" />
             </Button>
           </div>
         )}
         {loadingStatus.type === 'account-fail' && (
           <div className={styles.retry}>
-            <Button onClick={init}>
+            <Button onClick={onConnectWallet}>
               <FormattedMessage id="pages.login.retry" />
             </Button>
           </div>

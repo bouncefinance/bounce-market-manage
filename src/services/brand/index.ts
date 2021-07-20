@@ -1,3 +1,4 @@
+import { RECOMMEND_BRANDS_AMOUNT } from '@/tools/const';
 import { Apis, post, ToOffset } from '../index';
 import type {
   IBrandRequest,
@@ -6,6 +7,17 @@ import type {
   BrandFilterType,
 } from './types';
 import { BrandFilterEnum } from './types';
+
+export const getRecommendBrands = () => {
+  return post<IBrandResponse[]>(Apis.getbrandsbylikename, {
+    offset: 0,
+    limit: RECOMMEND_BRANDS_AMOUNT,
+  });
+};
+
+export const deleteBrand = ({ id }: { id: number }) => {
+  return post(Apis.delbrand, { id });
+};
 
 export const updateBrandWeight = ({ id, popularweight }: IUpdateBrandWeightParams) => {
   return post<IBrandResponse[]>(Apis.updatbrandeweight, { id, popularweight });

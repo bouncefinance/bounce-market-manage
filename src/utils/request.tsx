@@ -2,14 +2,14 @@ import type { RequestConfig } from 'umi';
 import { notification } from 'antd';
 import { history } from 'umi';
 import UMIRequest from 'umi-request';
-import { APIPrefixUrl, AXIOS_URL_MATCH_ARRAY } from '@/tools/const';
-import { moduleUrlReplace } from '@/tools';
+import { APIPrefixUrl } from '@/tools/const';
+// import { moduleUrlReplace } from '@/tools';
 
 export const InitRequest = () => {
   UMIRequest.use(async (ctx, next) => {
     if (ctx.req.url.substring(0, 4) !== 'http') {
       const beforeUrl = ctx.req.url;
-      const fixMatch = moduleUrlReplace(ctx.req, AXIOS_URL_MATCH_ARRAY);
+      const fixMatch = ctx.req // moduleUrlReplace(ctx.req, AXIOS_URL_MATCH_ARRAY);
       if (beforeUrl === fixMatch.url) {
         ctx.req.url = APIPrefixUrl + ctx.req.url;
       }

@@ -85,13 +85,13 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
 
   // 加载中
   if ((!data && item.poolid) || loading) {
-    return <SkeletonCard />;
+    return <SkeletonCard height={407} />;
   }
   // 未设置
   if (!item.poolid) {
     return (
       <AddItemCard
-        height={427}
+        height={407}
         handleAdd={() => {
           clickedIndex = index;
           oldPoolId = item.poolid;

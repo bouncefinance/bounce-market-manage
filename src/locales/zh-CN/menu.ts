@@ -1,31 +1,45 @@
 export default {
-  'menu.Overview': '总览',
-  'menu.landingPage': 'Landing Page',
-  'menu.HomeManager': '旧首页推荐管理',
-  'menu.Marketplace': '市场',
-  'menu.recommend': '首页推荐管理',
-  'menu.recommendBrand': '品牌推荐管理',
-  'menu.recommendNFT': 'NFT推荐管理',
-  'menu.banner': '首页轮播',
-  'menu.banner.list': '轮播列表',
-  'menu.banner.addTitle': '添加轮播',
-  'menu.usermanager.nft': 'NFT管理',
-  'menu.delete': '删除',
-  'menu.deleteAndHide': '删除和隐藏',
-  'menu.NFT': 'NFT',
-  'menu.brand': '品牌',
+  'menu.overview': '总览',
+  'menu.overview.overview': '数据总览',
+  'menu.overview.transcations': '交易记录',
+
+  'menu.landingPage': '登录页',
+
+  'menu.marketplace': '市场',
+  'menu.marketplace.pools': 'Pools',
+  'menu.marketplace.collections': 'Collections',
+
+  'menu.drops': 'Drops',
+  'menu.dropsEdit': '编辑Drops',
+
+  'menu.nft': 'NFT 管理',
+
+  'menu.users': '用户',
+
+  'menu.administrator': '管理员',
+
+  'menu.history': '操作记录',
+
   'menu.Authority': '权限',
-  'menu.Authority.Administor': '权限',
   'menu.Authority.User': '用户',
-  'menu.Authority.History': '操作记录',
-  'menu.Drops': 'Drops List',
-  'menu.DropsEdit':"Drops Edit",
-  'menu.test': '测试',
-  'menu.test.hhh': '测试',
-  'menu.banner.updateTitle': '轮播更新',
-  'menu.box': '盲盒',
-  'menu.box.view': '管理',
-  'menu.box.create': '创建',
-  'menu.login': 'Connect Wallet',
-  'menu.LandingPage': 'LandingPage'
+  'menu.Authority.History': '交易记录',
+  'menu.login': '连接钱包',
+  'menu.test': '测试页面',
+  'menu.test.hhh': '测试页面hhh',
+
+  // 'menu.box': 'Box',
+  // 'menu.box.view': 'View',
+  // 'menu.box.create': 'Create',
+
+  // 'menu.homeManager': 'Home Recommend',
+  // 'menu.recommend': 'Recommend',
+  // 'menu.recommendBrand': 'Recommend Brand',
+  // 'menu.recommendNFT': 'Recommend NFT',
+  // 'menu.banner': 'Home banner',
+  // 'menu.banner.list': 'Banner List',
+  // 'menu.banner.addTitle': 'Banner Add',
+  // 'menu.banner.updateTitle': 'Banner Update',
+  // 'menu.usermanager.nft': 'NFT Manager',
+  // 'menu.delete': 'Delete',
+  // 'menu.deleteAndHide': 'Delete And Hide',
 };

@@ -467,7 +467,7 @@ const DropEdit: React.FC = () => {
             ]}
           >
             <Space direction="vertical">
-              {(!currentDropId || dropState === 1) && (
+              {(!currentDropId || dropState !== 3) && (
                 <Button
                   onClick={() => {
                     setAddNftModalVisible(true);

@@ -57,3 +57,8 @@ export interface IGetAccountsParams {
   likestr?: number;
 }
 
+export interface ILoginRequest {
+  signature: string;
+  message: string,
+  accountaddress: string,
+}

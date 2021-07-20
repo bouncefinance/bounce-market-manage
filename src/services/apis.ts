@@ -4,6 +4,7 @@ export const ApiServiceUrl = {
 };
 
 export const Apis = {
+  jwtauth: '/api/bouadmin/main/jwtauth', // 登录
   fileupload: '/api/v2/main/auth/fileupload', // Uploader
   searchdrops: '/api/bouadmin/main/auth/searchdrops', // 获取Drops List
   // getaccountsbylikename: '/api/bouadmin/main/auth/getaccountsbylikename',
@@ -14,6 +15,7 @@ export const Apis = {
   updatedrops: '/api/bouadmin/main/auth/updatedrops', // 编辑一条drop
   getonedropsdetail: '/api/bouadmin/main/auth/getonedropsdetail', // 获取一条drop的信息
   updatedropsstate: '/api/bouadmin/main/auth/updatedropsstate', // 更新一条drop的状态
+  getoperatorsinfo: '/api/bouadmin/main/auth/getoperatorsinfo', // 获取角色信息
 };
 
 export default Apis;

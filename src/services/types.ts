@@ -5,7 +5,7 @@ export interface IRequest<TFilter> {
   sorter?: any;
 }
 
-export type IResCode = -1 | 0 | 1 | 502 | 503 | 504;
+export type IResCode = -1 | 0 | 1 | 502 | 503 | 504 | 200;
 
 export interface IResponse<TData> {
   code: IResCode;

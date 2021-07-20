@@ -79,6 +79,7 @@ const routes: MenuDataItem[] = [
     name: 'Administrator',
     path: 'administrator',
     icon: 'Key',
+    access: 'canAdmin', // 权限定义返回值的某个 key
     component: './authority',
   },
   {

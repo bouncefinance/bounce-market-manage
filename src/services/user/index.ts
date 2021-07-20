@@ -1,6 +1,17 @@
-import { Apis, post, ToOffset } from '..';
+import { Apis, post, get, ToOffset } from '..';
 import type { IResponse } from '../types';
-import type { IGetAccountsParams, IUserItem, IUserListParma } from './types';
+import type { IGetAccountsParams, ILoginRequest, IUserItem, IUserListParma } from './types';
+
+/**
+ * 用户登录
+ * @param {address,signature}
+ * @returns tokens
+ */
+export const login = (params: ILoginRequest) => post(Apis.jwtauth, params);
+/**
+ * 获取用户权限
+ */
+export const getUserRole = (address: string) => get(Apis.getoperatorsinfo, { address });
 
 export const getUserList = (
   { pageSize: limit, current: offset, role }: IUserListParma,

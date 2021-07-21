@@ -319,7 +319,7 @@ const RecommendPools: React.FC = () => {
       ) : (
         <PoolModal
           tableProps={tableProps}
-          topPools={topPools}
+          topPools={topPools || []}
           searchAllPools={searchAllPools}
           setSearchType={setSearchType}
           clickedIndex={clickedIndex}

@@ -7,13 +7,8 @@ import {
   updataOneTopArtist,
   getVerfiedUsersByName,
 } from '@/services/user';
-import {
-  ITopArtist,
-  IUserItem,
-  modalActionType,
-  UserDisableEnum,
-  UserRoleEnum,
-} from '@/services/user/types';
+import type { ITopArtist, IUserItem, modalActionType } from '@/services/user/types';
+import { UserDisableEnum, UserRoleEnum } from '@/services/user/types';
 
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -47,7 +42,7 @@ const TopArtists: React.FC = () => {
   const {
     tableProps,
     run: searchAllUsers,
-    // refresh,
+    refresh: reloadAllUsers,
   } = useRequest(
     ({ pageSize: limit, current: offset }, likestr) =>
       getVerfiedUsersByName({ offset: (offset - 1) * limit, limit, likestr }),
@@ -83,6 +78,7 @@ const TopArtists: React.FC = () => {
           if (res.code === 1) {
             message.success('Success');
             reloadTopArtists();
+            reloadAllUsers();
           } else {
             message.error('Error');
           }
@@ -98,6 +94,7 @@ const TopArtists: React.FC = () => {
     if (res.code === 1) {
       message.success('Success');
       reloadTopArtists();
+      reloadAllUsers();
     } else {
       message.error('Error');
     }
@@ -112,6 +109,7 @@ const TopArtists: React.FC = () => {
     if (res.code === 1) {
       message.success('Success');
       reloadTopArtists();
+      reloadAllUsers();
     } else {
       message.error('Error');
     }
@@ -138,6 +136,7 @@ const TopArtists: React.FC = () => {
                     if (res3.code === 1) {
                       message.success('Success');
                       reloadTopArtists();
+                      reloadAllUsers();
                       setModalVisible(false);
                     } else message.error('Failed');
                   });

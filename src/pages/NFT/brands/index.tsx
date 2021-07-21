@@ -38,9 +38,7 @@ const handleDeleteBrand = async (id: number, reload: () => void) => {
 const NFT: React.FC = () => {
   const [brandSearchType, setBrandSearchType] = useState<BrandFilterType>(BrandFilterEnum.likestr);
 
-  const {
-    data: recommendBrands,
-  } = useRequest(() => getRecommendBrands());
+  const { data: recommendBrands } = useRequest(() => getRecommendBrands());
 
   const {
     tableProps: brandTableProps,
@@ -48,7 +46,7 @@ const NFT: React.FC = () => {
     refresh: reloadBrand,
   } = useRequest(
     ({ pageSize: limit, current: offset }, searchText) =>
-      getBrandsListByFilter(brandSearchType, searchText, (offset - 1) * limit, limit), 
+      getBrandsListByFilter(brandSearchType, searchText, (offset - 1) * limit, limit),
     {
       paginated: true,
       cacheKey: 'brands',
@@ -185,7 +183,7 @@ const NFT: React.FC = () => {
               render={(record: IBrandResponse) => {
                 return recommendBrands?.find((recommendBrand: IBrandResponse) => {
                   // console.log(recommendBrand.id, record.id, recommendBrand.id === record.id);
-                  return recommendBrand.id === record.id;
+                  return recommendBrand.id === record.id && record.popularweight >= 10000;
                 }) ? (
                   <StarFilled style={{ color: '#f58220', fontSize: 20 }} />
                 ) : (
@@ -197,7 +195,7 @@ const NFT: React.FC = () => {
                         record.id === 10 ||
                         record.id === 11 ||
                         recommendBrands?.find((recommendBrand: IBrandResponse) => {
-                          return recommendBrand.id === record.id;
+                          return recommendBrand.id === record.id && record.popularweight >= 10000;
                         })
                       )
                     }

@@ -45,7 +45,6 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
   setModalVisible,
   // handleAddClicked,
 }) => {
-
   const handleReset = ({ poolid, standard }: IUpdatePoolWeightParams) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
@@ -304,7 +303,7 @@ const RecommendPools: React.FC = () => {
           ))}
         </Row>
       </Card>
-      
+
       {modalAction === 'swap' ? (
         <SwapPoolModal
           data={fullTopPools}
@@ -320,6 +319,7 @@ const RecommendPools: React.FC = () => {
       ) : (
         <PoolModal
           tableProps={tableProps}
+          topPools={topPools}
           searchAllPools={searchAllPools}
           setSearchType={setSearchType}
           clickedIndex={clickedIndex}

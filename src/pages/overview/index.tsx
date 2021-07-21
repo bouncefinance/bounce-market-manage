@@ -43,7 +43,7 @@ const Overview: React.FC = () => {
               <Statistic
                 style={{ height: 63 }}
                 groupSeparator=","
-                title="NFTs generated"
+                title="NFTs Created"
                 value={overviewData?.nftnum}
               />
             </Card>
@@ -64,7 +64,7 @@ const Overview: React.FC = () => {
                 prefix={'$'}
                 style={{ height: 63 }}
                 groupSeparator=","
-                title="volumn (24h)"
+                title="Trading Volume (in 24h)"
                 value={overviewData?.vol24h}
               />
             </Card>
@@ -75,7 +75,7 @@ const Overview: React.FC = () => {
                 prefix={'$'}
                 style={{ height: 63 }}
                 groupSeparator=","
-                title="volumn"
+                title="Total Trading Volume"
                 value={overviewData?.volall}
               />
             </Card>

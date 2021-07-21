@@ -1,4 +1,4 @@
-import { IPoolInfo, poolStateEnum } from '@/services/pool/types';
+import { IPoolInfo, ITopPool, poolStateEnum } from '@/services/pool/types';
 import { Input, Modal, Select, Space, Table, Tag, Tooltip, Typography } from 'antd';
 import { PoolFilterEnum } from '@/services/pool/types';
 import React, { useState } from 'react';
@@ -8,6 +8,7 @@ const { Option } = Select;
 const { Search } = Input;
 
 interface poolModalProps {
+  topPools: ITopPool[];
   tableProps: any;
   searchAllPools: any;
   setSearchType: any;
@@ -18,6 +19,7 @@ interface poolModalProps {
 }
 
 const PoolModal: React.FC<poolModalProps> = ({
+  topPools,
   tableProps,
   searchAllPools,
   setSearchType,
@@ -26,34 +28,46 @@ const PoolModal: React.FC<poolModalProps> = ({
   onOk,
   onCancel,
 }) => {
+  console.log('topPools: ', topPools);
   const [selectedPool, setSelectedPool] = useState<IPoolInfo>();
 
   const columns = [
     {
       dataIndex: 'poolid',
       title: 'Pool ID',
+      align: 'center',
       width: 70,
     },
     {
       dataIndex: 'fileurl',
       title: 'Cover',
+      align: 'center',
       width: 20,
       render: (url: any) => <Image width={30} height={30} src={url} />,
     },
     {
       dataIndex: 'state',
       title: 'State',
-      width: 50,
-      render: (state: any) =>
-        state === poolStateEnum.closed ? (
-          <Tag color="red">Closed</Tag>
-        ) : (
-          <Tag color="green">Live</Tag>
-        ),
+      align: 'center',
+      width: 100,
+      render: (state: any, record: IPoolInfo) => (
+        <Space>
+          {state === poolStateEnum.closed ? (
+            <Tag color="red">Closed</Tag>
+          ) : (
+            <Tag color="green">Live</Tag>
+          )}
+
+          {topPools.find((topPool) => topPool.id === record.id) ? (
+            <Tag color="gold">Recommend</Tag>
+          ) : null}
+        </Space>
+      ),
     },
     {
       dataIndex: 'itemname',
       title: 'Name',
+      align: 'center',
       width: 200,
       render: (text: any) => (
         <Typography.Paragraph style={{ margin: 0 }}>
@@ -68,11 +82,13 @@ const PoolModal: React.FC<poolModalProps> = ({
     {
       dataIndex: 'tokenid',
       title: 'Token ID',
+      align: 'center',
       width: 100,
     },
     {
       dataIndex: 'creator',
       title: 'Creator Address',
+      align: 'center',
       render: (text: any) => (
         <Typography.Paragraph style={{ margin: 0 }} copyable={{ text }}>
           {/* {text} */}
@@ -88,14 +104,16 @@ const PoolModal: React.FC<poolModalProps> = ({
     },
     columnWidth: 14,
     getCheckboxProps: (record: IPoolInfo) => ({
-      disabled: record.state === poolStateEnum.closed,
+      disabled:
+        record.state === poolStateEnum.closed ||
+        topPools.find((topPool) => topPool.id === record.id),
     }),
   };
 
   return (
     <Modal
       title={`Select No.${clickedIndex + 1} pool`}
-      width={800}
+      width={850}
       destroyOnClose
       centered
       visible={visible}

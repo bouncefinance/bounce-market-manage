@@ -72,7 +72,7 @@ const TopArtists: React.FC = () => {
   const handleDelete = (username: string) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you want to delete this top artist?',
+      title: 'Are you sure you want to delete this top artist?',
       onOk() {
         deleteOneTopArtist({ username }).then((res) => {
           if (res.code === 1) {
@@ -122,7 +122,7 @@ const TopArtists: React.FC = () => {
 
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you want to Change this top artist?',
+      title: 'Are you sure you want to Change this top artist?',
       onOk() {
         deleteOneTopArtist({ username: clickedArtistName }).then((res1) => {
           if (res1.code === 1) {

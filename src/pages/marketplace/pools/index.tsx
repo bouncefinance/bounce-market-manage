@@ -48,7 +48,7 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
   const handleReset = ({ poolid, standard }: IUpdatePoolWeightParams) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you want to delete this brand?',
+      title: 'Are you sure you want to delete this brand?',
       onOk() {
         updatePoolWeight({ poolid, weight: 0, standard }).then((res) => {
           if (res.code === 1) {
@@ -203,7 +203,7 @@ const RecommendPools: React.FC = () => {
   const handleAdd = (pool: IPoolInfo) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you want to add this brand?',
+      title: 'Are you sure you want to add this brand?',
       onOk() {
         setModalVisible(false);
         updatePoolWeight({
@@ -226,7 +226,7 @@ const RecommendPools: React.FC = () => {
   const handleEdit = (pool: IPoolInfo) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you want to add this brand?',
+      title: 'Are you sure you want to add this brand?',
       onOk() {
         setModalVisible(false);
         updatePoolWeight({ poolid: oldPoolId, standard: oldPoolStandard, weight: 0 }).then(
@@ -257,7 +257,7 @@ const RecommendPools: React.FC = () => {
   const handleSwap = (pool: IPoolInfo) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you want to Swap this brand?',
+      title: 'Are you sure you want to Swap this brand?',
       onOk() {
         setModalVisible(false);
         updatePoolWeight({

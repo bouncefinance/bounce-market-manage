@@ -350,7 +350,7 @@ export default function recommend() {
     confirm({
       // title: 'Reset',
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you want to delete this item?',
+      title: 'Are you sure you want to delete this item?',
       onOk() {
         oldPoolItem = item;
         resetPoolWeight();
@@ -400,7 +400,7 @@ export default function recommend() {
     confirm({
       // title: 'Reset',
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you want to delete this brand?',
+      title: 'Are you sure you want to delete this brand?',
       onOk() {
         oldBrandItem = item;
         resetBrandWeight();

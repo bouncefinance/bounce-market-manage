@@ -20,7 +20,7 @@ const handleDeleteBrand = async (id: number, reload: () => void) => {
   confirm({
     // title: 'Delete',
     icon: <ExclamationCircleOutlined />,
-    title: 'Do you Want to delete this brand?',
+    title: 'Are you sure you want to delete this brand?',
     onOk() {
       deleteBrand({ id }).then((res) => {
         if (res.code === 1) {

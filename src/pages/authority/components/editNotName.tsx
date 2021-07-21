@@ -55,7 +55,7 @@ const AuthorityRowEditNoteName: React.FC<{
         </Button>
       </div>
       <Modal
-        title="Edit Note Name"
+        title="Edit Alias"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -65,7 +65,7 @@ const AuthorityRowEditNoteName: React.FC<{
           onChange={(e) => {
             setInputValue(e.target.value);
           }}
-          placeholder="input Note name"
+          placeholder="input Alias"
         />
       </Modal>
     </>

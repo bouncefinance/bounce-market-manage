@@ -49,7 +49,7 @@ const DropsPage: React.FC = () => {
   const handleDelete = (dropsid: number) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you want to delete this item?',
+      title: 'Are you sure you want to delete this item?',
       onOk() {
         deleteOneDrop(dropsid).then((res) => {
           if (res.code === 1) {
@@ -67,8 +67,8 @@ const DropsPage: React.FC = () => {
       icon: <ExclamationCircleOutlined />,
       content: (
         <>
-          <span style={{ fontSize: 20 }}>{'Confirm that you want to close this Drop？'}</span>
-          <span style={{ fontSize: 20, color: 'red' }}>{'This operation cannot withdraw.'}</span>
+          <span style={{ fontSize: 20 }}>{'Are you sure you want to close this Drop？'}</span>
+          <span style={{ fontSize: 20, color: 'red' }}>{'This operation cannot be undone.'}</span>
         </>
       ),
       onOk() {
@@ -90,7 +90,7 @@ const DropsPage: React.FC = () => {
         <>
           <span
             style={{ fontSize: 20 }}
-          >{`Confirm that you want to ${targetState} this Drop？`}</span>
+          >{`Are you sure you want to ${targetState} this Drop？`}</span>
         </>
       ),
       onOk() {

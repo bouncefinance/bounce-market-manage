@@ -111,7 +111,7 @@ const handleDeleteItem = async (contractaddress: string, tokenid: number, reload
   confirm({
     // title: 'Delete',
     icon: <ExclamationCircleOutlined />,
-    title: 'Do you Want to delete this item?',
+    title: 'Are you sure you want to delete this item?',
     onOk() {
       deleteItem(contractaddress, tokenid).then(() => {
         reload();
@@ -153,7 +153,7 @@ const handleHideItem = async (
   confirm({
     // title: 'Delete',
     icon: <ExclamationCircleOutlined />,
-    title: `Do you Want to ${actionType} this item?`,
+    title: `Are you sure you want to ${actionType} this item?`,
     onOk() {
       hideItem(contractaddress, tokenid).then(() => {
         reload();

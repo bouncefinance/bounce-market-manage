@@ -52,7 +52,7 @@ const columns: (run: () => void, refresh: () => void) => columnsType = (run, ref
       render: (value, record) => <AuthorityRoleView id={record.id} value={value} run={refresh} />,
     },
     {
-      title: 'Note name',
+      title: 'Alias',
       dataIndex: 'notename',
       key: 'notename',
       render: (value, record) => <AuthorityRowEditNoteName id={record.id} value={value} />,

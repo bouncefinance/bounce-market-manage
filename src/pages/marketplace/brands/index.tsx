@@ -75,7 +75,7 @@ const Collections: React.FC = () => {
   const handleResetBrand = (id: number) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you want to delete this brand?',
+      title: 'Are you sure you want to delete this brand?',
       onOk() {
         resetBrandWeight(id);
       },
@@ -101,7 +101,7 @@ const Collections: React.FC = () => {
 
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you want to Change this brand?',
+      title: 'Are you sure you want to Change this brand?',
       onOk() {
         updateBrandWeight({ id: clickedBrandId, popularweight: 0 }).then((res) => {
           if (res.code === 1 && targetWeight)
@@ -124,7 +124,7 @@ const Collections: React.FC = () => {
 
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Do you want to Change this brand?',
+      title: 'Are you sure you want to Change this brand?',
       onOk() {
         updateBrandWeight({ id: targetBrand.id, popularweight: targetWeight }).then((res) => {
           if (res.code === 1 && targetWeight)

@@ -33,7 +33,7 @@ const AuthorityActionView: React.FC<{
     confirm({
       title: 'Delete Administrator',
       icon: <ExclamationCircleOutlined />,
-      content: `Confirm that you want to delete this Administrator ?`,
+      content: `Are you sure you want to this Administrator ?`,
       onOk: () => onDelete(),
     });
   }

@@ -127,10 +127,10 @@ const AuthorityTopView: React.FC<{ onSearch: (v: string) => void; run: () => voi
           </Form.Item>
           <Form.Item
             name="notename"
-            label="Note Name"
-            rules={[{ required: true, message: 'note name not empty' }]}
+            label="Alias"
+            rules={[{ required: true, message: 'alias not empty' }]}
           >
-            <Input allowClear placeholder="Input note name" />
+            <Input allowClear placeholder="Input alias" />
           </Form.Item>
           {userSearchLoading === false && address && matchUser && (
             <>

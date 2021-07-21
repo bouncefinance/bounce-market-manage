@@ -89,6 +89,7 @@ const TopArtistsModal: React.FC<topArtistsModalProps> = ({
       okButtonProps={{ disabled: !selectedArtist }}
       onOk={() => {
         onOk(selectedArtist);
+        setSelectedArtist(undefined)
       }}
       onCancel={onCancel}
     >

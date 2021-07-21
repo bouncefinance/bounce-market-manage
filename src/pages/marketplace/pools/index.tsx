@@ -45,7 +45,6 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
   setModalVisible,
   // handleAddClicked,
 }) => {
-  // const [ran, setRan] = useState(false);
 
   const handleReset = ({ poolid, standard }: IUpdatePoolWeightParams) => {
     confirm({
@@ -187,7 +186,8 @@ const RecommendPools: React.FC = () => {
 
   useEffect(() => {
     if (topPools && !topPoolsLoading && topPools?.length > 0) {
-      const pools = new Array(recommendCount).fill({});
+      // const pools = new Array(recommendCount).fill({});
+      const pools = resultPools;
       topPools
         ?.sort((a, b) => {
           return b.poolweight - a.poolweight;
@@ -304,6 +304,7 @@ const RecommendPools: React.FC = () => {
           ))}
         </Row>
       </Card>
+      
       {modalAction === 'swap' ? (
         <SwapPoolModal
           data={fullTopPools}

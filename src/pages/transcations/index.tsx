@@ -139,7 +139,7 @@ const Transactions: React.FC = () => {
 
   return (
     <PageContainer>
-      <Card>
+      <Card style={{minWidth: 1200}}>
         <Space style={{ width: '100%' }} direction="vertical">
           <Typography.Paragraph>{}</Typography.Paragraph>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -174,7 +174,7 @@ const Transactions: React.FC = () => {
               onOk={onOk}
             />
           </div>
-          <Table rowKey="ctime" {...tableProps} columns={columns} bordered />
+          <Table rowKey="id" {...tableProps} columns={columns} bordered />
         </Space>
       </Card>
     </PageContainer>

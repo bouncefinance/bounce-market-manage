@@ -78,6 +78,7 @@ const routes: MenuDataItem[] = [
     path: '/drops',
     icon: 'Fire',
     component: './drops',
+    access: 'dropAdmin',
   },
   {
     name: 'dropsEdit',
@@ -113,14 +114,14 @@ const routes: MenuDataItem[] = [
     name: 'administrator',
     path: 'admin',
     icon: 'Key',
-    access: 'canAdmin', // 权限定义返回值的某个 key
+    access: 'superAdmin', // 权限定义返回值的某个 key
     component: './authority',
   },
   {
     name: 'history',
     path: 'history',
     icon: 'History',
-    component: './history',
+    component: './log',
   },
   // {
   //     name: 'box',

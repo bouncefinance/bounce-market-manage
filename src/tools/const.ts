@@ -1,11 +1,11 @@
-export const IsPre =
+export const isPre =
   /localhost/.test(window.location.hostname) || /stage/.test(window.location.hostname);
 
 export const WEB3ProvideUrl = 'https://mainnet.infura.io/v3/0b500c5f885b43a4ab192e8048f6fa8';
-export const APIPrefixUrl = !IsPre
+export const APIPrefixUrl = !isPre
   ? 'https://bounce-market.bounce.finance'
   : 'https://market-test.bounce.finance';
-const FGB_V2_URL = !IsPre
+const FGB_V2_URL = !isPre
   ? 'https://bounce-market.bounce.finance'
   : 'https://market-test.bounce.finance';
 

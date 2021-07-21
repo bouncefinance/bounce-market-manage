@@ -4,22 +4,24 @@ import { login } from '@/services/user';
 import { TokenSymbol } from '@/types';
 
 export type ITokens = {
-  [key in TokenSymbol]: string;
+  [key in TokenSymbol]: { token: string };
 };
 export const CHAIN_CACHE_KEY = 'chainAuth_cache';
 const staticMessage = 'Welcome to Bounce!';
 const staticPassword = 'xxx';
 
 export default () => {
-  const [chainSymbol, setChainSymbolSymbol] = useState<TokenSymbol>(TokenSymbol.BSC);
+  const [chainSymbol, setChainSymbolSymbol] = useState<TokenSymbol>(
+    sessionStorage.symbol || TokenSymbol.BSC,
+  );
   const [account, setAccount] = useState<string>('');
   const [signature, setSignature] = useState<string>('');
   const [tokens, setTokens] = useState<ITokens>({
-    bsc: '',
-    rinkeby: '',
-    eth: '',
-    heco: '',
-    matic: '',
+    bsc: { token: '' },
+    rinkeby: { token: '' },
+    eth: { token: '' },
+    heco: { token: '' },
+    matic: { token: '' },
   });
 
   useEffect(() => {
@@ -65,8 +67,11 @@ export default () => {
    */
   const onChainLogin = async (symbol: TokenSymbol = TokenSymbol.BSC) => {
     setChainSymbolSymbol(symbol);
-    if (tokens[symbol]) {
-      return Promise.resolve(tokens[symbol]);
+    sessionStorage.symbol = symbol;
+    const tokenData = tokens[symbol];
+    if (tokenData) {
+      sessionStorage.token = tokenData?.token;
+      return Promise.resolve(tokenData);
     }
     try {
       const { code, msg, data } = (await login({
@@ -75,6 +80,7 @@ export default () => {
         message: staticMessage,
       })) as any;
       if (code === 200) {
+        sessionStorage.token = data?.token;
         setTokens({
           ...tokens,
           [symbol]: data,
@@ -97,16 +103,6 @@ export default () => {
     reducers: {
       onChainLogin,
       onSignature,
-      // setAddress: useCallback((addr: string) => setAddress(addr), [setAddress]),
-      // setSignature: useCallback((sign: string) => setSignature(sign), [setSignature]),
-      // setTokens: useCallback(
-      //   (symbol: TokenSymbol, token: string) =>
-      //     setTokens({
-      //       ...tokens,
-      //       [symbol]: token,
-      //     }),
-      //   [setTokens, tokens],
-      // ),
     },
   };
 };

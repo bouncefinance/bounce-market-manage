@@ -2,7 +2,8 @@ import { ApiServiceUrl, Apis } from './apis';
 import UMIRequest from 'umi-request';
 import { history } from 'umi';
 import type { IResponse } from './types';
-import { IsPre } from '@/tools/const';
+import { isPre } from '@/tools/const';
+import { TokenSymbol } from '@/types';
 
 /**
  * 用于处理分页Offset偏移量计算
@@ -41,10 +42,18 @@ export function post<TDataType>(url: string, params?: object) {
 }
 // Request 拦截
 UMIRequest.interceptors.request.use((url, options) => {
-  const serviceUrl = IsPre ? ApiServiceUrl.DEV : ApiServiceUrl.PRO;
+  const symbol = sessionStorage.symbol || TokenSymbol.BSC;
+  const token = sessionStorage.token || '';
+  const serviceUrl = isPre ? ApiServiceUrl.DEV : ApiServiceUrl.PRO;
   return {
-    url: serviceUrl + url,
-    options,
+    url: serviceUrl + symbol + url,
+    options: {
+      ...options,
+      headers: {
+        ...options.headers,
+        token,
+      },
+    },
   };
 });
 

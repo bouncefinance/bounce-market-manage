@@ -1,9 +1,10 @@
 // const {} = useModel('login');
 import React from 'react';
-import { Select, Image } from 'antd';
+import { Select, Image, message } from 'antd';
 import { TokenSymbol } from '@/types';
 import { useModel } from 'umi';
 import { useBoolean } from 'ahooks';
+import { isPre } from '@/tools/const';
 
 const { Option } = Select;
 const styles = {
@@ -22,13 +23,17 @@ const styles = {
     marginRight: 5,
   },
 };
+// 测试网络 or 正式网络
+const symbols = isPre
+  ? [TokenSymbol.BSC, TokenSymbol.RINKEBY]
+  : [TokenSymbol.BSC, TokenSymbol.ETH, TokenSymbol.HECO, TokenSymbol.MATIC];
 const ChainSelect: React.FC = () => {
-  const symbols = Object.keys(TokenSymbol);
   const [loading, { toggle }] = useBoolean(false);
   const {
     state: { chainSymbol },
     reducers: { onChainLogin },
   } = useModel('login');
+
   return (
     <Select
       loading={loading}
@@ -36,19 +41,28 @@ const ChainSelect: React.FC = () => {
       value={chainSymbol}
       onChange={(value: TokenSymbol) => {
         toggle(true);
-        onChainLogin(value).then(() => toggle(false));
+        onChainLogin(value).then(() => {
+          message.success(`Switched NFT network to ${value}`);
+          setTimeout(() => {
+            toggle(false);
+            window.location.reload();
+          }, 500);
+        });
       }}
     >
-      {symbols.map((label) => (
-        <Option key={label} value={TokenSymbol[label]}>
-          <div style={styles.option}>
-            <div style={styles.iconBox}>
-              <Image preview={false} src={`/tokens/${TokenSymbol[label]}.svg`} />
+      {symbols.map((label) => {
+        const symbol = label.toUpperCase();
+        return (
+          <Option key={symbol} value={TokenSymbol[symbol]}>
+            <div style={styles.option}>
+              <div style={styles.iconBox}>
+                <Image preview={false} src={`/tokens/${label}.svg`} />
+              </div>
+              {symbol}
             </div>
-            {label}
-          </div>
-        </Option>
-      ))}
+          </Option>
+        );
+      })}
     </Select>
   );
 };

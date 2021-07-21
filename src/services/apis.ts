@@ -57,7 +57,7 @@ export const Apis = {
   get_overviews: '/api/bouadmin/main/auth/get_overviews', // 获取统计数据
 
   // file
-  fileupload: '/api/v2/main/auth/fileupload', // Uploader
+  fileupload: '/api/bouadmin/main/auth/fileupload', // Uploader
 };
 
 export default Apis;

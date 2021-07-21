@@ -33,7 +33,7 @@ const Login: React.FC = () => {
   /**
    * 链接钱包
    */
-  const onConnectWallet = async () => {
+  const onConnectWallet = () => {
     setLoginLoading('loading');
     const handleLoginFail = (err: any) => {
       message.error(err);

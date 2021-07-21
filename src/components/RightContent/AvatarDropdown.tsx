@@ -16,6 +16,7 @@ export type GlobalHeaderRightProps = {
  */
 const loginOut = () => {
   outLogin();
+  sessionStorage.clear()
   const { query = {}, pathname } = history.location;
   const { redirect } = query;
   // Note: There may be security issues, please note

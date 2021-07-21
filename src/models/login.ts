@@ -10,54 +10,59 @@ export const CHAIN_CACHE_KEY = 'chainAuth_cache';
 const staticMessage = 'Welcome to Bounce!';
 const staticPassword = 'xxx';
 
+interface ISource {
+  account: string;
+  signature: string;
+  tokens: ITokens;
+  chainSymbol: TokenSymbol;
+}
 export default () => {
-  const [chainSymbol, setChainSymbolSymbol] = useState<TokenSymbol>(
-    sessionStorage.symbol || TokenSymbol.BSC,
-  );
-  const [account, setAccount] = useState<string>('');
-  const [signature, setSignature] = useState<string>('');
-  const [tokens, setTokens] = useState<ITokens>({
-    bsc: { token: '' },
-    rinkeby: { token: '' },
-    eth: { token: '' },
-    heco: { token: '' },
-    matic: { token: '' },
-  });
+  let source: ISource = {
+    chainSymbol: sessionStorage.symbol || TokenSymbol.BSC,
+    account: '',
+    signature: '',
+    tokens: {
+      bsc: { token: '' },
+      rinkeby: { token: '' },
+      eth: { token: '' },
+      heco: { token: '' },
+      matic: { token: '' },
+    },
+  };
 
+  const handelCache = () => {
+    sessionStorage.setItem(CHAIN_CACHE_KEY, JSON.stringify(source));
+  };
   useEffect(() => {
-    if (account || signature) {
-      sessionStorage.setItem(
-        CHAIN_CACHE_KEY,
-        JSON.stringify({
-          account,
-          signature,
-          tokens,
-        }),
-      );
-    } else {
-      let data = sessionStorage.getItem(CHAIN_CACHE_KEY) as any;
-      if (data) {
-        data = JSON.parse(data!);
-        if (data?.account) setAccount(data.account);
-        if (data?.signature) setSignature(data.signature);
-        if (data?.tokens) setTokens(data.tokens);
+    if (!source.account && !source.signature) {
+      const cacheData = sessionStorage.getItem(CHAIN_CACHE_KEY) as any;
+      if (cacheData) {
+        source = JSON.parse(cacheData!);
+      }
+      const ethereum = window?.ethereum || null;
+      if (ethereum) {
+        ethereum.on('accountsChanged', () => {
+          sessionStorage.clear();
+          window.location.reload();
+        });
       }
     }
-  }, [account, tokens, signature]);
+  }, [source]);
 
   const onSignature = async () => {
     // 连接钱包获得account
     try {
       const addr = (await getMetaMaskAccount()) as string;
-      setAccount(addr);
+      source.account = addr;
       const sign = await web3.eth.personal.sign(staticMessage, addr, staticPassword);
-      setSignature(sign);
-      return Promise.resolve({
+      source.signature = sign;
+      handelCache();
+      Promise.resolve({
         account: addr,
         signature: sign,
       });
     } catch (err) {
-      return Promise.reject(err);
+      Promise.reject(err);
     }
   };
   /**
@@ -66,25 +71,26 @@ export default () => {
    * @returns {token} || {err}
    */
   const onChainLogin = async (symbol: TokenSymbol = TokenSymbol.BSC) => {
-    setChainSymbolSymbol(symbol);
+    source.chainSymbol = symbol;
     sessionStorage.symbol = symbol;
-    const tokenData = tokens[symbol];
+    const tokenData = source.tokens[symbol];
     if (tokenData.token) {
       sessionStorage.token = tokenData?.token;
       return Promise.resolve(tokenData);
     }
     try {
       const { code, msg, data } = (await login({
-        signature,
-        accountaddress: account,
+        signature: source.signature,
+        accountaddress: source.account,
         message: staticMessage,
       })) as any;
       if (code === 200) {
         sessionStorage.token = data?.token;
-        setTokens({
-          ...tokens,
+        source.tokens = {
+          ...source.tokens,
           [symbol]: data,
-        });
+        };
+        handelCache();
         return Promise.resolve(data);
       }
       return Promise.reject(msg);
@@ -94,12 +100,7 @@ export default () => {
   };
 
   return {
-    state: {
-      tokens,
-      account,
-      signature,
-      chainSymbol,
-    },
+    state: source,
     reducers: {
       onChainLogin,
       onSignature,

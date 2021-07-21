@@ -13,9 +13,12 @@ export default {
   'menu.dropsEdit': 'Drops Edit',
 
   'menu.nft': 'NFT Management',
+  'menu.nft.items': 'Items',
+  'menu.nft.brands': 'Collections',
 
   'menu.users': 'Users',
 
+  'menu.administrator': 'Administrator',
   'menu.administrator.administrator': 'Administrator',
   'menu.administrator.history': 'History',
 

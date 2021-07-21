@@ -22,10 +22,11 @@ export const ToOffset = (page: number = 1, pageSize: number): number => {
  * @param params
  * @returns UMIRequest
  */
-export function get<TDataType>(url: string, params?: object) {
+export function get<TDataType>(url: string, params?: object, headers?: HeadersInit) {
   return UMIRequest<IResponse<TDataType>>(url, {
     params,
     method: 'get',
+    headers,
   });
 }
 /**
@@ -34,25 +35,29 @@ export function get<TDataType>(url: string, params?: object) {
  * @param params
  * @returns UMIRequest
  */
-export function post<TDataType>(url: string, params?: object) {
+export function post<TDataType>(url: string, params?: object, headers?: HeadersInit) {
   return UMIRequest<IResponse<TDataType>>(url, {
     method: 'post',
     data: params,
+    headers,
   });
 }
 // Request 拦截
 UMIRequest.interceptors.request.use((url, options) => {
   const symbol = sessionStorage.symbol || TokenSymbol.BSC;
-  const token = sessionStorage.token || '';
+  const token = sessionStorage.token || null;
   const serviceUrl = isPre ? ApiServiceUrl.DEV : ApiServiceUrl.PRO;
+  const headers: any = {
+    ...options.headers,
+  };
+  if (token && url !== Apis.jwtauth) {
+    headers.token = sessionStorage.token;
+  }
   return {
     url: serviceUrl + symbol + url,
     options: {
       ...options,
-      headers: {
-        ...options.headers,
-        token,
-      },
+      headers,
     },
   };
 });

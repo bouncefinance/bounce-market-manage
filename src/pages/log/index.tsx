@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Input, Space, Table, Typography, Select, DatePicker } from 'antd';
+import { Card, Input, Space, Table, Typography, DatePicker } from 'antd';
 import { useRequest } from 'umi';
 import { getLog } from '@/services/log';
 import type { LogOrderType } from '@/services/log/types';
@@ -19,24 +19,75 @@ const Log: React.FC = () => {
 
   const columns = [
     {
-      dataIndex: 'op_purpose',
+      dataIndex: 'Address',
       align: 'center',
-      title: 'Function Module',
+      title: 'Address',
+      width: 50,
+      render: (text: any) => <p style={{ wordBreak: 'break-all' }}>{text}</p>,
+    },
+    {
+      dataIndex: 'op_path',
+      align: 'center',
+      title: 'op_path',
+      width: 50,
+      render: (text: any) => <p style={{ wordBreak: 'break-all' }}>{text}</p>,
+    },
+    {
+      dataIndex: 'username',
+      align: 'center',
+      title: 'username',
+      width: 50,
+      render: (text: any) => <p style={{ wordBreak: 'break-all' }}>{text}</p>,
+    },
+    {
+      dataIndex: 'op_module',
+      align: 'center',
+      title: 'op_module',
+      width: 50,
+      render: (text: any) => <p style={{ wordBreak: 'break-all' }}>{text}</p>,
     },
     {
       dataIndex: 'op_purpose',
       align: 'center',
       title: 'Operation',
+      width: 50,
+      render: (text: any) => <p style={{ wordBreak: 'break-all' }}>{text}</p>,
     },
     {
-      dataIndex: 'op_purpose',
+      dataIndex: 'op_ip',
       align: 'center',
-      title: 'Operator',
+      title: 'op_ip',
+      width: 50,
+      render: (text: any) => <p style={{ wordBreak: 'break-all' }}>{text}</p>,
+    },
+    {
+      dataIndex: 'op_parameters',
+      // align: 'center',
+      title: 'op_parameters',
+      width: 200,
+      render: (text: any) => {
+        return (
+          <>
+            {Object.keys(JSON.parse(text)).map((key) => (
+              <p>{`${key}: ${JSON.parse(text)[key]}`}</p>
+            ))}
+          </>
+        );
+      },
+    },
+    {
+      dataIndex: 'op_result',
+      align: 'center',
+      title: 'op_result',
+      width: 50,
+      render: (text: any) => <p style={{ wordBreak: 'break-all' }}>{text}</p>,
     },
     {
       dataIndex: 'created_at',
       align: 'center',
-      title: 'Date',
+      title: 'created_at',
+      width: 50,
+      render: (text: any) => <p style={{ wordBreak: 'break-all' }}>{text}</p>,
     },
   ];
 
@@ -75,8 +126,8 @@ const Log: React.FC = () => {
   };
 
   const onOk = (value: any) => {
-    if (value[0]) setStartTime(value[0].unix());
-    if (value[1]) setEndTime(value[1].unix());
+    if (value[0]) setStartTime(moment(value[0]).format('YYYY-MM-DD HH:mm:ss'));
+    if (value[0]) setEndTime(moment(value[1]).format('YYYY-MM-DD HH:mm:ss'));
   };
 
   return (

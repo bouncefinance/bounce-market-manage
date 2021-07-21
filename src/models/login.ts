@@ -69,7 +69,7 @@ export default () => {
     setChainSymbolSymbol(symbol);
     sessionStorage.symbol = symbol;
     const tokenData = tokens[symbol];
-    if (tokenData) {
+    if (tokenData.token) {
       sessionStorage.token = tokenData?.token;
       return Promise.resolve(tokenData);
     }

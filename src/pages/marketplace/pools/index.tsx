@@ -106,6 +106,7 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
     <ItemCard
       title={`No. ${index + 1}`}
       imgSrc={data?.fileurl}
+      category={data?.category}
       onSwap={() => {
         clickedIndex = index;
         oldPoolId = item.poolid;

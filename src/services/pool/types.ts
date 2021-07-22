@@ -45,6 +45,8 @@ export interface IUpdatePoolWeightParams {
   weight?: number;
 }
 
+export type categoryType = 'image' | 'video';
+
 export interface IPoolInfo {
   id?: number;
   poolid?: number;
@@ -58,7 +60,7 @@ export interface IPoolInfo {
   username: string;
   poolweight?: number;
   pooltype?: poolSaleType;
-  category?: string;
+  category?: categoryType;
   channel?: string;
   standard?: number;
   supply?: number;

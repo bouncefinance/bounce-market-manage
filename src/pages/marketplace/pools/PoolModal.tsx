@@ -43,7 +43,12 @@ const PoolModal: React.FC<poolModalProps> = ({
       title: 'Cover',
       align: 'center',
       width: 20,
-      render: (url: any) => <Image width={30} height={30} src={url} />,
+      render: (url: any, record: IPoolInfo) =>
+        record.category === 'video' ? (
+          <video width={30} height={30} src={url} />
+        ) : (
+          <Image width={30} height={30} src={url} />
+        ),
     },
     {
       dataIndex: 'state',

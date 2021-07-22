@@ -2,6 +2,7 @@ import { Card } from 'antd';
 import React from 'react';
 import Image from '@/components/Image';
 import { DeleteOutlined, EditOutlined, SwapOutlined } from '@ant-design/icons';
+import type { categoryType } from '@/services/pool/types';
 
 const { Meta } = Card;
 
@@ -12,6 +13,7 @@ interface IItemCardProps {
   onEdit: any;
   onReset: any;
   description: React.ReactNode;
+  category?: categoryType;
 }
 
 const ItemCard: React.FC<IItemCardProps> = ({
@@ -21,13 +23,24 @@ const ItemCard: React.FC<IItemCardProps> = ({
   onEdit,
   onReset,
   description,
+  category = 'image',
 }) => {
   return (
     <Card
       // style={{ width: 260 }}
       title={title}
       cover={
-        <Image height={200} width={230} style={{ objectFit: 'contain' }} alt="image" src={imgSrc} />
+        category === 'image' ? (
+          <Image
+            height={200}
+            width={230}
+            style={{ objectFit: 'contain' }}
+            alt="image"
+            src={imgSrc}
+          />
+        ) : (
+          <video height={200} width={230} src={imgSrc} controls preload="metadata" />
+        )
       }
       actions={[
         <SwapOutlined

@@ -1,7 +1,7 @@
 import type { IBrandResponse } from '@/services/brand/types';
 import { Input, Modal, Select, Space, Table, Tooltip, Typography } from 'antd';
 import { BrandFilterEnum } from '@/services/brand/types';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from '@/components/Image';
 import { StarFilled } from '@ant-design/icons';
 
@@ -28,6 +28,10 @@ const BrandModal: React.FC<brandModalProps> = ({
   setBrandSearchType,
 }) => {
   const [selectedBrand, setSelectedBrand] = useState<IBrandResponse>();
+
+  useEffect(() => {
+    setSelectedBrand(undefined)
+  }, [visible])
 
   const columns = [
     {

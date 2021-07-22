@@ -63,10 +63,7 @@ export const getBrandsListByFilter = (
       break;
 
     default:
-      filter = 1;
       data = {
-        filter,
-        likestr: searchText,
         limit,
         offset,
       };

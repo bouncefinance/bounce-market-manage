@@ -51,7 +51,7 @@ export const Apis = {
   getpoolsbylikename: '/api/bouadmin/main/auth/getpoolsbylikename',
   getauctionpoolsbyfilter: '/api/bouadmin/main/auth/getauctionpoolsbyfilter',
   delpoolitem: '/api/bouadmin/main/auth/delpoolitem',
-  updatepoolitem: '/api/bouadmin/main/auth/updatepoolitem',
+  updatepoolitem: '/api/bouadmin/main/auth/updatepoolitem', // 更改一个nft的显示状态
 
   // overview
   get_overviews: '/api/bouadmin/main/auth/get_overviews', // 获取统计数据

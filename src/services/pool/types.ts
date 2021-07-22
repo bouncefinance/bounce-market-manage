@@ -25,7 +25,7 @@ export enum poolSaleEnum {
 }
 
 /**
- * User Display
+ * Filter type
  * 1 likestr
  * 2 creator
  * 3 tokenid

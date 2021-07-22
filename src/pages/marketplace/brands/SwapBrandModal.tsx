@@ -1,6 +1,6 @@
 import type { IBrandResponse } from '@/services/brand/types';
 import { Modal, Table, Tooltip, Typography } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from '@/components/Image';
 
 interface brandModalProps {
@@ -25,14 +25,12 @@ const BrandModal: React.FC<brandModalProps> = ({
   const [selectedBrand, setSelectedBrand] = useState<IBrandResponse>();
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>();
 
+  useEffect(() => {
+    setSelectedBrand(undefined);
+    setSelectedKeys([]);
+  }, [visible]);
+
   const columns = [
-    // {
-    //   dataIndex: 'popularweight',
-    //   title: 'Status',
-    //   width: 26,
-    //   render: (weight: number) =>
-    //     weight > 10000 ? <StarFilled style={{ color: '#f58220', fontSize: 20 }} /> : null,
-    // },
     {
       dataIndex: 'id',
       title: 'ID',

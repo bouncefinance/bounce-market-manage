@@ -29,9 +29,15 @@ const PoolModal: React.FC<poolModalProps> = ({
   const columns = [
     {
       dataIndex: 'fileurl',
-      title: 'fileurl',
-      width: 60,
-      render: (url: any) => <Image width={40} height={40} preview src={url} />,
+      title: 'Cover',
+      align: 'center',
+      width: 20,
+      render: (url: any, record: IPoolInfo) =>
+        record.category === 'video' ? (
+          <video width={30} height={30} src={url} />
+        ) : (
+          <Image width={30} height={30} src={url} />
+        ),
     },
     {
       dataIndex: 'poolid',
@@ -89,7 +95,7 @@ const PoolModal: React.FC<poolModalProps> = ({
           type: 'radio',
           ...rowSelection,
         }}
-        rowKey={(record) => record.poolid! + record.pooltype!}
+        rowKey={(record) => `${record.poolid}_${record.pooltype}`}
         columns={columns}
         dataSource={data}
         pagination={false}

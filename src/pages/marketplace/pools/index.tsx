@@ -34,33 +34,16 @@ const fullTopPools: IPoolInfo[] = [];
 interface IRecommendItemProps {
   item: ITopPool;
   index: number;
-  refreshTopPools: any;
   setModalVisible: any;
+  onReset: any;
 }
 
 const RecommendItem: React.FC<IRecommendItemProps> = ({
   item,
   index,
-  refreshTopPools,
   setModalVisible,
-  // handleAddClicked,
+  onReset,
 }) => {
-  const handleReset = ({ poolid, standard }: IUpdatePoolWeightParams) => {
-    confirm({
-      icon: <ExclamationCircleOutlined />,
-      title: 'Are you sure you want to delete this brand?',
-      onOk() {
-        updatePoolWeight({ poolid, weight: 0, standard }).then((res) => {
-          if (res.code === 1) {
-            message.success('Success');
-            refreshTopPools();
-          } else {
-            message.error('Error');
-          }
-        });
-      },
-    });
-  };
 
   const { data, run, loading } = useRequest(
     () => getOnePoolInfo({ poolId: item.poolid, poolType: item.standard }),
@@ -70,7 +53,7 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
   );
 
   useEffect(() => {
-    if (item.poolid) {
+    if (item.poolid || item.poolid === 0) {
       run();
     }
   }, [item.poolid]);
@@ -82,11 +65,11 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
   }, [data, loading]);
 
   // 加载中
-  if ((!data && item.poolid) || loading) {
+  if ((!data && (item.poolid || item.poolid === 0)) || loading) {
     return <SkeletonCard height={407} />;
   }
   // 未设置
-  if (!item.poolid) {
+  if (!item.poolid && item.poolid !== 0) {
     return (
       <AddItemCard
         height={407}
@@ -125,7 +108,7 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
       }}
       onReset={() => {
         clickedIndex = index;
-        handleReset({ poolid: item.poolid, standard: item.standard });
+        onReset({ poolid: item.poolid, standard: item.standard });
       }}
       description={
         <>
@@ -158,6 +141,7 @@ const RecommendPools: React.FC = () => {
   const [resultPools, setResultPools] = useState<ITopPool[]>(new Array(recommendCount).fill({}));
   const [modalVisible, setModalVisible] = useState(false);
   const [searchType, setSearchType] = useState<PoolFilterType>(PoolFilterEnum.likestr);
+  const [pageLoading, setPageLoading] = useState(false);
 
   const {
     data: topPools,
@@ -186,8 +170,8 @@ const RecommendPools: React.FC = () => {
 
   useEffect(() => {
     if (topPools && !topPoolsLoading && topPools?.length > 0) {
-      // const pools = new Array(recommendCount).fill({});
-      const pools = resultPools;
+      const pools = new Array(recommendCount).fill({});
+      // const pools = resultPools;
       topPools
         ?.sort((a, b) => {
           return b.poolweight - a.poolweight;
@@ -197,9 +181,35 @@ const RecommendPools: React.FC = () => {
             pools[recommendCount - item.poolweight] = item;
           }
         });
+
       setResultPools(pools);
     }
   }, [topPools, topPoolsLoading]);
+
+  useEffect(() => {
+  }, [resultPools]);
+
+  const handleReset = ({ poolid, standard }: IUpdatePoolWeightParams) => {
+    confirm({
+      icon: <ExclamationCircleOutlined />,
+      title: 'Are you sure you want to delete this brand?',
+      onOk() {
+        setPageLoading(true);
+        updatePoolWeight({ poolid, weight: 0, standard }).then((res) => {
+          if (res.code === 1) {
+            refreshTopPools().then((value) => {
+              if (value && value?.length > 0) {
+                setPageLoading(false);
+                message.success('Success');
+              }
+            });
+          } else {
+            message.error('Error');
+          }
+        });
+      },
+    });
+  };
 
   const handleAdd = (pool: IPoolInfo) => {
     confirm({
@@ -207,6 +217,7 @@ const RecommendPools: React.FC = () => {
       title: 'Are you sure you want to add this brand?',
       onOk() {
         setModalVisible(false);
+        setPageLoading(true);
         updatePoolWeight({
           poolid: pool.poolid!,
           standard: pool.pooltype!,
@@ -216,6 +227,7 @@ const RecommendPools: React.FC = () => {
             message.success('Success');
             refreshTopPools();
             searchAllPools({ pageSize: 6, current: 1 });
+            setPageLoading(false);
           } else {
             message.error('Error');
           }
@@ -230,6 +242,7 @@ const RecommendPools: React.FC = () => {
       title: 'Are you sure you want to add this brand?',
       onOk() {
         setModalVisible(false);
+        setPageLoading(true);
         updatePoolWeight({ poolid: oldPoolId, standard: oldPoolStandard, weight: 0 }).then(
           (res1) => {
             if (res1.code === 1) {
@@ -242,6 +255,7 @@ const RecommendPools: React.FC = () => {
                   message.success('Success');
                   refreshTopPools();
                   searchAllPools({ pageSize: 6, current: 1 });
+                  setPageLoading(false);
                 } else {
                   message.error('Error');
                 }
@@ -261,6 +275,7 @@ const RecommendPools: React.FC = () => {
       title: 'Are you sure you want to Swap this brand?',
       onOk() {
         setModalVisible(false);
+        setPageLoading(true);
         updatePoolWeight({
           poolid: oldPoolId,
           standard: oldPoolStandard,
@@ -276,6 +291,7 @@ const RecommendPools: React.FC = () => {
                 message.success('Success');
                 refreshTopPools();
                 searchAllPools({ pageSize: 6, current: 1 });
+                setPageLoading(false);
               } else {
                 message.error('Error');
               }
@@ -289,16 +305,20 @@ const RecommendPools: React.FC = () => {
   };
 
   return (
-    <PageContainer>
+    <PageContainer loading={pageLoading}>
       <Card>
         <Row gutter={[18, 24]}>
           {resultPools.map((item: ITopPool, index) => (
-            <Col className="gutter-row" flex="0 0 230px">
+            <Col
+              key={`${item.poolid}_${item.standard}_${index}`}
+              className="gutter-row"
+              flex="0 0 230px"
+            >
               <RecommendItem
                 item={item}
                 index={index}
-                refreshTopPools={refreshTopPools}
                 setModalVisible={setModalVisible}
+                onReset={handleReset}
               />
             </Col>
           ))}
@@ -320,7 +340,7 @@ const RecommendPools: React.FC = () => {
       ) : (
         <PoolModal
           tableProps={tableProps}
-          topPools={topPools || []}
+          topPools={topPools?.filter((pool) => pool.poolweight > 0) || []}
           searchAllPools={searchAllPools}
           setSearchType={setSearchType}
           clickedIndex={clickedIndex}

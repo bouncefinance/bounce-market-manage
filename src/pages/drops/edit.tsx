@@ -441,13 +441,17 @@ const DropEdit: React.FC = () => {
           )}
 
           <Form.Item label="Links">
-            <Form.Item name="instagram" rules={[{ type: 'url' }]}>
+            <Form.Item
+              name="instagram"
+              validateTrigger={['onBlur']}
+              rules={[{ type: 'url' }]}
+            >
               <Input addonBefore="Instagram" />
             </Form.Item>
-            <Form.Item name="twitter" rules={[{ type: 'url' }]}>
+            <Form.Item name="twitter" validateTrigger={['onBlur']} rules={[{ type: 'url' }]}>
               <Input addonBefore="Twitter" />
             </Form.Item>
-            <Form.Item name="website" rules={[{ type: 'url' }]}>
+            <Form.Item name="website" validateTrigger={['onBlur']} rules={[{ type: 'url' }]}>
               <Input addonBefore="Website" />
             </Form.Item>
           </Form.Item>

@@ -1,4 +1,5 @@
-import { IPoolInfo, ITopPool, poolStateEnum } from '@/services/pool/types';
+import type { IPoolInfo, ITopPool } from '@/services/pool/types';
+import { poolStateEnum } from '@/services/pool/types';
 import { Input, Modal, Select, Space, Table, Tag, Tooltip, Typography } from 'antd';
 import { PoolFilterEnum } from '@/services/pool/types';
 import React, { useState } from 'react';
@@ -63,7 +64,9 @@ const PoolModal: React.FC<poolModalProps> = ({
             <Tag color="green">Live</Tag>
           )}
 
-          {topPools.find((topPool) => topPool.id === record.id) ? (
+          {topPools.find(
+            (topPool) => topPool.poolid === record.poolid && topPool.standard === record.pooltype,
+          ) ? (
             <Tag color="gold">Recommend</Tag>
           ) : null}
         </Space>
@@ -155,7 +158,7 @@ const PoolModal: React.FC<poolModalProps> = ({
             type: 'radio',
             ...rowSelection,
           }}
-          rowKey="id"
+          rowKey={(record: IPoolInfo) => `${record.poolid}_${record.pooltype}`}
           columns={columns}
           {...tableProps}
         />

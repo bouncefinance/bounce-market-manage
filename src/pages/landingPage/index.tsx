@@ -24,12 +24,13 @@ import { RECOMMEND_TOP_ARTISTS_AMOUNT } from '@/tools/const';
 
 const { confirm } = Modal;
 
+let targetWeight: number;
 const TopArtists: React.FC = () => {
   const [clickedIndex, setClickedIndex] = useState<number>();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [modalAction, setModalAction] = useState<modalActionType>();
   const [clickedArtistName, setClickedArtistName] = useState<string>();
-  const [targetWeight, setTargetWeight] = useState<number>();
+  const [pageLoading, setPageLoading] = useState(false);
 
   const {
     data: topArtists,
@@ -74,11 +75,13 @@ const TopArtists: React.FC = () => {
       icon: <ExclamationCircleOutlined />,
       title: 'Are you sure you want to delete this top artist?',
       onOk() {
+        setPageLoading(true);
         deleteOneTopArtist({ username }).then((res) => {
           if (res.code === 1) {
-            message.success('Success');
             reloadTopArtists();
             reloadAllUsers();
+            setPageLoading(false);
+            message.success('Success');
           } else {
             message.error('Error');
           }
@@ -90,31 +93,59 @@ const TopArtists: React.FC = () => {
   const handleAdd = async (user: IUserItem) => {
     if (!targetWeight) return;
 
-    const res = await updataOneTopArtist({ username: user.username, topweight: targetWeight });
-    if (res.code === 1) {
-      message.success('Success');
-      reloadTopArtists();
-      reloadAllUsers();
-    } else {
-      message.error('Error');
-    }
-
-    setModalVisible(false);
+    confirm({
+      icon: <ExclamationCircleOutlined />,
+      title: 'Are you sure you want to add this top artist?',
+      onOk() {
+        setPageLoading(true);
+        updataOneTopArtist({ username: user.username, topweight: targetWeight }).then((res) => {
+          if (res.code === 1) {
+            reloadTopArtists();
+            reloadAllUsers();
+            setModalVisible(false);
+            setPageLoading(false);
+            message.success('Success');
+          } else {
+            message.error('Error');
+          }
+        });
+      },
+    });
   };
 
-  const handleEdit = async (user: IUserItem) => {
+  const handleEdit = async (newUser: IUserItem) => {
     if (!targetWeight) return;
 
-    const res = await updataOneTopArtist({ username: user.username, topweight: targetWeight });
-    if (res.code === 1) {
-      message.success('Success');
-      reloadTopArtists();
-      reloadAllUsers();
-    } else {
-      message.error('Error');
-    }
-
-    setModalVisible(false);
+    confirm({
+      icon: <ExclamationCircleOutlined />,
+      title: 'Are you sure you want to add this top artist?',
+      onOk() {
+        setPageLoading(true);
+        updataOneTopArtist({
+          username: clickedArtistName!,
+          topweight: 0,
+        }).then((res1) => {
+          if (res1.code === 1) {
+            updataOneTopArtist({
+              username: newUser.username,
+              topweight: targetWeight,
+            }).then((res2) => {
+              if (res2.code === 1) {
+                reloadTopArtists();
+                reloadAllUsers();
+                setModalVisible(false);
+                setPageLoading(false);
+                message.success('Success');
+              } else {
+                message.error('Error');
+              }
+            });
+          } else {
+            message.error('Error');
+          }
+        });
+      },
+    });
   };
 
   const handleSwap = (targetUser: ITopArtist) => {
@@ -124,6 +155,7 @@ const TopArtists: React.FC = () => {
       icon: <ExclamationCircleOutlined />,
       title: 'Are you sure you want to Change this top artist?',
       onOk() {
+        setPageLoading(true);
         deleteOneTopArtist({ username: clickedArtistName }).then((res1) => {
           if (res1.code === 1) {
             updataOneTopArtist({ username: targetUser.username, topweight: targetWeight }).then(
@@ -134,10 +166,11 @@ const TopArtists: React.FC = () => {
                     topweight: targetUser.top_weight,
                   }).then((res3) => {
                     if (res3.code === 1) {
-                      message.success('Success');
                       reloadTopArtists();
                       reloadAllUsers();
                       setModalVisible(false);
+                      setPageLoading(false);
+                      message.success('Success');
                     } else message.error('Failed');
                   });
                 else message.error('Failed');
@@ -156,7 +189,7 @@ const TopArtists: React.FC = () => {
       <Card>
         <Row gutter={[18, 24]}>
           {resultList?.map((item: ITopArtist | 0, index) => (
-            <Col className="gutter-row" flex="0 0 230px">
+            <Col key={item === 0 ? index : `${item.id}_${index}`} className="gutter-row" flex="0 0 230px">
               {topArtistsLoading ? (
                 <SkeletonCard />
               ) : item === 0 ? (
@@ -164,7 +197,8 @@ const TopArtists: React.FC = () => {
                   height={427}
                   handleAdd={() => {
                     setClickedIndex(index);
-                    setTargetWeight(RECOMMEND_TOP_ARTISTS_AMOUNT - index);
+                    // setTargetWeight(RECOMMEND_TOP_ARTISTS_AMOUNT - index);
+                    targetWeight = RECOMMEND_TOP_ARTISTS_AMOUNT - index;
                     setModalAction('add');
                     setModalVisible(true);
                   }}
@@ -175,14 +209,16 @@ const TopArtists: React.FC = () => {
                   imgSrc={item.imgurl}
                   onSwap={() => {
                     setClickedIndex(index);
-                    setTargetWeight(RECOMMEND_TOP_ARTISTS_AMOUNT - index);
+                    // setTargetWeight(RECOMMEND_TOP_ARTISTS_AMOUNT - index);
+                    targetWeight = RECOMMEND_TOP_ARTISTS_AMOUNT - index;
                     setClickedArtistName(item.username);
                     setModalAction('swap');
                     setModalVisible(true);
                   }}
                   onEdit={() => {
                     setClickedIndex(index);
-                    setTargetWeight(RECOMMEND_TOP_ARTISTS_AMOUNT - index);
+                    // setTargetWeight(RECOMMEND_TOP_ARTISTS_AMOUNT - index);
+                    targetWeight = RECOMMEND_TOP_ARTISTS_AMOUNT - index;
                     setClickedArtistName(item.username);
                     setModalAction('edit');
                     setModalVisible(true);

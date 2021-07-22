@@ -19,14 +19,13 @@ const { confirm } = Modal;
 
 const Collections: React.FC = () => {
   let clickedBrandIndex: number;
-  // let targetWeight: number
 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [modalAction, setModalAction] = useState<modalActionType>();
   const [clickedBrandId, setClickedBrandId] = useState<number>();
   const [targetWeight, setTargetWeight] = useState<number>();
-
   const [brandSearchType, setBrandSearchType] = useState<BrandFilterType>(BrandFilterEnum.likestr);
+  const [pageLoading, setPageLoading] = useState(false);
 
   const {
     data: topBrands,
@@ -62,22 +61,21 @@ const Collections: React.FC = () => {
       brandResultList[RECOMMEND_BRANDS_AMOUNT - Math.floor(item.popularweight / 10000)] = item;
   });
 
-  const resetBrandWeight = async (id: number) => {
-    const res = await updateBrandWeight({ id, popularweight: 0 });
-    if (res.code === 1) {
-      message.success('Success');
-      reloadTopBrands();
-    } else {
-      message.error('Error');
-    }
-  };
-
   const handleResetBrand = (id: number) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
       title: 'Are you sure you want to delete this brand?',
       onOk() {
-        resetBrandWeight(id);
+        updateBrandWeight({ id, popularweight: 0 }).then((res) => {
+          if (res.code === 1) {
+            message.success('Success');
+            reloadTopBrands();
+            setModalVisible(false);
+            setPageLoading(false);
+          } else {
+            message.error('Error');
+          }
+        });
       },
     });
   };
@@ -85,15 +83,23 @@ const Collections: React.FC = () => {
   const handleAddBrand = async (brand: IBrandResponse) => {
     if (!targetWeight) return;
 
-    const res = await updateBrandWeight({ id: brand.id, popularweight: targetWeight });
-    if (res.code === 1) {
-      message.success('Success');
-      reloadTopBrands();
-    } else {
-      message.error('Error');
-    }
-
-    setModalVisible(false);
+    confirm({
+      icon: <ExclamationCircleOutlined />,
+      title: 'Are you sure you want to Change this brand?',
+      onOk() {
+        setPageLoading(true);
+        updateBrandWeight({ id: brand.id, popularweight: targetWeight }).then((res) => {
+          if (res.code === 1) {
+            message.success('Success');
+            reloadTopBrands();
+            setModalVisible(false);
+            setPageLoading(false);
+          } else {
+            message.error('Error');
+          }
+        });
+      },
+    });
   };
 
   const handleEditBrand = async (brand: IBrandResponse) => {
@@ -103,6 +109,7 @@ const Collections: React.FC = () => {
       icon: <ExclamationCircleOutlined />,
       title: 'Are you sure you want to Change this brand?',
       onOk() {
+        setPageLoading(true);
         updateBrandWeight({ id: clickedBrandId, popularweight: 0 }).then((res) => {
           if (res.code === 1 && targetWeight)
             updateBrandWeight({ id: brand.id, popularweight: targetWeight }).then(() => {
@@ -111,6 +118,7 @@ const Collections: React.FC = () => {
                 searchAllBrands({ pageSize: 6, current: 1 });
                 reloadTopBrands();
                 setModalVisible(false);
+                setPageLoading(false);
               } else message.error('Failed');
             });
           else message.error('Failed');
@@ -126,6 +134,7 @@ const Collections: React.FC = () => {
       icon: <ExclamationCircleOutlined />,
       title: 'Are you sure you want to Change this brand?',
       onOk() {
+        setPageLoading(true);
         updateBrandWeight({ id: targetBrand.id, popularweight: targetWeight }).then((res) => {
           if (res.code === 1 && targetWeight)
             updateBrandWeight({
@@ -136,6 +145,7 @@ const Collections: React.FC = () => {
                 message.success('Success');
                 reloadTopBrands();
                 setModalVisible(false);
+                setPageLoading(false);
               } else message.error('Failed');
             });
           else message.error('Failed');
@@ -145,11 +155,15 @@ const Collections: React.FC = () => {
   };
 
   return (
-    <PageContainer>
+    <PageContainer loading={pageLoading}>
       <Card>
         <Row gutter={[18, 24]}>
           {brandResultList.map((item: IBrandResponse | 0, index) => (
-            <Col className="gutter-row" flex="0 0 230px">
+            <Col
+              key={item === 0 ? index : `${item.id}_${index}`}
+              className="gutter-row"
+              flex="0 0 230px"
+            >
               {topBrandsLoading ? (
                 <SkeletonCard />
               ) : item === 0 ? (

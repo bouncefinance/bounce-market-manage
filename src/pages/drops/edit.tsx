@@ -363,7 +363,7 @@ const DropEdit: React.FC = () => {
                       limit={4 * 1024 * 1024}
                     />
                   </Form.Item>
-                  <span>Support PNG, JPG, GIF, WEBP, etc. Max size: 4MB.</span>
+                  <span>Support jpg, png, gif, jpeg, jp2. Max size: 4MB.</span>
                 </>
               )}
               {backgroundType === 'bgcolor' && (
@@ -431,7 +431,7 @@ const DropEdit: React.FC = () => {
                 limit={30 * 1024 * 1024}
               />
             </Form.Item>
-            <span>Support AVI, rmvb, rm, FLV, mp4, etc. Max size: 30M.</span>
+            <span>Support mp4. Max size: 30M.</span>
           </Form.Item>
 
           {videoUrl && (

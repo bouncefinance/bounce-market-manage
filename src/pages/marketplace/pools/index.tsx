@@ -138,9 +138,9 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
           </Space>
 
           <Typography.Paragraph style={{ margin: 0 }}>
-            {data && data?.itemname?.length > 16 ? (
+            {data && data?.itemname?.length > 12 ? (
               <Tooltip title={data?.itemname}>
-                {`name: ${data?.itemname.replace(/^(.{16}).*$/, '$1...')}`}
+                {`name: ${data?.itemname.replace(/^(.{12}).*$/, '$1...')}`}
               </Tooltip>
             ) : (
               `name: ${data?.itemname}`

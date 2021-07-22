@@ -7,6 +7,8 @@ import { PlusOutlined } from '@ant-design/icons';
 // import 'antd/dist/antd.min.css';
 import { fileUploader } from '@/services/uploader';
 
+// JPG,PNG,GIF,SVG,MP4,WEBM,MP3,WAV,OGG,GLB,GLTF
+const SupportedVideoType = ['video/mp4'];
 export interface IVideoUploaderProps {
   value?: UploadFile;
   maxCount?: number;
@@ -28,7 +30,12 @@ const VideoUploader: React.FC<IVideoUploaderProps> = ({
   }, [value]);
 
   const handleChange = ({ file, fileList: newFileList }: UploadChangeParam) => {
+    console.log('file: ', file);
     if (!file.status) return;
+    if (!SupportedVideoType.find((supportedType) => supportedType === file.type)) {
+      message.error(`Only support mp4`);
+      return;
+    }
     setFileList(newFileList);
     switch (file.status) {
       case 'done':
@@ -63,7 +70,7 @@ const VideoUploader: React.FC<IVideoUploaderProps> = ({
     <Upload
       maxCount={maxCount}
       listType="picture-card"
-      accept="video/*"
+      accept=".mp4, .wav, .webm"
       showUploadList={{ showPreviewIcon: false }}
       beforeUpload={handleBeforeUpload}
       onChange={handleChange}

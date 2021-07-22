@@ -7,6 +7,8 @@ import { PlusOutlined } from '@ant-design/icons';
 // import 'antd/dist/antd.min.css';
 import { fileUploader } from '@/services/uploader';
 
+const SupportedImgType = ['image/jpg', 'image/png', 'image/gif', 'image/jp2', 'image/jpeg'];
+
 export interface IImageUploaderProps {
   value?: UploadFile;
   maxCount?: number;
@@ -28,7 +30,12 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
   }, [value]);
 
   const handleChange = ({ file, fileList: newFileList }: UploadChangeParam) => {
+    // console.log('file: ', file);
     if (!file.status) return;
+    if (!SupportedImgType.find((supportedType) => supportedType === file.type)) {
+      message.error(`Only support jpg, png, gif, jpeg, jp2`);
+      return;
+    }
     setFileList(newFileList);
     switch (file.status) {
       case 'done':
@@ -63,7 +70,7 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
     <Upload
       maxCount={maxCount}
       listType="picture-card"
-      accept="image/*"
+      accept=".jpg, .png, .gif, .svg,"
       showUploadList={{ showPreviewIcon: false }}
       beforeUpload={handleBeforeUpload}
       onChange={handleChange}

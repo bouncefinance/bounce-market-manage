@@ -70,7 +70,7 @@ const VideoUploader: React.FC<IVideoUploaderProps> = ({
     <Upload
       maxCount={maxCount}
       listType="picture-card"
-      accept=".mp4, .wav, .webm"
+      accept=".mp4"
       showUploadList={{ showPreviewIcon: false }}
       beforeUpload={handleBeforeUpload}
       onChange={handleChange}

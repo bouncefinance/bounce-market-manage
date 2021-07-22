@@ -70,7 +70,7 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
     <Upload
       maxCount={maxCount}
       listType="picture-card"
-      accept=".jpg, .png, .gif, .svg,"
+      accept=".jpg, .png, .gif, .jpeg, .jp2,"
       showUploadList={{ showPreviewIcon: false }}
       beforeUpload={handleBeforeUpload}
       onChange={handleChange}

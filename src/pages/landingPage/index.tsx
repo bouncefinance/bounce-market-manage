@@ -185,11 +185,15 @@ const TopArtists: React.FC = () => {
   };
 
   return (
-    <PageContainer>
+    <PageContainer loading={pageLoading}>
       <Card>
         <Row gutter={[18, 24]}>
           {resultList?.map((item: ITopArtist | 0, index) => (
-            <Col key={item === 0 ? index : `${item.id}_${index}`} className="gutter-row" flex="0 0 230px">
+            <Col
+              key={item === 0 ? index : `${item.id}_${index}`}
+              className="gutter-row"
+              flex="0 0 230px"
+            >
               {topArtistsLoading ? (
                 <SkeletonCard />
               ) : item === 0 ? (

@@ -291,6 +291,9 @@ const DropEdit: React.FC = () => {
           wrapperCol={{ span: 14 }}
           onFinish={handleEdit}
           validateMessages={validateMessages}
+          onFieldsChange={(changedFields) => {
+            console.log('changedFields: ', changedFields);
+          }}
         >
           <Form.Item label="Account" required>
             {!currentDropId && (
@@ -441,11 +444,7 @@ const DropEdit: React.FC = () => {
           )}
 
           <Form.Item label="Links">
-            <Form.Item
-              name="instagram"
-              validateTrigger={['onBlur']}
-              rules={[{ type: 'url' }]}
-            >
+            <Form.Item name="instagram" validateTrigger={['onBlur']} rules={[{ type: 'url' }]}>
               <Input addonBefore="Instagram" />
             </Form.Item>
             <Form.Item name="twitter" validateTrigger={['onBlur']} rules={[{ type: 'url' }]}>

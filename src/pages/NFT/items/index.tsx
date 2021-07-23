@@ -135,13 +135,16 @@ const NFT: React.FC = () => {
     },
     {
       title: 'Contract Address',
-      dataIndex: 'contractaddress',
+      dataIndex: 'token0',
       align: 'center',
-      render: (text: any) => (
-        <Typography.Paragraph style={{ margin: 0 }} copyable={{ text }}>
-          <Tooltip title={text}>{text.replace(/^(.{6}).*(.{4})$/, '$1...$2')}</Tooltip>
-        </Typography.Paragraph>
-      ),
+      render: (text: any) =>
+        text ? (
+          <Typography.Paragraph style={{ margin: 0 }} copyable={{ text }}>
+            <Tooltip title={text}>{text.replace(/^(.{6}).*(.{4})$/, '$1...$2')}</Tooltip>
+          </Typography.Paragraph>
+        ) : (
+          '--'
+        ),
     },
     {
       title: 'Creator Address',

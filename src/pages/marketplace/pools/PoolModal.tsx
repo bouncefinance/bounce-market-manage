@@ -114,7 +114,12 @@ const PoolModal: React.FC<poolModalProps> = ({
     getCheckboxProps: (record: IPoolInfo) => ({
       disabled:
         record.state === poolStateEnum.closed ||
-        topPools.find((topPool) => topPool.id === record.id),
+        topPools.find(
+          (topPool) =>
+            topPool.poolid === record.poolid &&
+            topPool.standard === record.pooltype &&
+            topPool.poolweight > 0,
+        ),
     }),
   };
 

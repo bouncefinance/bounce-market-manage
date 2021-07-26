@@ -44,7 +44,6 @@ const RecommendItem: React.FC<IRecommendItemProps> = ({
   setModalVisible,
   onReset,
 }) => {
-
   const { data, run, loading } = useRequest(
     () => getOnePoolInfo({ poolId: item.poolid, poolType: item.standard }),
     {
@@ -143,6 +142,10 @@ const RecommendPools: React.FC = () => {
   const [searchType, setSearchType] = useState<PoolFilterType>(PoolFilterEnum.likestr);
   const [pageLoading, setPageLoading] = useState(false);
 
+  useEffect(() => {
+    fullTopPools.splice(0, fullTopPools.length);
+  }, [modalVisible]);
+
   const {
     data: topPools,
     loading: topPoolsLoading,
@@ -185,9 +188,6 @@ const RecommendPools: React.FC = () => {
       setResultPools(pools);
     }
   }, [topPools, topPoolsLoading]);
-
-  useEffect(() => {
-  }, [resultPools]);
 
   const handleReset = ({ poolid, standard }: IUpdatePoolWeightParams) => {
     confirm({

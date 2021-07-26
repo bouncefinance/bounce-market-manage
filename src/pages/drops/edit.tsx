@@ -31,6 +31,7 @@ import type { IPoolResponse } from '@/services/pool/types';
 import type { DropsState, IDropDetailResponse } from '@/services/drops/types';
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 type BGType = 'cover' | 'bgcolor';
 
@@ -291,9 +292,6 @@ const DropEdit: React.FC = () => {
           wrapperCol={{ span: 14 }}
           onFinish={handleEdit}
           validateMessages={validateMessages}
-          onFieldsChange={(changedFields) => {
-            console.log('changedFields: ', changedFields);
-          }}
         >
           <Form.Item label="Account" required>
             {!currentDropId && (
@@ -400,14 +398,14 @@ const DropEdit: React.FC = () => {
             label="Title"
             rules={[{ required: true, message: 'Title cannot be empty' }]}
           >
-            <Input />
+            <TextArea autoSize showCount maxLength={48} />
           </Form.Item>
           <Form.Item
             name="description"
             label="Description"
             rules={[{ required: true, message: 'Description cannot be empty' }]}
           >
-            <Input />
+            <TextArea rows={5} showCount maxLength={300} />
           </Form.Item>
           <Form.Item
             name="dropdate"

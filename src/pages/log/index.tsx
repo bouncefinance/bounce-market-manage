@@ -3,7 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Input, Space, Table, Typography, DatePicker, Collapse, Tooltip } from 'antd';
 import { useRequest } from 'umi';
 import { getLog } from '@/services/log';
-import type { LogOrderType } from '@/services/log/types';
+import type { ILogReponse } from '@/services/log/types';
 import { LogOrderEnum } from '@/services/log/types';
 
 import moment from 'moment';
@@ -17,46 +17,28 @@ const Log: React.FC = () => {
   const [address, setAddress] = useState<string>('');
   const [startTime, setStartTime] = useState<string>('');
   const [endTime, setEndTime] = useState<string>('');
-  const [orderType, setOrderType] = useState<LogOrderType>(LogOrderEnum.descend);
+  const orderType = LogOrderEnum.descend;
 
   const columns = [
     {
-      dataIndex: 'Address',
-      align: 'center',
-      title: 'Address',
-      width: 50,
-      render: (text: any) => (
-        <Typography.Paragraph style={{ margin: 0 /* width: 120 */ }} copyable={{ text }}>
-          <Tooltip title={text}>{text.replace(/^(.{6}).*(.{4})$/, '$1...$2')}</Tooltip>
-        </Typography.Paragraph>
-      ),
-    },
-    {
-      dataIndex: 'username',
-      align: 'center',
-      title: 'username',
-      width: 20,
-      render: (text: any) => <p style={{ wordBreak: 'break-all' }}>{text}</p>,
-    },
-    {
       dataIndex: 'op_module',
       align: 'center',
-      title: 'op_module',
-      width: 50,
+      title: 'Function Module',
+      width: 150,
       render: (text: any) => <p style={{ wordBreak: 'break-all' }}>{text}</p>,
     },
     {
       dataIndex: 'op_purpose',
       align: 'center',
       title: 'Operation',
-      width: 50,
-      render: (text: any) => <p style={{ wordBreak: 'break-all' }}>{text}</p>,
+      width: 150,
+      render: (text: any) => <p style={{ wordBreak: 'break-word' }}>{text}</p>,
     },
     {
       dataIndex: 'op_parameters',
       // align: 'center',
       title: 'Details',
-      width: 300,
+      width: 250,
       render: (text: any) => {
         const keys = Object.keys(JSON.parse(text));
         const values = Object.values(JSON.parse(text));
@@ -67,27 +49,40 @@ const Log: React.FC = () => {
             expandIcon={({ isActive }) => <CaretDownOutlined rotate={isActive ? 180 : 0} />}
           >
             <Panel header={`${keys[0]}: ${values[0]}`} key="1">
-              <>
-                {keys.slice(1).map((key, index) => (
-                  <p>{`${key}: ${values[index]}`}</p>
-                ))}
-              </>
+              {keys.slice(1).map((key, index) => (
+                <Typography.Paragraph
+                  key={key}
+                  style={{ margin: 0, wordBreak: 'break-all' }}
+                >{`${key}: ${values[index + 1] || '--'}`}</Typography.Paragraph>
+              ))}
             </Panel>
           </Collapse>
-          // <>
-          //   {Object.keys(JSON.parse(text)).map((key) => (
-          //     <p>{`${key}: ${JSON.parse(text)[key]}`}</p>
-          //   ))}
-          // </>
         );
       },
+    },
+    {
+      dataIndex: 'Address',
+      align: 'center',
+      title: 'Operator',
+      width: 50,
+      render: (text: any, record: ILogReponse) => (
+        <Typography.Paragraph style={{ margin: 0 }}>
+          <span>{record.username}</span>
+          <Tooltip title={text}>{`(${text.replace(/^(.{6}).*(.{4})$/, '$1...$2')})`}</Tooltip>
+        </Typography.Paragraph>
+      ),
     },
     {
       dataIndex: 'created_at',
       align: 'center',
       title: 'created_at',
-      width: 50,
-      render: (text: any) => <p style={{ wordBreak: 'break-all' }}>{text}</p>,
+      width: 150,
+      render: (text: any) => (
+        <p style={{ wordBreak: 'break-all' }}>{moment.utc(text).format('YYYY-MM-DD, HH:mm:ss')}</p>
+      ),
+      sorter: (a: ILogReponse, b: ILogReponse) =>
+        moment.utc(a.created_at).valueOf() - moment.utc(b.created_at).valueOf(),
+      sortDirections: ['descend', 'ascend', 'descend'],
     },
   ];
 
@@ -134,7 +129,6 @@ const Log: React.FC = () => {
     <PageContainer>
       <Card>
         <Space style={{ width: '100%' }} direction="vertical">
-          <Typography.Paragraph>{}</Typography.Paragraph>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Search
               placeholder="Input address"

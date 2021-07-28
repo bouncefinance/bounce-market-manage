@@ -20,7 +20,7 @@ export default {
 
   'menu.administrator': 'Administrator',
   'menu.administrator.administrator': 'Administrator',
-  'menu.administrator.history': 'History',
+  'menu.administrator.history': 'Action History',
 
   'menu.Authority': 'Authority',
   'menu.Authority.User': 'User',

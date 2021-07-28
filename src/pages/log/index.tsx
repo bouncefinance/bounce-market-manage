@@ -23,14 +23,14 @@ const Log: React.FC = () => {
     {
       dataIndex: 'op_module',
       align: 'center',
-      title: 'Function Module',
+      title: 'Module',
       width: 150,
       render: (text: any) => <p style={{ wordBreak: 'break-all' }}>{text}</p>,
     },
     {
       dataIndex: 'op_purpose',
       align: 'center',
-      title: 'Operation',
+      title: 'Action',
       width: 150,
       render: (text: any) => <p style={{ wordBreak: 'break-word' }}>{text}</p>,
     },
@@ -63,11 +63,11 @@ const Log: React.FC = () => {
     {
       dataIndex: 'Address',
       align: 'center',
-      title: 'Operator',
+      title: 'Executor',
       width: 50,
       render: (text: any, record: ILogReponse) => (
         <Typography.Paragraph style={{ margin: 0 }}>
-          <span>{record.username}</span>
+          <span>{`${record.username} `}</span>
           <Tooltip title={text}>{`(${text.replace(/^(.{6}).*(.{4})$/, '$1...$2')})`}</Tooltip>
         </Typography.Paragraph>
       ),

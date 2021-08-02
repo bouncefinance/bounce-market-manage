@@ -1,6 +1,14 @@
-import { RECOMMEND_POOLS_AMOUNT } from '@/tools/const';
-import { Apis, post } from '../index';
-import type { IGetPoolsParams, IPoolInfo, IPoolResponse, ITopPool, IUpdatePoolWeightParams, PoolFilterType, poolSaleType } from './types';
+import { Apis, post, get } from '../index';
+import type {
+  IDeletePoolWeightParams,
+  IGetPoolsParams,
+  IPoolInfo,
+  IPoolResponse,
+  ITopPool,
+  IInsertPoolWeightParams,
+  PoolFilterType,
+  poolSaleType,
+} from './types';
 import { PoolFilterEnum } from './types';
 
 export const getPoolsByFilter = (
@@ -47,14 +55,7 @@ export const getPoolsByFilter = (
   return post<IPoolInfo[]>(Apis.getauctionpoolsbyfilter, data);
 };
 
-export const getPools = ({
-  creator,
-  filter,
-  likestr,
-  limit,
-  offset,
-  tokenid,
-}: IGetPoolsParams) => {
+export const getPools = ({ creator, filter, likestr, limit, offset, tokenid }: IGetPoolsParams) => {
   return post(Apis.dealpoolinfo, {
     creator,
     filter,
@@ -62,18 +63,6 @@ export const getPools = ({
     limit,
     offset,
     tokenid,
-  });
-};
-
-export const updatePoolWeight = ({
-  poolid,
-  weight,
-  standard,
-}: IUpdatePoolWeightParams) => {
-  return post(Apis.dealpoolinfo, {
-    poolid,
-    weight,
-    standard,
   });
 };
 
@@ -91,10 +80,21 @@ export const getOnePoolInfo = ({
 };
 
 export const getTopPools = () => {
-  return post<ITopPool[]>(Apis.getpoolsinfobypage, {
-    offset: 0,
-    limit: RECOMMEND_POOLS_AMOUNT,
-    orderweight: 1,
+  return get<ITopPool[]>(Apis.pool_get_recommends);
+};
+
+export const insertPoolWeight = ({ auctionType, poolWeight, poolid }: IInsertPoolWeightParams) => {
+  return post(Apis.pool_insert_recommend, {
+    poolid,
+    auctionType,
+    poolWeight,
+  });
+};
+
+export const deletePoolWeight = ({ poolid, auctionType }: IDeletePoolWeightParams) => {
+  return post(Apis.pool_delete_recommend, {
+    poolid,
+    auctionType,
   });
 };
 

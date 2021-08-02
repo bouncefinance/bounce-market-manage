@@ -1,11 +1,11 @@
-import type { IPoolInfo } from '@/services/pool/types';
+import type { ITopPool } from '@/services/pool/types';
 import { poolSaleEnum } from '@/services/pool/types';
-import { Modal, Table, Tooltip, Typography } from 'antd';
+import { Modal, Table } from 'antd';
 import React, { useState } from 'react';
 import Image from '@/components/Image';
 
 interface poolModalProps {
-  data: IPoolInfo[] | undefined;
+  data: ITopPool[] | undefined;
   loading: boolean;
   clickedIndex: number;
   clickedPoolId: number | undefined;
@@ -23,58 +23,51 @@ const PoolModal: React.FC<poolModalProps> = ({
   onOk,
   onCancel,
 }) => {
-  const [selectedPool, setSelectedPool] = useState<IPoolInfo>();
+  const [selectedPool, setSelectedPool] = useState<ITopPool>();
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>();
 
   const columns = [
     {
-      dataIndex: 'fileurl',
+      dataIndex: 'imgurl',
       title: 'Cover',
       align: 'center',
-      width: 20,
-      render: (url: any, record: IPoolInfo) =>
+      width: 50,
+      render: (url: any, record: ITopPool) =>
         record.category === 'video' ? (
-          <video width={30} height={30} src={url} />
+          <video width={50} height={50} src={url} />
         ) : (
-          <Image width={30} height={30} src={url} />
+          <Image width={50} height={50} src={url} preview style={{ objectFit: 'contain' }} />
         ),
     },
     {
-      dataIndex: 'poolid',
+      dataIndex: 'pool_id',
       title: 'Pool ID',
+      align: 'center',
     },
     {
-      dataIndex: 'pooltype',
+      dataIndex: 'auctiontype',
       title: 'Type',
+      align: 'center',
       render: (text: any) => poolSaleEnum[text],
-    },
-    {
-      dataIndex: 'creator',
-      title: 'Creator Address',
-      render: (text: any) => (
-        <Typography.Paragraph style={{ margin: 0 }} copyable={{ text }}>
-          <Tooltip title={text}>{text.replace(/^(.{6}).*(.{4})$/, '$1...$2')}</Tooltip>
-        </Typography.Paragraph>
-      ),
     },
   ];
 
   const rowSelection = {
     selectedRowKeys: selectedKeys,
-    onChange: (selectedRowKeys: React.Key[], selectedRows: IPoolInfo[]) => {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: ITopPool[]) => {
       setSelectedKeys(selectedRowKeys);
       setSelectedPool(selectedRows[0]);
     },
     columnWidth: 14,
-    getCheckboxProps: (record: IPoolInfo) => ({
-      disabled: record.id === clickedPoolId, // Column configuration not to be checked
+    getCheckboxProps: (record: ITopPool) => ({
+      disabled: record.pool_id === clickedPoolId, // Column configuration not to be checked
     }),
   };
 
   return (
     <Modal
       title={`Select No.${clickedIndex + 1} pool`}
-      width={800}
+      width={500}
       centered
       visible={visible}
       okButtonProps={{ disabled: !selectedPool }}
@@ -95,7 +88,7 @@ const PoolModal: React.FC<poolModalProps> = ({
           type: 'radio',
           ...rowSelection,
         }}
-        rowKey={(record) => `${record.poolid}_${record.pooltype}`}
+        rowKey={(record) => `${record.pool_id}_${record.auctiontype}`}
         columns={columns}
         dataSource={data}
         pagination={false}

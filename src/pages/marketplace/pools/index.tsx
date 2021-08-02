@@ -1,10 +1,10 @@
 /* eslint-disable no-nested-ternary */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRequest } from '@/.umi/plugin-request/request';
 import type {
   IPoolInfo,
   ITopPool,
-  IUpdatePoolWeightParams,
+  IDeletePoolWeightParams,
   PoolFilterType,
   poolSaleType,
 } from '@/services/pool/types';
@@ -15,10 +15,9 @@ import { Card, Col, Row, Modal, message, Typography, Tooltip, Tag, Space } from 
 import SkeletonCard from '@/components/Cards/SkeletonCard';
 import AddItemCard from '@/components/Cards/AddItemCard';
 import ItemCard from '@/components/Cards/ItemCard';
-import { getOnePoolInfo, getPoolsByFilter, getTopPools, updatePoolWeight } from '@/services/pool';
+import { deletePoolWeight, getPoolsByFilter, getTopPools, insertPoolWeight } from '@/services/pool';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import SwapPoolModal from './SwapPoolModal';
-import { RECOMMEND_POOLS_AMOUNT } from '@/tools/const';
 import PoolModal from './PoolModal';
 import { ToOffset } from '@/services';
 
@@ -29,122 +28,13 @@ let targetWeight: number;
 let modalAction: 'swap' | 'add' | 'edit';
 let oldPoolId: number;
 let oldPoolStandard: poolSaleType;
-const fullTopPools: IPoolInfo[] = [];
-
-interface IRecommendItemProps {
-  item: ITopPool;
-  index: number;
-  setModalVisible: any;
-  onReset: any;
-}
-
-const RecommendItem: React.FC<IRecommendItemProps> = ({
-  item,
-  index,
-  setModalVisible,
-  onReset,
-}) => {
-  const { data, run, loading } = useRequest(
-    () => getOnePoolInfo({ poolId: item.poolid, poolType: item.standard }),
-    {
-      manual: true,
-    },
-  );
-
-  useEffect(() => {
-    if (item.poolid || item.poolid === 0) {
-      run();
-    }
-  }, [item.poolid]);
-
-  useEffect(() => {
-    if (data && !loading) {
-      fullTopPools.push({ ...data, poolweight: item.poolweight });
-    }
-  }, [data, loading]);
-
-  // 加载中
-  if ((!data && (item.poolid || item.poolid === 0)) || loading) {
-    return <SkeletonCard height={407} />;
-  }
-  // 未设置
-  if (!item.poolid && item.poolid !== 0) {
-    return (
-      <AddItemCard
-        height={407}
-        handleAdd={() => {
-          clickedIndex = index;
-          oldPoolId = item.poolid;
-          oldPoolStandard = item.standard;
-          targetWeight = RECOMMEND_POOLS_AMOUNT - index;
-          modalAction = 'add';
-          setModalVisible(true);
-        }}
-      />
-    );
-  }
-  // 加载完成
-  return (
-    <ItemCard
-      title={`No. ${index + 1}`}
-      imgSrc={data?.fileurl}
-      category={data?.category}
-      onSwap={() => {
-        clickedIndex = index;
-        oldPoolId = item.poolid;
-        oldPoolStandard = item.standard;
-        targetWeight = RECOMMEND_POOLS_AMOUNT - index;
-        modalAction = 'swap';
-        setModalVisible(true);
-      }}
-      onEdit={() => {
-        clickedIndex = index;
-        oldPoolId = item.poolid;
-        oldPoolStandard = item.standard;
-        targetWeight = RECOMMEND_POOLS_AMOUNT - index;
-        modalAction = 'edit';
-        setModalVisible(true);
-      }}
-      onReset={() => {
-        clickedIndex = index;
-        onReset({ poolid: item.poolid, standard: item.standard });
-      }}
-      description={
-        <>
-          <Space>
-            <Typography.Paragraph>{`id: ${item.poolid}`}</Typography.Paragraph>
-
-            <Typography.Paragraph>
-              {data?.state === poolStateEnum.closed && <Tag color="red">Closed</Tag>}
-            </Typography.Paragraph>
-          </Space>
-
-          <Typography.Paragraph style={{ margin: 0 }}>
-            {data && data?.itemname?.length > 12 ? (
-              <Tooltip title={data?.itemname}>
-                {`name: ${data?.itemname.replace(/^(.{12}).*$/, '$1...')}`}
-              </Tooltip>
-            ) : (
-              `name: ${data?.itemname}`
-            )}
-          </Typography.Paragraph>
-        </>
-      }
-    />
-  );
-};
 
 // 推荐位个数
 const recommendCount = 11;
 const RecommendPools: React.FC = () => {
-  const [resultPools, setResultPools] = useState<ITopPool[]>(new Array(recommendCount).fill({}));
   const [modalVisible, setModalVisible] = useState(false);
   const [searchType, setSearchType] = useState<PoolFilterType>(PoolFilterEnum.likestr);
   const [pageLoading, setPageLoading] = useState(false);
-
-  useEffect(() => {
-    fullTopPools.splice(0, fullTopPools.length);
-  }, [modalVisible]);
 
   const {
     data: topPools,
@@ -171,31 +61,18 @@ const RecommendPools: React.FC = () => {
     },
   );
 
-  useEffect(() => {
-    if (topPools && !topPoolsLoading && topPools?.length > 0) {
-      const pools = new Array(recommendCount).fill({});
-      // const pools = resultPools;
-      topPools
-        ?.sort((a, b) => {
-          return b.poolweight - a.poolweight;
-        })
-        .forEach((item) => {
-          if (item.poolweight > 0) {
-            pools[recommendCount - item.poolweight] = item;
-          }
-        });
+  const poolResultList: (ITopPool | Record<string, never>)[] = new Array(recommendCount).fill({});
+  topPools?.forEach((item) => {
+    poolResultList[recommendCount - item.pool_weight] = item;
+  });
 
-      setResultPools(pools);
-    }
-  }, [topPools, topPoolsLoading]);
-
-  const handleReset = ({ poolid, standard }: IUpdatePoolWeightParams) => {
+  const handleReset = ({ poolid, auctionType }: IDeletePoolWeightParams) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
       title: 'Are you sure you want to delete this brand?',
       onOk() {
         setPageLoading(true);
-        updatePoolWeight({ poolid, weight: 0, standard }).then((res) => {
+        deletePoolWeight({ poolid, auctionType }).then((res) => {
           if (res.code === 1) {
             refreshTopPools().then((value) => {
               if (value && value?.length > 0) {
@@ -218,10 +95,10 @@ const RecommendPools: React.FC = () => {
       onOk() {
         setModalVisible(false);
         setPageLoading(true);
-        updatePoolWeight({
+        insertPoolWeight({
           poolid: pool.poolid!,
-          standard: pool.pooltype!,
-          weight: targetWeight,
+          auctionType: pool.pooltype!,
+          poolWeight: targetWeight,
         }).then((res1) => {
           if (res1.code === 1) {
             message.success('Success');
@@ -243,49 +120,12 @@ const RecommendPools: React.FC = () => {
       onOk() {
         setModalVisible(false);
         setPageLoading(true);
-        updatePoolWeight({ poolid: oldPoolId, standard: oldPoolStandard, weight: 0 }).then(
-          (res1) => {
-            if (res1.code === 1) {
-              updatePoolWeight({
-                poolid: pool.poolid!,
-                standard: pool.pooltype!,
-                weight: targetWeight,
-              }).then((res2) => {
-                if (res2.code === 1) {
-                  message.success('Success');
-                  refreshTopPools();
-                  searchAllPools({ pageSize: 6, current: 1 });
-                  setPageLoading(false);
-                } else {
-                  message.error('Error');
-                }
-              });
-            } else {
-              message.error('Error');
-            }
-          },
-        );
-      },
-    });
-  };
-
-  const handleSwap = (pool: IPoolInfo) => {
-    confirm({
-      icon: <ExclamationCircleOutlined />,
-      title: 'Are you sure you want to Swap this brand?',
-      onOk() {
-        setModalVisible(false);
-        setPageLoading(true);
-        updatePoolWeight({
-          poolid: oldPoolId,
-          standard: oldPoolStandard,
-          weight: pool.poolweight,
-        }).then((res1) => {
+        deletePoolWeight({ poolid: oldPoolId, auctionType: oldPoolStandard }).then((res1) => {
           if (res1.code === 1) {
-            updatePoolWeight({
+            insertPoolWeight({
               poolid: pool.poolid!,
-              standard: pool.pooltype!,
-              weight: targetWeight,
+              auctionType: pool.pooltype!,
+              poolWeight: targetWeight,
             }).then((res2) => {
               if (res2.code === 1) {
                 message.success('Success');
@@ -304,22 +144,129 @@ const RecommendPools: React.FC = () => {
     });
   };
 
+  const handleSwap = (pool: ITopPool) => {
+    confirm({
+      icon: <ExclamationCircleOutlined />,
+      title: 'Are you sure you want to Swap this brand?',
+      onOk() {
+        setModalVisible(false);
+        setPageLoading(true);
+        deletePoolWeight({ poolid: pool.pool_id!, auctionType: pool.auctiontype! }).then(
+          (delOriginRes) => {
+            if (delOriginRes.code === 1) {
+              deletePoolWeight({ poolid: oldPoolId, auctionType: oldPoolStandard }).then(
+                (delTargetRes) => {
+                  if (delTargetRes.code === 1) {
+                    insertPoolWeight({
+                      poolid: oldPoolId,
+                      auctionType: oldPoolStandard,
+                      poolWeight: pool.pool_weight,
+                    }).then((insertTargetRes) => {
+                      if (insertTargetRes.code === 1) {
+                        insertPoolWeight({
+                          poolid: pool.pool_id!,
+                          auctionType: pool.auctiontype!,
+                          poolWeight: targetWeight,
+                        }).then((insertOriginRes) => {
+                          if (insertOriginRes.code === 1) {
+                            message.success('Success');
+                            refreshTopPools();
+                            searchAllPools({ pageSize: 6, current: 1 });
+                            setPageLoading(false);
+                          } else {
+                            message.error('Error');
+                          }
+                        });
+                      } else {
+                        message.error('Error');
+                      }
+                    });
+                  } else message.error('Error');
+                },
+              );
+            } else message.error('Error');
+          },
+        );
+      },
+    });
+  };
+
   return (
     <PageContainer loading={pageLoading}>
       <Card>
         <Row gutter={[18, 24]}>
-          {resultPools.map((item: ITopPool, index) => (
+          {poolResultList.map((topPool: ITopPool | Record<string, never>, index) => (
             <Col
-              key={`${item.poolid}_${item.standard}_${index}`}
+              key={
+                JSON.stringify(topPool) === '{}'
+                  ? index
+                  : `${topPool.pool_id}_${topPool.auctiontype}`
+              }
               className="gutter-row"
-              flex="0 0 230px"
+              flex="0 0 240px"
             >
-              <RecommendItem
-                item={item}
-                index={index}
-                setModalVisible={setModalVisible}
-                onReset={handleReset}
-              />
+              {topPoolsLoading ? (
+                <SkeletonCard height={407} />
+              ) : JSON.stringify(topPool) === '{}' ? (
+                <AddItemCard
+                  height={407}
+                  handleAdd={() => {
+                    clickedIndex = index;
+                    oldPoolId = topPool.pool_id;
+                    oldPoolStandard = topPool.auctiontype;
+                    targetWeight = recommendCount - index;
+                    modalAction = 'add';
+                    setModalVisible(true);
+                  }}
+                />
+              ) : (
+                <ItemCard
+                  title={`No. ${index + 1}`}
+                  imgSrc={topPool.imgurl}
+                  category={topPool.category}
+                  onSwap={() => {
+                    clickedIndex = index;
+                    oldPoolId = topPool.pool_id;
+                    oldPoolStandard = topPool.auctiontype;
+                    targetWeight = recommendCount - index;
+                    modalAction = 'swap';
+                    setModalVisible(true);
+                  }}
+                  onEdit={() => {
+                    clickedIndex = index;
+                    oldPoolId = topPool.pool_id;
+                    oldPoolStandard = topPool.auctiontype;
+                    targetWeight = recommendCount - index;
+                    modalAction = 'edit';
+                    setModalVisible(true);
+                  }}
+                  onReset={() => {
+                    clickedIndex = index;
+                    handleReset({ poolid: topPool.pool_id, auctionType: topPool.auctiontype });
+                  }}
+                  description={
+                    <>
+                      <Space>
+                        <Typography.Paragraph>{`id: ${topPool.pool_id}`}</Typography.Paragraph>
+
+                        <Typography.Paragraph>
+                          {topPool?.state === poolStateEnum.closed && <Tag color="red">Closed</Tag>}
+                        </Typography.Paragraph>
+                      </Space>
+
+                      <Typography.Paragraph style={{ margin: 0, wordBreak: 'break-all' }}>
+                        {topPool && topPool?.name?.length > 20 ? (
+                          <Tooltip title={topPool?.name}>
+                            {`name: ${topPool?.name.replace(/^(.{20}).*$/, '$1...')}`}
+                          </Tooltip>
+                        ) : (
+                          `name: ${topPool?.name}`
+                        )}
+                      </Typography.Paragraph>
+                    </>
+                  }
+                />
+              )}
             </Col>
           ))}
         </Row>
@@ -327,7 +274,7 @@ const RecommendPools: React.FC = () => {
 
       {modalAction === 'swap' ? (
         <SwapPoolModal
-          data={fullTopPools}
+          data={topPools}
           loading={topPoolsLoading}
           clickedIndex={clickedIndex}
           clickedPoolId={oldPoolId}
@@ -340,7 +287,7 @@ const RecommendPools: React.FC = () => {
       ) : (
         <PoolModal
           tableProps={tableProps}
-          topPools={topPools?.filter((pool) => pool.poolweight > 0) || []}
+          topPools={topPools?.filter((pool) => pool.pool_weight > 0) || []}
           searchAllPools={searchAllPools}
           setSearchType={setSearchType}
           clickedIndex={clickedIndex}

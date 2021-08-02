@@ -53,6 +53,11 @@ export const Apis = {
   delpoolitem: '/auth/delpoolitem',
   updatepoolitem: '/auth/updatepoolitem', // 更改一个nft的显示状态
 
+  // pool weight
+  pool_get_recommends: '/auth/pool_get_recommends', // 获取已设置推荐位的pool
+  pool_insert_recommend: '/auth/pool_insert_recommend',
+  pool_delete_recommend: '/auth/pool_delete_recommend',
+
   // overview
   get_overviews: '/auth/get_overviews', // 获取统计数据
 

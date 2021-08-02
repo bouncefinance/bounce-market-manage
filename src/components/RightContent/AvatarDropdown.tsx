@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Menu, Spin } from 'antd';
-import { history, useModel } from 'umi';
+import { history, useIntl, useModel } from 'umi';
 import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
@@ -16,7 +16,7 @@ export type GlobalHeaderRightProps = {
  */
 const loginOut = () => {
   outLogin();
-  sessionStorage.clear()
+  sessionStorage.clear();
   const { query = {}, pathname } = history.location;
   const { redirect } = query;
   // Note: There may be security issues, please note
@@ -32,6 +32,7 @@ const loginOut = () => {
 
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
+  const intl = useIntl();
 
   const onMenuClick = useCallback(
     (event: {
@@ -86,7 +87,10 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
 
       <Menu.Item key="logout">
         <LogoutOutlined />
-        退出登录
+        {intl.formatMessage({
+          id: 'component.globalHeader.log-out',
+          defaultMessage: 'Log out',
+        })}
       </Menu.Item>
     </Menu>
   );

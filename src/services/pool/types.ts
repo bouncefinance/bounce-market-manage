@@ -39,10 +39,15 @@ export enum PoolFilterEnum {
 
 export type modalActionType = 'add' | 'swap' | 'edit';
 
-export interface IUpdatePoolWeightParams {
+export interface IInsertPoolWeightParams {
   poolid: number;
-  standard: poolSaleType;
-  weight?: number;
+  auctionType: poolSaleType;
+  poolWeight: number;
+}
+
+export interface IDeletePoolWeightParams {
+  poolid: number;
+  auctionType: poolSaleType;
 }
 
 export type categoryType = 'image' | 'video';
@@ -70,9 +75,17 @@ export interface IPoolInfo {
 
 export interface ITopPool {
   id: number;
-  poolid: number;
-  poolweight: number;
-  standard: poolSaleType;
+  creator: string;
+  pool_id: number;
+  name: string;
+  token_id: number;
+  price: string;
+  nft_type: number;
+  auctiontype: poolSaleType;
+  state: number;
+  pool_weight: number;
+  imgurl: string;
+  category: categoryType;
 }
 
 export interface IGetTopPoolsParams {

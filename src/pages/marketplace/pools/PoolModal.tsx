@@ -29,7 +29,6 @@ const PoolModal: React.FC<poolModalProps> = ({
   onOk,
   onCancel,
 }) => {
-  console.log('topPools: ', topPools);
   const [selectedPool, setSelectedPool] = useState<IPoolInfo>();
 
   const columns = [
@@ -43,12 +42,12 @@ const PoolModal: React.FC<poolModalProps> = ({
       dataIndex: 'fileurl',
       title: 'Cover',
       align: 'center',
-      width: 20,
+      width: 50,
       render: (url: any, record: IPoolInfo) =>
         record.category === 'video' ? (
-          <video width={30} height={30} src={url} />
+          <video width={50} height={50} src={url} />
         ) : (
-          <Image width={30} height={30} src={url} />
+          <Image width={50} height={50} src={url} preview style={{ objectFit: 'contain' }} />
         ),
     },
     {
@@ -65,7 +64,8 @@ const PoolModal: React.FC<poolModalProps> = ({
           )}
 
           {topPools.find(
-            (topPool) => topPool.poolid === record.poolid && topPool.standard === record.pooltype,
+            (topPool) =>
+              topPool.pool_id === record.poolid && topPool.auctiontype === record.pooltype,
           ) ? (
             <Tag color="gold">Recommend</Tag>
           ) : null}
@@ -116,9 +116,9 @@ const PoolModal: React.FC<poolModalProps> = ({
         record.state === poolStateEnum.closed ||
         topPools.find(
           (topPool) =>
-            topPool.poolid === record.poolid &&
-            topPool.standard === record.pooltype &&
-            topPool.poolweight > 0,
+            topPool.pool_id === record.poolid &&
+            topPool.auctiontype === record.pooltype &&
+            topPool.pool_weight > 0,
         ),
     }),
   };

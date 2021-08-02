@@ -48,8 +48,14 @@ const DropsPage: React.FC = () => {
 
   const handleDelete = (dropsid: number) => {
     confirm({
+      title: <span style={{ fontSize: 14 }}>{'Delete Drop'}</span>,
       icon: <ExclamationCircleOutlined />,
-      title: 'Are you sure you want to delete this item?',
+      content: (
+        <>
+          <span style={{ fontSize: 20 }}>{'Are you sure you want to delete this Drop？'}</span>
+          <span style={{ fontSize: 20, color: 'red' }}>{'This operation cannot be undone.'}</span>
+        </>
+      ),
       onOk() {
         deleteOneDrop(dropsid).then((res) => {
           if (res.code === 1) {

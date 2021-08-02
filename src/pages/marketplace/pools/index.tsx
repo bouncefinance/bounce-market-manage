@@ -69,7 +69,7 @@ const RecommendPools: React.FC = () => {
   const handleReset = ({ poolid, auctionType }: IDeletePoolWeightParams) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Are you sure you want to delete this brand?',
+      title: 'Are you sure you want to delete this pool?',
       onOk() {
         setPageLoading(true);
         deletePoolWeight({ poolid, auctionType }).then((res) => {
@@ -91,7 +91,7 @@ const RecommendPools: React.FC = () => {
   const handleAdd = (pool: IPoolInfo) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Are you sure you want to add this brand?',
+      title: 'Are you sure you want to add this pool?',
       onOk() {
         setModalVisible(false);
         setPageLoading(true);
@@ -116,7 +116,7 @@ const RecommendPools: React.FC = () => {
   const handleEdit = (pool: IPoolInfo) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Are you sure you want to add this brand?',
+      title: 'Are you sure you want to add this pool?',
       onOk() {
         setModalVisible(false);
         setPageLoading(true);
@@ -147,7 +147,7 @@ const RecommendPools: React.FC = () => {
   const handleSwap = (pool: ITopPool) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
-      title: 'Are you sure you want to Swap this brand?',
+      title: 'Are you sure you want to Swap this pool?',
       onOk() {
         setModalVisible(false);
         setPageLoading(true);

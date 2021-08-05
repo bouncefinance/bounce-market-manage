@@ -2,7 +2,7 @@ export interface INftItem {
   artistpoolweight: number;
   category: string;
   channel: string;
-  contractaddress: string;
+  token0: string; // contractaddress
   created_at: string;
   creator: string;
   description: string;

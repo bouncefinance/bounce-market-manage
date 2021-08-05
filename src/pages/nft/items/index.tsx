@@ -166,19 +166,9 @@ const NFT: React.FC = () => {
           unCheckedChildren="Show"
           onChange={(checked: boolean) => {
             if (checked) {
-              handleHideItem(
-                record.contractaddress,
-                record.tokenid,
-                NftDisplayEnum.hide,
-                reloadItem,
-              );
+              handleHideItem(record.token0, record.tokenid, NftDisplayEnum.hide, reloadItem);
             } else {
-              handleHideItem(
-                record.contractaddress,
-                record.tokenid,
-                NftDisplayEnum.hide,
-                reloadItem,
-              );
+              handleHideItem(record.token0, record.tokenid, NftDisplayEnum.hide, reloadItem);
             }
           }}
         />
@@ -193,7 +183,7 @@ const NFT: React.FC = () => {
           danger
           key="list-loadmore-delete"
           onClick={() => {
-            handleDeleteItem(record.contractaddress, record.tokenid, reloadItem);
+            handleDeleteItem(record.token0, record.tokenid, reloadItem);
           }}
         >
           Delete

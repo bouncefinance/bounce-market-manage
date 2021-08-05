@@ -27,7 +27,7 @@ let clickedIndex: number;
 let targetWeight: number;
 let modalAction: 'swap' | 'add' | 'edit';
 let oldPoolId: number;
-let oldPoolStandard: poolSaleType;
+let oldPoolAuctionType: poolSaleType;
 
 // 推荐位个数
 const recommendCount = 11;
@@ -120,7 +120,7 @@ const RecommendPools: React.FC = () => {
       onOk() {
         setModalVisible(false);
         setPageLoading(true);
-        deletePoolWeight({ poolid: oldPoolId, auctionType: oldPoolStandard }).then((res1) => {
+        deletePoolWeight({ poolid: oldPoolId, auctionType: oldPoolAuctionType }).then((res1) => {
           if (res1.code === 1) {
             insertPoolWeight({
               poolid: pool.poolid!,
@@ -154,12 +154,12 @@ const RecommendPools: React.FC = () => {
         deletePoolWeight({ poolid: pool.pool_id!, auctionType: pool.auctiontype! }).then(
           (delOriginRes) => {
             if (delOriginRes.code === 1) {
-              deletePoolWeight({ poolid: oldPoolId, auctionType: oldPoolStandard }).then(
+              deletePoolWeight({ poolid: oldPoolId, auctionType: oldPoolAuctionType }).then(
                 (delTargetRes) => {
                   if (delTargetRes.code === 1) {
                     insertPoolWeight({
                       poolid: oldPoolId,
-                      auctionType: oldPoolStandard,
+                      auctionType: oldPoolAuctionType,
                       poolWeight: pool.pool_weight,
                     }).then((insertTargetRes) => {
                       if (insertTargetRes.code === 1) {
@@ -213,7 +213,7 @@ const RecommendPools: React.FC = () => {
                   handleAdd={() => {
                     clickedIndex = index;
                     oldPoolId = topPool.pool_id;
-                    oldPoolStandard = topPool.auctiontype;
+                    oldPoolAuctionType = topPool.auctiontype;
                     targetWeight = recommendCount - index;
                     modalAction = 'add';
                     setModalVisible(true);
@@ -227,7 +227,7 @@ const RecommendPools: React.FC = () => {
                   onSwap={() => {
                     clickedIndex = index;
                     oldPoolId = topPool.pool_id;
-                    oldPoolStandard = topPool.auctiontype;
+                    oldPoolAuctionType = topPool.auctiontype;
                     targetWeight = recommendCount - index;
                     modalAction = 'swap';
                     setModalVisible(true);
@@ -235,7 +235,7 @@ const RecommendPools: React.FC = () => {
                   onEdit={() => {
                     clickedIndex = index;
                     oldPoolId = topPool.pool_id;
-                    oldPoolStandard = topPool.auctiontype;
+                    oldPoolAuctionType = topPool.auctiontype;
                     targetWeight = recommendCount - index;
                     modalAction = 'edit';
                     setModalVisible(true);

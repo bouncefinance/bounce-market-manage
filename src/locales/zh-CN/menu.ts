@@ -13,12 +13,14 @@ export default {
   'menu.dropsEdit': '编辑Drops',
 
   'menu.nft': 'NFT 管理',
+  'menu.nft.items': 'NFT',
+  'menu.nft.brands': '品牌',
 
   'menu.users': '用户',
 
   'menu.administrator': '管理员',
-
-  'menu.history': '操作记录',
+  'menu.administrator.administrator': '管理员权限',
+  'menu.administrator.history': '操作记录',
 
   'menu.Authority': '权限',
   'menu.Authority.User': '用户',

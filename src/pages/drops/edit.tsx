@@ -92,8 +92,10 @@ const DropEdit: React.FC = () => {
   };
 
   useEffect(() => {
-    setSelectedPoolList([]);
-    setTempSelectedPoolList([]);
+    if (!currentDropId) {
+      setSelectedPoolList([]);
+      setTempSelectedPoolList([]);
+    }
   }, [selectedAccount]);
 
   // getAccountByAddress
@@ -138,6 +140,7 @@ const DropEdit: React.FC = () => {
 
   useEffect(() => {
     const list = dropData?.list || [];
+
     if (currentDropId && !dropDataLoading && list.length) {
       const selecteds = list.map((drop: any) => {
         return drop.auctionpoolid;
@@ -200,8 +203,6 @@ const DropEdit: React.FC = () => {
   }, [currentDropId, dropData, dropDataLoading]);
 
   const handleEdit = (data: any) => {
-    // console.log('data: ', data);
-
     if (!selectedAccount) return;
 
     let bgcolor;
@@ -232,8 +233,6 @@ const DropEdit: React.FC = () => {
       }),
       dropdate: data.dropdate.unix(),
     };
-
-    // console.log('params: ', params);
 
     if (currentDropId) {
       updateOneDrop({ ...params, id: Number(currentDropId) }).then((res) => {

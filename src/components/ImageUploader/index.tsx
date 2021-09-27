@@ -32,7 +32,10 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
   const handleChange = ({ file, fileList: newFileList }: UploadChangeParam) => {
     // console.log('file: ', file);
     if (!file.status) return;
-    if (!SupportedImgType.find((supportedType) => supportedType === file.type)) {
+    if (
+      file.status === 'uploading' &&
+      !SupportedImgType.find((supportedType) => supportedType === file.type)
+    ) {
       message.error(`Only support jpg, png, gif, jpeg, jp2`);
       return;
     }

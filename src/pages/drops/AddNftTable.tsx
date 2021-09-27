@@ -70,7 +70,12 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
       dataIndex: 'fileurl',
       title: 'Cover',
       width: 80,
-      render: (src: any) => <Image height={60} width={60} src={src} />,
+      render: (src: any, record: IPoolResponse) =>
+        record.category === 'video' ? (
+          <video height={60} width={60} src={src} controls={false} preload="metadata" />
+        ) : (
+          <Image height={60} width={60} src={src} />
+        ),
     },
     {
       dataIndex: 'itemname',

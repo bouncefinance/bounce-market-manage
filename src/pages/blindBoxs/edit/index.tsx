@@ -58,6 +58,14 @@ const disabledTime = (date: any) => {
   };
 };
 
+const typeTemplate = 'Please input a valid ${type}';
+const validateMessages = {
+  required: '${label} is required!',
+  types: {
+    url: typeTemplate,
+  },
+};
+
 export type IEditBlindBoxProps = {};
 
 const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
@@ -201,7 +209,11 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
       if (res.code === 1) {
         message.success('Added Successfully');
         history.push('/blindboxs');
-      } else if (res.msg?.includes('timestamp')) message.error('Drop time is over due');
+      } else if (res.msg?.includes('timestamp')) message.error('Time is over due');
+      else if (res.msg?.includes('Duplicate entry'))
+        message.error('Collection cannot be duplicate.');
+      else if (res.msg?.includes('tokenimgs length'))
+        message.error('Tokenimgs length and Total supply should be same.');
       else message.error('Add failed');
     });
   };
@@ -259,12 +271,14 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 14 }}
           onFinish={boxId ? handleEdit : handleAdd}
+          validateMessages={validateMessages}
+          validateTrigger={['onSubmit', 'onBlur']}
         >
           <Form.Item noStyle>
             <h1>Add blind box</h1>
           </Form.Item>
 
-          <Form.Item label="输入collection合约" required>
+          <Form.Item label="collection合约">
             {!boxId && (
               // <>
               //   <Select
@@ -317,7 +331,7 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
             ) : null}
           </Form.Item>
 
-          <Form.Item name="dropdate" label="选择盲盒开启的时间：" required>
+          <Form.Item name="dropdate" label="盲盒开启的时间" rules={[{ required: true }]}>
             <DatePicker
               disabled={boxId}
               inputReadOnly
@@ -329,7 +343,7 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
             />
           </Form.Item>
 
-          <Form.Item name="opendate" label="选择盲盒开售的时间：" required>
+          <Form.Item name="opendate" label="盲盒开售的时间" rules={[{ required: true }]}>
             <DatePicker
               disabled={boxId}
               inputReadOnly
@@ -341,7 +355,7 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
             />
           </Form.Item>
 
-          <Form.Item label="上传盲盒封面：">
+          <Form.Item label="盲盒封面">
             <Form.Item
               name="blindcoverimgurl"
               noStyle
@@ -352,15 +366,15 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
             <span>Support jpg, png, gif, jpeg, jp2. Max size: 10MB.</span>
           </Form.Item>
 
-          <Form.Item name="name" label="盲盒name：" required>
+          <Form.Item name="name" label="盲盒name" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
 
-          <Form.Item name="box_description" label="盲盒description：">
+          <Form.Item name="box_description" label="盲盒description">
             <TextArea rows={4} />
           </Form.Item>
 
-          <Form.Item name="channel" label="Channel：" initialValue="art" required>
+          <Form.Item name="channel" label="Channel" initialValue="art" rules={[{ required: true }]}>
             <Select>
               <Option value="art">Art</Option>
               <Option value="sports">Sports</Option>
@@ -373,27 +387,72 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
             </Select>
           </Form.Item>
 
-          <Form.Item name="category" label="Category: " initialValue="image" required>
+          <Form.Item
+            name="category"
+            label="Category: "
+            initialValue="image"
+            rules={[{ required: true }]}
+          >
             <Select>
               <Option value="image">Image</Option>
               <Option value="video">Video</Option>
             </Select>
           </Form.Item>
 
-          <Form.Item name="supply" label="Total Supply" required>
+          <Form.Item
+            name="supply"
+            label="Total Supply"
+            validateTrigger={['onSubmit']}
+            rules={[
+              { required: true },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  console.log('maxbuycount: ', getFieldValue('maxbuycount'));
+                  if (
+                    !value ||
+                    !getFieldValue('maxbuycount') ||
+                    getFieldValue('maxbuycount') <= value
+                  ) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error('Total supply cannot be smaller than total max buy count.'),
+                  );
+                },
+              }),
+            ]}
+          >
             <Input type="number" disabled={boxId} />
           </Form.Item>
 
-          <Form.Item name="price" label="Price" required>
+          <Form.Item name="price" label="Price" rules={[{ required: true }]}>
             <Input suffix={CURRENCY[sessionStorage.symbol]} type="number" disabled={boxId} />
           </Form.Item>
 
-          <Form.Item name="maxbuycount" label="最大购买数量" required>
+          <Form.Item
+            name="maxbuycount"
+            label="最大购买数量"
+            validateTrigger={['onSubmit']}
+            rules={[
+              { required: true },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  console.log('supply: ', getFieldValue('supply'));
+                  if (!value || !getFieldValue('supply') || getFieldValue('supply') >= value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error('Max buy count cannot be bigger than total supply.'),
+                  );
+                },
+              }),
+            ]}
+          >
             <Input type="number" disabled={boxId} />
           </Form.Item>
 
-          <Form.Item name="tokenimgs" label="盲盒image链接：" required>
-            <Input />
+          <Form.Item name="tokenimgs" label="盲盒image链接" rules={[{ required: true }]}>
+            <TextArea rows={4} />
           </Form.Item>
 
           <Divider />
@@ -402,20 +461,22 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
             <h1>drops相关资料</h1>
           </Form.Item>
 
-          <Form.Item name="drop_description" label="Description：" required>
+          <Form.Item name="drop_description" label="Description" rules={[{ required: true }]}>
             <TextArea rows={4} showCount maxLength={300} />
           </Form.Item>
 
-          <Form.Item name="instagram" label="Instagram">
-            <Input />
-          </Form.Item>
+          <Form.Item label="Links">
+            <Form.Item name="instagram" rules={[{ type: 'url' }]}>
+              <Input addonBefore="Instagram" />
+            </Form.Item>
 
-          <Form.Item name="twitter" label="Twitter">
-            <Input />
-          </Form.Item>
+            <Form.Item name="twitter" rules={[{ type: 'url' }]}>
+              <Input addonBefore="Twitter" />
+            </Form.Item>
 
-          <Form.Item name="website" label="Website">
-            <Input />
+            <Form.Item name="website" rules={[{ type: 'url' }]}>
+              <Input addonBefore="Website" />
+            </Form.Item>
           </Form.Item>
 
           <Form.Item label="Cover">

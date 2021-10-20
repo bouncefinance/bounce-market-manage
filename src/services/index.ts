@@ -64,6 +64,7 @@ UMIRequest.interceptors.request.use((url, options) => {
 
 // Response 拦截
 UMIRequest.interceptors.response.use((res) => {
+  // console.log('res: ', res);
   // 无权访问
   if (res.status === 403) {
     history.replace('/user/login');

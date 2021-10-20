@@ -26,6 +26,7 @@ export const Apis = {
   updateuseridentity: '/auth/updateuseridentity', // 修改brand的权重
   updateuserstate: '/auth/updateuserstate', // 修改brand的权重
   updateuserdisplay: '/auth/updateuserdisplay', // 修改brand的权重
+  getBrandByContract: '/auth/get_brand_by_contract',
 
   // authority
   addoperators: '/auth/addoperators', // 修改brand的权重
@@ -63,6 +64,13 @@ export const Apis = {
 
   // file
   fileupload: '/auth/fileupload', // Uploader
+
+  // blind box
+  add_blindbox: '/auth/add_blindbox',
+  del_blindbox: '/auth/del_blindbox',
+  query_allblindbox: '/auth/query_blindbox',
+  query_oneblindbox: '/auth/query_oneblindbox',
+  update_blindbox: '/auth/update_blindbox',
 };
 
 export default Apis;

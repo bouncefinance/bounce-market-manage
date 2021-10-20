@@ -29,6 +29,9 @@ export default {
   'menu.test': '测试页面',
   'menu.test.hhh': '测试页面hhh',
 
+  'menu.blindboxs': '盲盒',
+  'menu.blindboxEdit': '编辑盲盒信息',
+
   // 'menu.box': 'Box',
   // 'menu.box.view': 'View',
   // 'menu.box.create': 'Create',

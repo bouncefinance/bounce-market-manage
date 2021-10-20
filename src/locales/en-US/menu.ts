@@ -29,6 +29,9 @@ export default {
   'menu.test': '测试页面',
   'menu.test.hhh': '测试页面hhh',
 
+  'menu.blindBox': 'Blind Box',
+  'menu.blindBoxEdit': 'Blind Box Edit',
+
   // 'menu.box': 'Box',
   // 'menu.box.view': 'View',
   // 'menu.box.create': 'Create',

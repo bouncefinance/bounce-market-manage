@@ -13,7 +13,7 @@ export interface IImageUploaderProps {
   value?: UploadFile;
   maxCount?: number;
   limit?: number;
-  onChange: (file: UploadFile | null, items: UploadFile[]) => void;
+  onChange?: (file: UploadFile | null, items: UploadFile[]) => void;
 }
 const ImageUploader: React.FC<IImageUploaderProps> = ({
   value,
@@ -40,15 +40,17 @@ const ImageUploader: React.FC<IImageUploaderProps> = ({
       return;
     }
     setFileList(newFileList);
-    switch (file.status) {
-      case 'done':
-        onChange(file, fileList);
-        break;
-      case 'removed':
-        onChange(null, fileList);
-        break;
-      default:
-        break;
+    if (onChange) {
+      switch (file.status) {
+        case 'done':
+          onChange(file, fileList);
+          break;
+        case 'removed':
+          onChange(null, fileList);
+          break;
+        default:
+          break;
+      }
     }
   };
 

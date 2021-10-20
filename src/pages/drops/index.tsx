@@ -129,7 +129,7 @@ const DropsPage: React.FC = () => {
       title: 'Cover',
       render: (src: any, record) => {
         if (src === '-')
-          return <div style={{ backgroundColor: record.bgcolor, width: 40, height: 40 }}></div>;
+          return <div style={{ backgroundColor: record.bgcolor, width: 40, height: 40 }} />;
         return <Image width={40} height={40} src={src} />;
       },
     },
@@ -222,13 +222,13 @@ const DropsPage: React.FC = () => {
         setState(Number(key) as DropsState);
       }}
       tabList={tabs}
-      tabBarExtraContent={[
+      tabBarExtraContent={
         <Link key="add" to="/drops/edit">
           <Button icon={<PlusOutlined />} type="primary">
             Add
           </Button>
-        </Link>,
-      ]}
+        </Link>
+      }
     >
       <ProTable
         actionRef={ref as any}
@@ -255,7 +255,7 @@ const DropsPage: React.FC = () => {
             placeholder: 'Input address',
           },
         }}
-      ></ProTable>
+      />
     </PageContainer>
   );
 };

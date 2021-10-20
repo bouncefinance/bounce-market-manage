@@ -73,6 +73,7 @@ const routes: MenuDataItem[] = [
       },
     ],
   },
+
   {
     name: 'drops',
     path: '/drops',
@@ -86,6 +87,21 @@ const routes: MenuDataItem[] = [
     hideInMenu: true,
     component: './drops/edit',
   },
+
+  {
+    name: 'blindboxs',
+    path: '/blindboxs',
+    icon: 'PlusSquare',
+    component: './blindBoxs',
+    access: 'dropAdmin',
+  },
+  {
+    name: 'blindboxEdit',
+    path: '/blindboxs/edit',
+    hideInMenu: true,
+    component: './blindBoxs/edit',
+  },
+
   {
     name: 'nft',
     path: '/nft',
@@ -130,26 +146,6 @@ const routes: MenuDataItem[] = [
       },
     ],
   },
-  // {
-  //     name: 'box',
-  //     path: '/box',
-  //     icon: 'PlusSquare',
-  //     component: './box/createBox.tsx',
-  //     routes:[
-  //       {
-  //         name: 'view',
-  //         path: 'View',
-  //         // icon: 'DownSquare',
-  //         component: './box/viewBoxs.tsx',
-  //       },
-  //       {
-  //         name: 'create',
-  //         path: 'Create',
-  //         // icon: 'DownSquare',
-  //         component: './box/createBox.tsx',
-  //       }
-  //     ]
-  //   },
   {
     component: './404',
   },

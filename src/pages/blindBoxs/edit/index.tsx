@@ -163,7 +163,7 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
         channel: boxData.channel,
         category: boxData.category,
         supply: boxData.nfts,
-        price: Number(boxData.price) * 1e18,
+        price: boxData.price,
         maxbuycount: boxData.maxbuycount,
         tokenimgs: boxData.tokenimgs,
         drop_description: boxData.nftdescription,
@@ -198,7 +198,7 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
       maxbuycount: Number(data.maxbuycount),
       nftdescription: data.drop_description,
       opendate: data.opendate.unix(),
-      price: `${data.price / 1e18}`,
+      price: data.price,
       tokenimgs: data.tokenimgs,
       totalsupply: Number(data.supply),
       twitter: data.twitter,
@@ -246,12 +246,9 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
   };
 
   const handleReset = () => {
-    // setCoverImage('');
     setSelectedBrand(undefined);
     form.resetFields();
   };
-
-  // const handleEdit = () ={}
 
   const options = (
     <Option value={brandData?.contractaddress || ''}>
@@ -402,7 +399,7 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
           <Form.Item
             name="supply"
             label="Total Supply"
-            validateTrigger={['onSubmit']}
+            // validateTrigger={['onSubmit']}
             rules={[
               { required: true },
               ({ getFieldValue }) => ({
@@ -432,7 +429,7 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
           <Form.Item
             name="maxbuycount"
             label="最大购买数量"
-            validateTrigger={['onSubmit']}
+            // validateTrigger={['onSubmit']}
             rules={[
               { required: true },
               ({ getFieldValue }) => ({

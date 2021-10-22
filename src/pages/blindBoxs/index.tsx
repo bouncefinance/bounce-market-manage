@@ -109,8 +109,7 @@ const BlindBoxsPage: FC = () => {
     {
       dataIndex: 'price',
       title: 'Price',
-      // TODO: 精度问题
-      render: (text: any) => <span>{`${text * 1e18} ${CURRENCY[sessionStorage.symbol]}`}</span>,
+      render: (text: any) => <span>{`${text} ${CURRENCY[sessionStorage.symbol]}`}</span>,
     },
     {
       dataIndex: 'accountaddress',

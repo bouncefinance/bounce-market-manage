@@ -58,26 +58,22 @@ const disabledTime = (date: any) => {
   };
 };
 
+// eslint-disable-next-line no-template-curly-in-string
 const typeTemplate = 'Please input a valid ${type}';
 const validateMessages = {
+  // eslint-disable-next-line no-template-curly-in-string
   required: '${label} is required!',
   types: {
     url: typeTemplate,
   },
 };
 
-export type IEditBlindBoxProps = {};
-
-const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
+const EditBlindBox: React.FC = () => {
   const [form] = Form.useForm();
   const location = useLocation();
   const boxId = location['query']?.id || '';
 
   const [selectedBrand, setSelectedBrand] = useState<IBrandResponse>();
-  // const [searchType, setSearchType] = useState<SearchType>('contract');
-  // const [brandData, setBrandData] = useState<IBrandResponse | IBrandResponse[]>();
-  // const [brandLoading, setBrandLoading] = useState<boolean>(false);
-  // const [searchBrand, setSearchBrand] = useState();
 
   const { data: boxData, run: searchOneBlindBox } = useRequest(
     (id: number) => {
@@ -328,7 +324,22 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
             ) : null}
           </Form.Item>
 
-          <Form.Item name="dropdate" label="盲盒开启的时间" rules={[{ required: true }]}>
+          <Form.Item
+            name="dropdate"
+            label="盲盒开售的时间"
+            validateTrigger={['onSubmit', 'onBlur', 'onChange']}
+            rules={[
+              { required: true },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || !getFieldValue('opendate') || getFieldValue('opendate') > value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Open time cannot be later than drop time.'));
+                },
+              }),
+            ]}
+          >
             <DatePicker
               disabled={boxId}
               inputReadOnly
@@ -340,7 +351,22 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
             />
           </Form.Item>
 
-          <Form.Item name="opendate" label="盲盒开售的时间" rules={[{ required: true }]}>
+          <Form.Item
+            name="opendate"
+            label="盲盒开启的时间"
+            validateTrigger={['onSubmit', 'onBlur', 'onChange']}
+            rules={[
+              { required: true },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || !getFieldValue('dropdate') || getFieldValue('dropdate') < value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Open time cannot be later than drop time.'));
+                },
+              }),
+            ]}
+          >
             <DatePicker
               disabled={boxId}
               inputReadOnly
@@ -404,7 +430,6 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
               { required: true },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  console.log('maxbuycount: ', getFieldValue('maxbuycount'));
                   if (
                     !value ||
                     !getFieldValue('maxbuycount') ||
@@ -434,7 +459,6 @@ const EditBlindBox: React.FC<IEditBlindBoxProps> = ({}) => {
               { required: true },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  console.log('supply: ', getFieldValue('supply'));
                   if (!value || !getFieldValue('supply') || getFieldValue('supply') >= value) {
                     return Promise.resolve();
                   }

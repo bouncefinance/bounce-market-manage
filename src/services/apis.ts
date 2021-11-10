@@ -71,6 +71,13 @@ export const Apis = {
   query_allblindbox: '/auth/query_blindbox',
   query_oneblindbox: '/auth/query_oneblindbox',
   update_blindbox: '/auth/update_blindbox',
+
+  // airdrop
+  add_airdrop: '/auth/add_airdrop',
+  del_airdrop: '/auth/del_airdrop',
+  query_allAirdrop: '/auth/query_airdrop',
+  query_oneAirdrop: '/auth/query_oneairdrop',
+  update_airdrop: '/auth/update_airdrop',
 };
 
 export default Apis;

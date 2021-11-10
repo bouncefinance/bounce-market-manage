@@ -103,6 +103,20 @@ const routes: MenuDataItem[] = [
   },
 
   {
+    name: 'airdrop',
+    path: '/airdrop',
+    icon: 'PlusSquare',
+    component: './airdrop',
+    access: 'dropAdmin',
+  },
+  {
+    name: 'airdropEdit',
+    path: '/airdrop/edit',
+    hideInMenu: true,
+    component: './airdrop/edit',
+  },
+
+  {
     name: 'nft',
     path: '/nft',
     icon: 'icon-cube',

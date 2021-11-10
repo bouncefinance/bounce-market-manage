@@ -1,31 +1,30 @@
-export type BlindBoxState = 1 | 2 | 3;
+export type AirdropState = 1 | 2 | 3;
 
-export interface IAddBlindBoxParams {
-  accountaddress: string;
-  blindname: string;
-  blindcoverimgurl: string;
+export interface IUserInfo {
+  useravatars: string;
+  usernames: string;
+}
+
+export type ModalAction = 'add' | 'edit';
+
+export interface IAddAirdropParams {
+  airdropname: string;
   category: string;
   channel: string;
   collection: string;
   coverimgurl: string;
   description: string;
   dropdate: number;
-  facebook?: string;
-  instagram: string;
-  maxbuycount: number;
   nftdescription: string;
-  opendate: number;
-  price: string;
   tokenimgs: string;
   totalsupply: number;
-  twitter: string;
-  website: string;
+  userinfos: IUserInfo[];
 }
 
-export interface IDelBlindBoxParams {
+export interface IDelAirdropParams {
   id: number;
 }
-export interface IQueryAllBlindBoxResponse {
+export interface IQueryAllAirdropResponse {
   id: number;
   accountaddress: string;
   username: string;
@@ -45,17 +44,17 @@ export interface IQueryAllBlindBoxResponse {
   updated_at: string;
 }
 
-export interface IQueryAllBlindBoxParams {
+export interface IQueryAllAirdropParams {
   state?: number;
   limit?: number;
   offset?: number;
 }
 
-export interface IQueryOneBlindBoxParams {
+export interface IQueryOneAirdropParams {
   id: number;
 }
 
-export interface IQueryOneBlindBoxResponse {
+export interface IQueryOneAirdropResponse {
   id: number;
   accountaddress: string;
   collection: string;
@@ -85,7 +84,7 @@ export interface IQueryOneBlindBoxResponse {
   updated_at: string;
 }
 
-export interface IUpdateBlindBoxParams {
+export interface IUpdateAirdropParams {
   blindcoverimgurl: 'string';
   blindname: string;
   category: string;

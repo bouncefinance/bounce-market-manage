@@ -63,12 +63,15 @@ UMIRequest.interceptors.request.use((url, options) => {
 });
 
 // Response 拦截
-UMIRequest.interceptors.response.use((res) => {
-  // console.log('res: ', res);
+UMIRequest.interceptors.response.use(async (res) => {
+  const data = await res.clone().json();
+
   // 无权访问
-  if (res.status === 403) {
+  if (res.status === 403 || data.status === -1) {
     history.replace('/user/login');
   }
+
   return res;
 });
+
 export { Apis };

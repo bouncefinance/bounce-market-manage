@@ -91,7 +91,7 @@ const routes: MenuDataItem[] = [
   {
     name: 'blindboxs',
     path: '/blindboxs',
-    icon: 'PlusSquare',
+    icon: 'Dropbox',
     component: './blindBoxs',
     access: 'dropAdmin',
   },
@@ -105,7 +105,7 @@ const routes: MenuDataItem[] = [
   {
     name: 'airdrop',
     path: '/airdrop',
-    icon: 'PlusSquare',
+    icon: 'CloudDownload',
     component: './airdrop',
     access: 'dropAdmin',
   },

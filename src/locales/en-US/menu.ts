@@ -29,8 +29,11 @@ export default {
   'menu.test': '测试页面',
   'menu.test.hhh': '测试页面hhh',
 
-  'menu.blindBox': 'Blind Box',
-  'menu.blindBoxEdit': 'Blind Box Edit',
+  'menu.blindboxs': 'Blind Box',
+  'menu.blindboxEdit': 'Blind Box Edit',
+
+  'menu.airdrop': 'Airdrop',
+  'menu.airdropEdit': 'Airdrop Edit',
 
   // 'menu.box': 'Box',
   // 'menu.box.view': 'View',

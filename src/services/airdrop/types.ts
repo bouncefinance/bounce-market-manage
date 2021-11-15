@@ -8,6 +8,7 @@ export interface IUserInfo {
 export type ModalAction = 'add' | 'edit';
 
 export interface IAddAirdropParams {
+  accountaddress: string;
   airdropname: string;
   category: string;
   channel: string;
@@ -26,22 +27,13 @@ export interface IDelAirdropParams {
 }
 export interface IQueryAllAirdropResponse {
   id: number;
-  accountaddress: string;
-  username: string;
-  website: string;
-  twitter: string;
-  instagram: string;
+  collection: string;
+  Brandname: string;
+  totalminted: 7;
   title: string;
-  description: string;
-  bgcolor: string;
   coverimgurl: string;
-  videourl: string;
-  dropdate: number;
   nfts: number;
-  state: number;
-  display: number;
   created_at: string;
-  updated_at: string;
 }
 
 export interface IQueryAllAirdropParams {
@@ -50,6 +42,23 @@ export interface IQueryAllAirdropParams {
   offset?: number;
 }
 
+export interface IQueryOneAirdropUserInfoParams {
+  id: number;
+}
+
+export interface IQueryOneAirdropUserInfoResponse {
+  id: number;
+  dropsid: number;
+  username: string;
+  imgurl: number;
+  tokenid: number;
+  contractaddress: string;
+  verifycode: string;
+  state: number;
+  reserve: string;
+  created_at: string;
+  updated_at: string;
+}
 export interface IQueryOneAirdropParams {
   id: number;
 }
@@ -98,4 +107,17 @@ export interface IUpdateAirdropParams {
   tokenimgs: string;
   twitter: string;
   website: string;
+}
+
+export interface IExportAirdropUserInfoParams {
+  dropsid: number;
+}
+
+export interface IExportAirdropUserInfoResponse {
+  usernames: string;
+  useravatar: string;
+  nftname: string;
+  nftimgurl: string;
+  tokenid: number;
+  verifycode: string;
 }

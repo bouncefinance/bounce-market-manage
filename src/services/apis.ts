@@ -77,7 +77,9 @@ export const Apis = {
   del_airdrop: '/auth/del_airdrop',
   query_allAirdrop: '/auth/query_airdrop',
   query_oneAirdrop: '/auth/query_oneairdrop',
+  query_oneairdrop_userinfo: '/auth/query_oneairdrop_userinfos',
   update_airdrop: '/auth/update_airdrop',
+  export_airdrop_userinfo: '/auth/export_airdrop_userinfo',
 };
 
 export default Apis;

@@ -48,8 +48,6 @@ const UserInfoModal: React.FC<IUserInfoModalProps> = ({
   };
 
   const handleSubmit = (values: any) => {
-    console.log('Success:', values);
-
     const tempArr = userInfoArr;
     tempArr[userIndex] = { useravatars: values.avatarimg.url, usernames: values.userName };
 

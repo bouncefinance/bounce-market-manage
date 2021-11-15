@@ -2,19 +2,17 @@ import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import type { ProColumns } from '@ant-design/pro-table';
-import { Button, message, Tooltip, Typography, Modal } from 'antd';
+import { Button, Tooltip, Typography } from 'antd';
 import Image from '@/components/Image';
 import { Link } from 'umi';
 import moment from 'moment';
-import { ExclamationCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import type {
-  AirdropState,
-  IDelAirdropParams,
-  IQueryAllAirdropResponse,
-} from '@/services/airdrop/types';
-import { delAirdrop, queryAllAirdrop } from '@/services/airdrop';
-
-const { confirm } = Modal;
+import ExcelJS from 'exceljs';
+import FileSaver from 'file-saver';
+import QRCode from 'qrcode.react';
+import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
+import type { AirdropState, IQueryAllAirdropResponse } from '@/services/airdrop/types';
+import { exportAirdropUserinfo, queryAllAirdrop } from '@/services/airdrop';
+import { useRequest } from 'ahooks';
 
 interface ActionType {
   reload: (resetPageIndex?: boolean) => void;
@@ -44,24 +42,67 @@ const AirDrop: React.FC = () => {
   const ref = useRef<ActionType>();
   const [airdropState, setAirdropState] = useState<AirdropState>(1);
 
-  const handleDelete = (params: IDelAirdropParams) => {
-    confirm({
-      title: <span style={{ fontSize: 14 }}>{'Delete'}</span>,
-      icon: <ExclamationCircleOutlined />,
-      content: (
-        <>
-          <span style={{ fontSize: 20 }}>{'Are you sure you want to delete this airdrop ? '}</span>
-          <span style={{ fontSize: 20, color: 'red' }}>{'This operation cannot be undone.'}</span>
-        </>
-      ),
-      onOk() {
-        delAirdrop(params).then((res) => {
-          if (res.code === 1) {
-            message.success('Deleted Successfully');
-            ref?.current?.reload();
-          }
-        });
+  const { run: getUserInfo } = useRequest(
+    (id: number) => {
+      return exportAirdropUserinfo({ dropsid: id });
+    },
+    { manual: true },
+  );
+
+  const handleDownloadBtnClick = (id: number) => {
+    const workbook = new ExcelJS.Workbook(); // 创建文件
+    const sheet = workbook.addWorksheet('sheet 1'); // 创建表
+    sheet.columns = [
+      // 设置表头
+      {
+        header: 'name',
+        key: 'usernames',
+        width: 20,
+        style: { font: { size: 14 } },
+      }, // 表头，对应数据属性为`key`值
+      {
+        header: 'image',
+        key: 'useravatar',
+        width: 150,
+        style: { font: { size: 14 } },
       },
+      {
+        header: 'NFT name',
+        key: 'nftname',
+        width: 20,
+        style: { font: { size: 14 } },
+      },
+      {
+        header: 'token ID',
+        key: 'tokenid',
+        width: 10,
+        style: { font: { size: 14 } },
+      },
+      {
+        header: 'nft image',
+        key: 'nftimgurl',
+        width: 150,
+        style: { font: { size: 14 } },
+      },
+      {
+        header: 'password',
+        key: 'verifycode',
+        width: 40,
+        style: { font: { size: 14 } },
+      },
+    ];
+
+    getUserInfo(id).then((res) => {
+      if (res.data) {
+        sheet.addRows(res.data);
+
+        workbook.xlsx.writeBuffer().then((result) => {
+          const blob = new Blob([result], {
+            type: 'applicationi/xlsx',
+          });
+          FileSaver.saveAs(blob, 'airdrop.xlsx');
+        });
+      }
     });
   };
 
@@ -96,6 +137,10 @@ const AirDrop: React.FC = () => {
       title: 'Supply',
     },
     {
+      dataIndex: 'totalminted',
+      title: 'Minted',
+    },
+    {
       dataIndex: 'created_at',
       title: '创建时间',
       render: (ts: any) => {
@@ -103,17 +148,27 @@ const AirDrop: React.FC = () => {
       },
     },
     {
+      title: 'QR Code',
+      render: (_, record) => {
+        return (
+          <QRCode
+            id="qrcode"
+            value={`https://fangible.com/airdrop/${record.id}/landing`}
+            size={100}
+          />
+        );
+      },
+    },
+    {
       title: 'Action',
-      width: 100,
-      render: (_, item) => {
+      render: (_, record) => {
         return (
           <Button
-            danger
             onClick={() => {
-              handleDelete({ id: item.id });
+              handleDownloadBtnClick(record.id);
             }}
           >
-            Delete
+            <DownloadOutlined />
           </Button>
         );
       },

@@ -18,11 +18,9 @@ import {
   Table,
 } from 'antd';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
-import { useRequest, history } from 'umi';
+import React, { useState } from 'react';
+import { history, useRequest } from 'umi';
 import UserInfoModal from './UserInfoModal';
-
-// type SearchType = 'contract' | 'name';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -47,18 +45,6 @@ const EditAirdrop: React.FC = () => {
   const [userIndex, setUserIndex] = useState<number>(-1);
   const [userInfoArr, setUserInfoArr] = useState<IUserInfo[]>([]);
 
-  useEffect(() => {
-    console.log('userIndex: ', userIndex);
-  }, [userIndex]);
-
-  useEffect(() => {
-    console.log('userInfoArr: ', userInfoArr);
-  }, [userInfoArr]);
-
-  useEffect(() => {
-    console.log('modalAction: ', modalAction);
-  }, [modalAction]);
-
   const {
     data: brandData,
     loading: brandLoading,
@@ -69,14 +55,22 @@ const EditAirdrop: React.FC = () => {
     },
     {
       manual: true,
+      formatResult: (res) => res.data,
       // cacheKey: 'accounts',
     },
   );
 
-  const handleAdd = (data: any) => {
+  const handleAdd = async (data: any) => {
     if (!selectedBrand) return;
 
+    const ethereum = window?.ethereum;
+    if (!ethereum) return;
+
+    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+    const account = accounts[0];
+
     const params: IAddAirdropParams = {
+      accountaddress: account,
       airdropname: data.airdropname,
       category: data.category,
       channel: data.channel,
@@ -90,12 +84,10 @@ const EditAirdrop: React.FC = () => {
       userinfos: userInfoArr,
     };
 
-    // console.log('params: ', params);
-
     addAirdrop(params).then((res) => {
       if (res.code === 1) {
         message.success('Added Successfully');
-        history.push('/blindairdrops');
+        history.push('/airdrop');
       } else if (res.msg?.includes('timestamp')) message.error('Time is over due');
       else if (res.msg?.includes('Duplicate entry'))
         message.error('Collection cannot be duplicate.');
@@ -165,6 +157,7 @@ const EditAirdrop: React.FC = () => {
             >
               Edit
             </Button>
+
             <Button
               danger
               onClick={() => {
@@ -280,26 +273,20 @@ const EditAirdrop: React.FC = () => {
           <Form.Item
             name="supply"
             label="Total Supply"
-            // validateTrigger={['onSubmit']}
-            // rules={[
-            //   { required: true },
-            //   ({ getFieldValue }) => ({
-            //     validator(_, value) {
-            //       if (
-            //         !value ||
-            //         !getFieldValue('maxbuycount') ||
-            //         getFieldValue('maxbuycount') <= value
-            //       ) {
-            //         return Promise.resolve();
-            //       }
-            //       return Promise.reject(
-            //         new Error('Total supply cannot be smaller than total max buy count.'),
-            //       );
-            //     },
-            //   }),
-            // ]}
+            validateTrigger={['onSubmit', 'onChange']}
+            rules={[
+              { required: true },
+              () => ({
+                validator(_, value) {
+                  if (!value || value <= 50) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Total supply must be under 50'));
+                },
+              }),
+            ]}
           >
-            <Input type="number" />
+            <Input type="number" max={50} />
           </Form.Item>
 
           <Form.Item name="tokenimgs" label="image链接" rules={[{ required: true }]}>

@@ -32,6 +32,9 @@ export default {
   'menu.blindboxs': '盲盒',
   'menu.blindboxEdit': '编辑盲盒信息',
 
+  'menu.airdrop': '空投',
+  'menu.airdropEdit': '编辑空投信息',
+
   // 'menu.box': 'Box',
   // 'menu.box.view': 'View',
   // 'menu.box.create': 'Create',

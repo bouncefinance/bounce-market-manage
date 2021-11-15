@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { getMetaMaskAccount, web3 } from '@/tools/connect';
 import { login } from '@/services/user';
 import { TokenSymbol } from '@/types';

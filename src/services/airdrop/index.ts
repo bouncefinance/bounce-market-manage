@@ -2,10 +2,14 @@ import { Apis, post, ToOffset } from '../index';
 import type {
   IAddAirdropParams,
   IDelAirdropParams,
+  IExportAirdropUserInfoParams,
+  IExportAirdropUserInfoResponse,
   IQueryAllAirdropParams,
   IQueryAllAirdropResponse,
   IQueryOneAirdropParams,
   IQueryOneAirdropResponse,
+  IQueryOneAirdropUserInfoParams,
+  IQueryOneAirdropUserInfoResponse,
   IUpdateAirdropParams,
 } from './types';
 
@@ -25,10 +29,18 @@ export const queryAllAirdrop = ({ state = 1, limit = 10, offset = 0 }: IQueryAll
   });
 };
 
+export const queryOneAirdropUserInfo = (params: IQueryOneAirdropUserInfoParams) => {
+  return post<IQueryOneAirdropUserInfoResponse[]>(Apis.query_oneairdrop_userinfo, params);
+};
+
 export const queryOneAirdrop = (params: IQueryOneAirdropParams) => {
   return post<IQueryOneAirdropResponse>(Apis.query_oneAirdrop, params);
 };
 
 export const updateAirdrop = (params: IUpdateAirdropParams) => {
   return post(Apis.update_airdrop, params);
+};
+
+export const exportAirdropUserinfo = (params: IExportAirdropUserInfoParams) => {
+  return post<IExportAirdropUserInfoResponse[]>(Apis.export_airdrop_userinfo, params);
 };

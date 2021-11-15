@@ -3,8 +3,9 @@ import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import type { ProColumns } from '@ant-design/pro-table';
 import { Button, Tooltip, Typography } from 'antd';
+import { isPre } from '@/tools/const';
 import Image from '@/components/Image';
-import { Link } from 'umi';
+import { Link, useRequest } from 'umi';
 import moment from 'moment';
 import ExcelJS from 'exceljs';
 import FileSaver from 'file-saver';
@@ -12,7 +13,6 @@ import QRCode from 'qrcode.react';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import type { AirdropState, IQueryAllAirdropResponse } from '@/services/airdrop/types';
 import { exportAirdropUserinfo, queryAllAirdrop } from '@/services/airdrop';
-import { useRequest } from 'ahooks';
 
 interface ActionType {
   reload: (resetPageIndex?: boolean) => void;
@@ -69,7 +69,7 @@ const AirDrop: React.FC = () => {
       {
         header: 'NFT name',
         key: 'nftname',
-        width: 20,
+        width: 40,
         style: { font: { size: 14 } },
       },
       {
@@ -93,8 +93,8 @@ const AirDrop: React.FC = () => {
     ];
 
     getUserInfo(id).then((res) => {
-      if (res.data) {
-        sheet.addRows(res.data);
+      if (res) {
+        sheet.addRows(res);
 
         workbook.xlsx.writeBuffer().then((result) => {
           const blob = new Blob([result], {
@@ -153,7 +153,7 @@ const AirDrop: React.FC = () => {
         return (
           <QRCode
             id="qrcode"
-            value={`https://fangible.com/airdrop/${record.id}/landing`}
+            value={`https://${isPre && 'stage.'}fangible.com/airdrop/${record.id}/landing`}
             size={100}
           />
         );

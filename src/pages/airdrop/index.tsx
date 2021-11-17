@@ -100,7 +100,7 @@ const AirDrop: React.FC = () => {
           const blob = new Blob([result], {
             type: 'applicationi/xlsx',
           });
-          FileSaver.saveAs(blob, 'airdrop.xlsx');
+          FileSaver.saveAs(blob, `airdrop ${id}.xlsx`);
         });
       }
     });

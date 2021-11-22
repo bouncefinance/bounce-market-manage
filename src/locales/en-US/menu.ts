@@ -35,6 +35,9 @@ export default {
   'menu.airdrop': 'Airdrop',
   'menu.airdropEdit': 'Airdrop Edit',
 
+  'menu.collections': 'Collections',
+  'menu.collectionEdit': 'Collection Edit',
+
   // 'menu.box': 'Box',
   // 'menu.box.view': 'View',
   // 'menu.box.create': 'Create',

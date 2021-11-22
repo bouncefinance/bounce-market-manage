@@ -27,6 +27,7 @@ export const Apis = {
   updateuserstate: '/auth/updateuserstate', // 修改brand的权重
   updateuserdisplay: '/auth/updateuserdisplay', // 修改brand的权重
   getBrandByContract: '/auth/get_brand_by_contract',
+  addCollectionInfo: '/auth/list_one_collection',
 
   // authority
   addoperators: '/auth/addoperators', // 修改brand的权重

@@ -384,7 +384,7 @@ const EditBlindBox: React.FC = () => {
               noStyle
               rules={[{ required: true, message: 'Cover cannot be empty' }]}
             >
-              <ImageUploader maxCount={1} limit={4 * 1024 * 1024} />
+              <ImageUploader maxCount={1} limit={10 * 1024 * 1024} />
             </Form.Item>
             <span>Support jpg, png, gif, jpeg, jp2. Max size: 10MB.</span>
           </Form.Item>

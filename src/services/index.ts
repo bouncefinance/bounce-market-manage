@@ -67,7 +67,8 @@ UMIRequest.interceptors.response.use(async (res) => {
   const data = await res.clone().json();
 
   // 无权访问
-  if (res.status === 403 || data.status === -1) {
+  if (res.status === 403 || data.code === -1) {
+    sessionStorage.clear();
     history.replace('/user/login');
   }
 

@@ -35,6 +35,9 @@ export default {
   'menu.airdrop': '空投',
   'menu.airdropEdit': '编辑空投信息',
 
+  'menu.collections': '品牌',
+  'menu.collectionEdit': '编辑品牌信息',
+
   // 'menu.box': 'Box',
   // 'menu.box.view': 'View',
   // 'menu.box.create': 'Create',

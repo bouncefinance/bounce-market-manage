@@ -17,18 +17,6 @@ const routes: MenuDataItem[] = [
       },
     ],
   },
-  // {
-  //   name: 'delete',
-  //   path: '/usermanager/nft',
-  //   component: './usermanager/nft',
-  // },
-  // {
-  //   name: 'deleteAndHide',
-  //   path: '/deleteAndHide',
-  //   icon: 'Edit',
-  //   component: './deleteAndHide',
-  // },
-
   {
     path: '/',
     redirect: './overview/statstics',
@@ -134,6 +122,20 @@ const routes: MenuDataItem[] = [
       },
     ],
   },
+
+  {
+    name: 'collections',
+    path: '/collections',
+    icon: 'FolderOpen',
+    component: './collections',
+  },
+  {
+    name: 'collectionEdit',
+    path: '/collection/edit',
+    hideInMenu: true,
+    component: './collections/edit',
+  },
+
   {
     name: 'users',
     path: 'account',

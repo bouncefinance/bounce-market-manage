@@ -22,6 +22,8 @@ import React, { useState } from 'react';
 import { history, useRequest } from 'umi';
 import UserInfoModal from './UserInfoModal';
 
+declare const window: any;
+
 const { TextArea } = Input;
 const { Option } = Select;
 

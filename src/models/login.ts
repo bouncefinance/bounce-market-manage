@@ -7,6 +7,9 @@ export type ITokens = {
   [key in TokenSymbol]: { token: string };
 };
 export const CHAIN_CACHE_KEY = 'chainAuth_cache';
+
+declare const window: any;
+
 const staticMessage = 'Welcome to Bounce!';
 const staticPassword = 'xxx';
 
@@ -33,6 +36,7 @@ export default () => {
   const handelCache = () => {
     sessionStorage.setItem(CHAIN_CACHE_KEY, JSON.stringify(source));
   };
+
   useEffect(() => {
     if (!source.account && !source.signature) {
       const cacheData = sessionStorage.getItem(CHAIN_CACHE_KEY) as any;
@@ -74,10 +78,12 @@ export default () => {
     source.chainSymbol = symbol;
     sessionStorage.symbol = symbol;
     const tokenData = source.tokens[symbol];
+
     if (tokenData.token) {
       sessionStorage.token = tokenData?.token;
       return Promise.resolve(tokenData);
     }
+
     try {
       const { code, msg, data } = (await login({
         signature: source.signature,

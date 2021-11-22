@@ -108,19 +108,7 @@ const routes: MenuDataItem[] = [
     name: 'nft',
     path: '/nft',
     icon: 'icon-cube',
-    routes: [
-      {
-        name: 'items',
-        path: 'item',
-        component: './nft/items',
-      },
-      {
-        name: 'brands',
-        path: 'brands',
-        // icon: 'History',
-        component: './nft/brands',
-      },
-    ],
+    component: './NFT',
   },
 
   {

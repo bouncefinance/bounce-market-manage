@@ -12,9 +12,7 @@ export default {
   'menu.drops': 'Drops List',
   'menu.dropsEdit': 'Drops Edit',
 
-  'menu.nft': 'NFT Management',
-  'menu.nft.items': 'Items',
-  'menu.nft.brands': 'Collections',
+  'menu.nft': 'NFT',
 
   'menu.users': 'Users',
 
@@ -35,7 +33,7 @@ export default {
   'menu.airdrop': 'Airdrop',
   'menu.airdropEdit': 'Airdrop Edit',
 
-  'menu.collections': 'Collections',
+  'menu.collections': 'Collection',
   'menu.collectionEdit': 'Collection Edit',
 
   // 'menu.box': 'Box',

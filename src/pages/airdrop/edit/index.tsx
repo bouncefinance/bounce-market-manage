@@ -3,6 +3,7 @@ import { addAirdrop } from '@/services/airdrop';
 import type { IAddAirdropParams, IUserInfo, ModalAction } from '@/services/airdrop/types';
 import { getBrandByContract } from '@/services/brand';
 import type { IBrandResponse } from '@/services/brand/types';
+import { disabledDate, disabledTime } from '@/utils/utils';
 import { PageContainer } from '@ant-design/pro-layout';
 import {
   Card,
@@ -16,6 +17,7 @@ import {
   Button,
   message,
   Table,
+  DatePicker,
 } from 'antd';
 import moment from 'moment';
 import React, { useState } from 'react';
@@ -52,7 +54,7 @@ const EditAirdrop: React.FC = () => {
     loading: brandLoading,
     run: searchBrand,
   } = useRequest(
-    (contractAddress) => {
+    (contractAddress: string) => {
       return getBrandByContract(contractAddress);
     },
     {
@@ -72,16 +74,17 @@ const EditAirdrop: React.FC = () => {
     const account = accounts[0];
 
     const params: IAddAirdropParams = {
-      accountaddress: account,
       airdropname: data.airdropname,
       category: data.category,
       channel: data.channel,
-      collection: selectedBrand?.contractaddress,
       coverimgurl: data.coverimgurl.url,
       description: data.description,
+      tokenimgs: data.tokenimgs,
+      opendate: data.opendate.unix(),
+      accountaddress: account,
+      collection: selectedBrand?.contractaddress,
       dropdate: moment().add(1, 'm').unix(),
       nftdescription: '',
-      tokenimgs: data.tokenimgs,
       totalsupply: Number(data.supply),
       userinfos: userInfoArr,
     };
@@ -228,7 +231,7 @@ const EditAirdrop: React.FC = () => {
             ) : null}
           </Form.Item>
 
-          <Form.Item label="上传封面">
+          <Form.Item label="cover">
             <Form.Item
               name="coverimgurl"
               noStyle
@@ -241,6 +244,21 @@ const EditAirdrop: React.FC = () => {
 
           <Form.Item name="airdropname" label="name" rules={[{ required: true }]}>
             <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="opendate"
+            label="open Date"
+            rules={[{ required: true, message: 'Open date cannot be empty' }]}
+          >
+            <DatePicker
+              inputReadOnly
+              format={'YYYY-MM-DD HH:mm'}
+              showTime={{ defaultValue: moment().add(1, 'minute') }}
+              showNow={false}
+              disabledDate={disabledDate}
+              disabledTime={disabledTime}
+            />
           </Form.Item>
 
           <Form.Item name="description" label="description">

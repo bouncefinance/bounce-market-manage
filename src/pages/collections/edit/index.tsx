@@ -4,9 +4,8 @@ import ImageUploader from '@/components/ImageUploader';
 import { addCollectionInfo } from '@/services/collection';
 import type { IAddCollectionInfoParams } from '@/services/collection/types';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Form, Input, Button, message, Select, Space, Tooltip } from 'antd';
+import { Card, Form, Input, Button, message, Select } from 'antd';
 import moment from 'moment';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -69,15 +68,8 @@ const EditBlindBox: React.FC = () => {
 
           <Form.Item
             name="timestamp"
-            // label="时间戳"
-            label={
-              <Space>
-                <span>time stamp</span>
-                <Tooltip title="eg: Nov-20-2021 08:34:54 AM +UTC">
-                  <QuestionCircleOutlined />
-                </Tooltip>
-              </Space>
-            }
+            label="time stamp"
+            tooltip="eg: Nov-20-2021 08:34:54 AM +UTC"
             rules={[
               { required: true },
               {

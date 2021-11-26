@@ -115,6 +115,6 @@ export const getBrandsByPage = ({ offset = 1, limit = 10 }: IBrandRequest) => {
   });
 };
 
-export const getBrandByContract = (contractAddress: number) => {
+export const getBrandByContract = (contractAddress: string) => {
   return post<IBrandResponse>(Apis.getBrandByContract, { contract: contractAddress });
 };

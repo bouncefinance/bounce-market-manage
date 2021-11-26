@@ -16,6 +16,7 @@ export interface IAddAirdropParams {
   coverimgurl: string;
   description: string;
   dropdate: number;
+  opendate: number;
   nftdescription: string;
   tokenimgs: string;
   totalsupply: number;

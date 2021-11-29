@@ -154,7 +154,8 @@ const AirDrop: React.FC = () => {
           <QRCode
             id="qrcode"
             value={`https://${isPre && 'stage.'}fangible.com/airdrop/${record.id}/landing`}
-            size={100}
+            // value={`https://fangible.com/airdrop/11/landing`}
+            size={4000}
           />
         );
       },

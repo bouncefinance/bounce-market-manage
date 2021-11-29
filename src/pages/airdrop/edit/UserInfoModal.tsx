@@ -1,4 +1,4 @@
-import ImageUploader from '@/components/ImageUploader';
+import AvatarUploader from '@/components/AvatarUploader';
 import type { IUserInfo, ModalAction } from '@/services/airdrop/types';
 import { Button, Form, Input, Modal } from 'antd';
 import React, { useEffect } from 'react';
@@ -49,7 +49,7 @@ const UserInfoModal: React.FC<IUserInfoModalProps> = ({
 
   const handleSubmit = (values: any) => {
     const tempArr = userInfoArr;
-    tempArr[userIndex] = { useravatars: values.avatarimg.url, usernames: values.userName };
+    tempArr[userIndex] = { useravatars: values.avatarimg, usernames: values.userName };
 
     setUserInfoArr(
       tempArr.map((userInfo) => {
@@ -86,7 +86,7 @@ const UserInfoModal: React.FC<IUserInfoModalProps> = ({
             noStyle
             rules={[{ required: true, message: 'Cover cannot be empty' }]}
           >
-            <ImageUploader maxCount={1} limit={4 * 1024 * 1024} />
+            <AvatarUploader sizeLimit={4} />
           </Form.Item>
           <span>Support jpg, png, gif, jpeg, jp2. Max size: 10MB.</span>
         </Form.Item>

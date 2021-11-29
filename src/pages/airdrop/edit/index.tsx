@@ -1,4 +1,4 @@
-import ImageUploader from '@/components/ImageUploader';
+import AvatarUploader from '@/components/AvatarUploader';
 import { addAirdrop } from '@/services/airdrop';
 import type { IAddAirdropParams, IUserInfo, ModalAction } from '@/services/airdrop/types';
 import { getBrandByContract } from '@/services/brand';
@@ -77,7 +77,7 @@ const EditAirdrop: React.FC = () => {
       airdropname: data.airdropname,
       category: data.category,
       channel: data.channel,
-      coverimgurl: data.coverimgurl.url,
+      coverimgurl: data.coverimgurl,
       description: data.description,
       tokenimgs: data.tokenimgs,
       opendate: data.opendate.unix(),
@@ -88,6 +88,8 @@ const EditAirdrop: React.FC = () => {
       totalsupply: Number(data.supply),
       userinfos: userInfoArr,
     };
+
+    // console.log('params: ', params);
 
     addAirdrop(params).then((res) => {
       if (res.code === 1) {
@@ -231,15 +233,12 @@ const EditAirdrop: React.FC = () => {
             ) : null}
           </Form.Item>
 
-          <Form.Item label="cover">
-            <Form.Item
-              name="coverimgurl"
-              noStyle
-              rules={[{ required: true, message: 'Cover cannot be empty' }]}
-            >
-              <ImageUploader maxCount={1} limit={4 * 1024 * 1024} />
-            </Form.Item>
-            <span>Support jpg, png, gif, jpeg, jp2. Max size: 10MB.</span>
+          <Form.Item
+            label="cover"
+            name="coverimgurl"
+            tooltip="Support jpg, png, gif, jpeg, jp2. Max size: 10MB."
+          >
+            <AvatarUploader sizeLimit={10} />
           </Form.Item>
 
           <Form.Item name="airdropname" label="name" rules={[{ required: true }]}>
@@ -323,7 +322,13 @@ const EditAirdrop: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
               <Button onClick={handleAddUserBtnClick}>Add user</Button>
             </div>
-            <Table columns={columns} dataSource={userInfoArr} />
+            <Table
+              columns={columns}
+              dataSource={userInfoArr}
+              rowKey={(record) => {
+                return `${record.usernames}_${new Date().valueOf()}`;
+              }}
+            />
           </Form.Item>
 
           <Form.Item

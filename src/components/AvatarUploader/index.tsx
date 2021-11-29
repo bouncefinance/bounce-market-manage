@@ -13,14 +13,15 @@ interface IAvatarUploaderProps {
 const SupportedImgType = ['image/jpg', 'image/png', 'image/gif', 'image/jp2', 'image/jpeg'];
 
 const AvatarUploader: React.FC<IAvatarUploaderProps> = ({ sizeLimit, onChange }) => {
-  const isUnmounted = useRef<boolean>(false);
+  const isMounted = useRef<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>();
 
   useEffect(() => {
+    isMounted.current = true;
     return () => {
-      isUnmounted.current = false;
+      isMounted.current = false;
     };
   }, []);
 
@@ -32,14 +33,14 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({ sizeLimit, onChange })
 
     const isSizeLegal = file.size / 1024 / 1024 < sizeLimit;
     if (!isSizeLegal) {
-      message.error(`Image must smaller than ${sizeLimit / 1024 / 1024}M!`);
+      message.error(`Image must smaller than ${sizeLimit}M!`);
     }
 
     return isTypeLegal && isSizeLegal;
   }
 
   const handleChange = (info: UploadChangeParam) => {
-    if (info.file.status === 'uploading') {
+    if (info.file.status === 'uploading' && isMounted.current) {
       setImageUrl(undefined);
       setLoading(true);
       return;
@@ -48,9 +49,9 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({ sizeLimit, onChange })
       const formData = new FormData();
       formData.append('filename', info.file.originFileObj);
 
-      if (!isUnmounted.current) {
-        fileUploader(formData).then((res) => {
-          if (res.result?.path) {
+      fileUploader(formData).then((res) => {
+        if (res.result?.path) {
+          if (isMounted.current) {
             setImageUrl(res.result.path);
 
             onChange?.(res.result.path);
@@ -58,11 +59,11 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({ sizeLimit, onChange })
             setTimeout(() => {
               setLoading(false);
             }, 1000);
-          } else {
-            message.error('Upload failed');
           }
-        });
-      }
+        } else {
+          message.error('Upload failed');
+        }
+      });
     }
   };
 

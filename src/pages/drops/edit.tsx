@@ -454,17 +454,17 @@ const DropEdit: React.FC = () => {
           <Form.Item
             name="nfts"
             label="NFTs List"
-            required
-            rules={[
-              () => ({
-                validator() {
-                  if (selectedPoolList.length > 0) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error('The NFTs List cannot be empty.'));
-                },
-              }),
-            ]}
+            // required
+            // rules={[
+            //   () => ({
+            //     validator() {
+            //       if (selectedPoolList.length > 0) {
+            //         return Promise.resolve();
+            //       }
+            //       return Promise.reject(new Error('The NFTs List cannot be empty.'));
+            //     },
+            //   }),
+            // ]}
           >
             <Space direction="vertical">
               {(!currentDropId || dropState !== 3) && (

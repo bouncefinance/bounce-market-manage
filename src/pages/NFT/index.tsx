@@ -16,7 +16,7 @@ import React, { useState } from 'react';
 import { useRequest } from 'umi';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import Image from '@/components/Image';
-import type { INftItem, NftDisplayState } from '@/services/nft/types';
+import type { INftItem } from '@/services/nft/types';
 import { NftDisplayEnum } from '@/services/nft/types';
 import { deleteNft, hideNft } from '@/services/nft';
 import type { PoolFilterType } from '@/services/pool/types';
@@ -49,23 +49,25 @@ const handleDeleteItem = async (contractaddress: string, tokenid: number, reload
 const handleHideItem = async (
   contractaddress: string,
   tokenid: number,
-  actionType: NftDisplayState,
+  status: NftDisplayEnum,
   reload: () => void,
 ) => {
   confirm({
     // title: 'Delete',
     icon: <ExclamationCircleOutlined />,
-    title: `Are you sure you want to ${actionType} this item?`,
+    title: `Are you sure you want to ${
+      status === NftDisplayEnum.hide ? 'hide' : 'show'
+    } this item?`,
     onOk() {
-      hideNft({ contractaddress, tokenid, actionType }).then((res) => {
+      hideNft({ contractaddress, tokenid, status }).then((res) => {
         if (res.code === 1) {
-          if (actionType === NftDisplayEnum.hide) {
+          if (status === NftDisplayEnum.hide) {
             message.success('Hide successfully');
           } else {
             message.success('Show successfully');
           }
           reload();
-        } else if (actionType === NftDisplayEnum.hide) {
+        } else if (status === NftDisplayEnum.hide) {
           message.error('Failed to hide');
         } else {
           message.error('Failed to show');
@@ -215,7 +217,7 @@ const NFT: React.FC = () => {
           />
         </Input.Group>
         <Card>
-          <Table rowKey="id" columns={columns} {...itemTableProps} />
+          <Table rowKey="id" columns={columns as any} {...itemTableProps} />
         </Card>
       </Space>
     </PageContainer>

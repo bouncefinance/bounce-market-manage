@@ -1,5 +1,5 @@
 import { Apis, post } from '..';
-import type { NftDisplayState } from './types';
+import type { NftDisplayEnum } from './types';
 
 export const deleteNft = ({
   contractaddress,
@@ -17,17 +17,15 @@ export const deleteNft = ({
 export const hideNft = ({
   contractaddress,
   tokenid,
-  actionType,
+  status,
 }: {
   contractaddress: string;
   tokenid: number;
-  actionType: NftDisplayState;
+  status: NftDisplayEnum;
 }) => {
   return post(Apis.updatepoolitem, {
-    data: {
-      contractaddress,
-      tokenid,
-      actionType,
-    },
+    contractaddress,
+    tokenid,
+    status,
   });
 };

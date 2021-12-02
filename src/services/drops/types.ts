@@ -55,7 +55,7 @@ export interface IGetDropDetailParams {
   poolstate?: number;
 }
 
-export interface IDropDetailResponse {
+export interface IDropResp {
   accountaddress: string;
   website: string;
   twitter: string;
@@ -64,18 +64,32 @@ export interface IDropDetailResponse {
   description: string;
   bgcolor: string;
   coverimgurl: string;
+  blindcoverimgurl: string;
+  videourl: string;
   dropdate: number;
+  opendate: number;
   nfts: number;
+  collection: string;
+  price: string;
+  notsaled: number;
+  droptype: number;
+  state: DropsState;
+  maxbuycount: number;
+  username: string;
+  creatorurl: string;
+  created_at: string;
+  poolsinfo: null | IPoolsInfo[];
+}
+
+export interface IPoolsInfo {
   itemname: string;
   fileurl: string;
   price: string;
   username: string;
   standard: number;
+  contractaddress: string;
   tokenid: number;
   auctionpoolid: number;
-  ordernum: number;
   creatorurl: string;
   created_at: string;
-  videourl: string;
-  state: DropsState;
 }

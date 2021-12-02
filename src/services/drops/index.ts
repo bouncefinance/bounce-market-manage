@@ -4,12 +4,12 @@ import type {
   IDropsResponse,
   IAddDropParams,
   IGetDropDetailParams,
-  IDropDetailResponse,
   IUpdataDropParams,
+  IDropResp,
 } from './types';
 
 export const getOneDropDetail = ({ /* offset, limit,  */ dropsid }: IGetDropDetailParams) => {
-  return post<IDropDetailResponse[]>(Apis.getonedropsdetail, {
+  return post<IDropResp>(Apis.getonedropsdetail, {
     // offset,
     // limit,
     dropsid,

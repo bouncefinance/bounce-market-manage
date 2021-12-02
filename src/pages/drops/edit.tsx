@@ -28,7 +28,7 @@ import type { IUserItem } from '@/services/user/types';
 import AddNftTable from '@/pages/drops/AddNftTable';
 import OperateNftTable from '@/pages/drops/OperateNftTable';
 import type { IPoolResponse } from '@/services/pool/types';
-import type { DropsState, IDropDetailResponse } from '@/services/drops/types';
+import type { DropsState, IPoolsInfo } from '@/services/drops/types';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -76,6 +76,10 @@ const DropEdit: React.FC = () => {
   const [selectedPoolList, setSelectedPoolList] = useState<IPoolResponse[]>([]);
   const [backgroundType, setBackgroundType] = useState<BGType>('cover');
   const [dropState, setDropState] = useState<DropsState>();
+
+  useEffect(() => {
+    console.log('selectedPoolList: ', selectedPoolList);
+  }, [selectedPoolList]);
 
   const [form] = Form.useForm();
   const location = useLocation();
@@ -129,77 +133,77 @@ const DropEdit: React.FC = () => {
     },
     {
       defaultParams: [currentDropId],
-      formatResult(data: any) {
-        return {
-          list: data.data,
-          total: data.total,
-        };
-      },
     },
   );
 
   useEffect(() => {
-    const list = dropData?.list || [];
-
-    if (currentDropId && !dropDataLoading && list.length) {
-      const selecteds = list.map((drop: any) => {
-        return drop.auctionpoolid;
-      });
-
-      setTempSelectedKeys(selecteds);
-      setSelectedKeys(selecteds);
-
-      const item: IDropDetailResponse = list?.[0] || {};
-
-      setDropState(item.state);
-
-      const image = {
-        uid: 0,
-        name: 'image file',
-        status: 'done',
-        thumbUrl: item?.coverimgurl || '',
-        url: item?.coverimgurl || '',
-      };
-
-      const video = {
-        uid: 0,
-        name: 'video file',
-        status: 'done',
-        // thumbUrl: item?.coverimgurl || '',
-        url: item?.videourl || '',
-      };
-
-      setBackgroundType(item?.coverimgurl ? 'cover' : 'bgcolor');
-      setCoverImage(item?.coverimgurl || '');
-      setVideoUrl(item?.videourl || '');
-
-      form.setFieldsValue({
-        title: item.title,
-        description: item.description,
-        website: item.website,
-        twitter: item.twitter,
-        instagram: item.instagram,
-        bgcolor: item?.bgcolor,
-        coverimgurl: item?.coverimgurl ? image : null,
-        videourl: item?.videourl ? video : null,
-        dropdate: moment(item.dropdate * 1000),
-      });
-
-      searchAccount(item?.accountaddress).then((res) => {
-        setSelectedAccount(res.list[0] || null);
-      });
-
-      getAllPoolsByCreatorAddress(item.accountaddress).then((res) => {
-        const selectedPools = selecteds.map((selectedKey: number) => {
-          return res?.data?.find((pool) => {
-            return selectedKey === pool.id;
-          });
-        });
-
-        setTempSelectedPoolList(selectedPools || []);
-        setSelectedPoolList(selectedPools || []);
-      });
+    if (!currentDropId || !dropData || dropDataLoading) {
+      return;
     }
+
+    const selectedPoolIds = dropData?.poolsinfo?.map((pool: IPoolsInfo) => {
+      return pool.auctionpoolid;
+    });
+
+    setTempSelectedKeys(selectedPoolIds || []);
+    setSelectedKeys(selectedPoolIds || []);
+
+    setDropState(dropData.state);
+
+    const image = {
+      uid: 0,
+      name: 'image file',
+      status: 'done',
+      thumbUrl: dropData.coverimgurl || '',
+      url: dropData.coverimgurl || '',
+    };
+
+    const video = {
+      uid: 0,
+      name: 'video file',
+      status: 'done',
+      // thumbUrl: item?.coverimgurl || '',
+      url: dropData.videourl || '',
+    };
+
+    setBackgroundType(dropData.coverimgurl ? 'cover' : 'bgcolor');
+    setCoverImage(dropData.coverimgurl || '');
+    setVideoUrl(dropData.videourl || '');
+
+    form.setFieldsValue({
+      title: dropData.title,
+      description: dropData.description,
+      website: dropData.website,
+      twitter: dropData.twitter,
+      instagram: dropData.instagram,
+      bgcolor: dropData.bgcolor,
+      coverimgurl: dropData.coverimgurl ? image : null,
+      videourl: dropData.videourl ? video : null,
+      dropdate: moment(dropData.dropdate * 1000),
+    });
+
+    searchAccount(dropData.accountaddress).then((res) => {
+      setSelectedAccount(res.list[0] || null);
+    });
+
+    getAllPoolsByCreatorAddress(dropData.accountaddress).then((res) => {
+      if (!selectedPoolIds || !res.data) {
+        return;
+      }
+
+      const selectedPools = selectedPoolIds
+        .map((poolId) =>
+          res.data?.find((pool) => {
+            return poolId === pool.id;
+          }),
+        )
+        .filter((rawPool) => typeof rawPool !== 'undefined');
+
+      // console.log('selectedPools: ', selectedPools);
+
+      setTempSelectedPoolList((selectedPools as IPoolResponse[]) || []);
+      setSelectedPoolList((selectedPools as IPoolResponse[]) || []);
+    });
   }, [currentDropId, dropData, dropDataLoading]);
 
   const handleEdit = (data: any) => {
@@ -225,10 +229,10 @@ const DropEdit: React.FC = () => {
       bgcolor,
       coverimgurl,
       videourl: data.videourl?.url || '',
-      poolids: selectedPoolList.map((nft) => {
+      poolids: selectedPoolList?.map((nft) => {
         return nft.id;
       }),
-      ordernum: new Array(selectedPoolList.length).fill(0).map((_, index) => {
+      ordernum: new Array(selectedPoolList?.length).fill(0).map((_, index) => {
         return index;
       }),
       dropdate: data.dropdate.unix(),
@@ -451,42 +455,32 @@ const DropEdit: React.FC = () => {
               <Input addonBefore="Website" />
             </Form.Item>
           </Form.Item>
-          <Form.Item
-            name="nfts"
-            label="NFTs List"
-            // required
-            // rules={[
-            //   () => ({
-            //     validator() {
-            //       if (selectedPoolList.length > 0) {
-            //         return Promise.resolve();
-            //       }
-            //       return Promise.reject(new Error('The NFTs List cannot be empty.'));
-            //     },
-            //   }),
-            // ]}
-          >
-            <Space direction="vertical">
-              {(!currentDropId || dropState !== 3) && (
-                <Button
-                  onClick={() => {
-                    setAddNftModalVisible(true);
-                  }}
-                >
-                  Add
-                </Button>
-              )}
-              <OperateNftTable
-                selectedPoolList={selectedPoolList}
-                setTempSelectedPoolList={setTempSelectedPoolList}
-                setSelectedPoolList={setSelectedPoolList}
-                selectedKeys={selectedKeys}
-                setSelectedKeys={setSelectedKeys}
-                tempSelectedKeys={tempSelectedKeys}
-                setTempSelectedKeys={setTempSelectedKeys}
-              />
-            </Space>
-          </Form.Item>
+
+          {currentDropId.length > 0 && (
+            <Form.Item name="nfts" label="NFTs List">
+              <Space direction="vertical">
+                {(!currentDropId || dropState !== 3) && (
+                  <Button
+                    onClick={() => {
+                      setAddNftModalVisible(true);
+                    }}
+                  >
+                    Add
+                  </Button>
+                )}
+                <OperateNftTable
+                  selectedPoolList={selectedPoolList}
+                  setTempSelectedPoolList={setTempSelectedPoolList}
+                  setSelectedPoolList={setSelectedPoolList}
+                  selectedKeys={selectedKeys}
+                  setSelectedKeys={setSelectedKeys}
+                  tempSelectedKeys={tempSelectedKeys}
+                  setTempSelectedKeys={setTempSelectedKeys}
+                />
+              </Space>
+            </Form.Item>
+          )}
+
           <Form.Item wrapperCol={{ offset: 7, span: 8 }} style={{ textAlign: 'right' }}>
             <Button
               htmlType="submit"

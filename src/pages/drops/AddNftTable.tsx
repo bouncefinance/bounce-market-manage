@@ -85,10 +85,18 @@ const AddNftTable: React.FC<IAddNftTableProps> = ({
     {
       dataIndex: 'state',
       title: 'State',
-      render: (_: any, item: IPoolResponse) => [
-        item.state === 0 ? <Tag color={'blue'}>live</Tag> : <Tag color={'red'}>closed</Tag>,
-        item.status === 0 ? <Tag color={'blue'}>on display</Tag> : <Tag color={'red'}>hiden</Tag>,
-      ],
+      render: (_: any, item: IPoolResponse) => {
+        return (
+          <>
+            {item.state === 0 ? <Tag color={'blue'}>live</Tag> : <Tag color={'red'}>closed</Tag>}
+            {item.status === 0 ? (
+              <Tag color={'blue'}>on display</Tag>
+            ) : (
+              <Tag color={'red'}>hiden</Tag>
+            )}
+          </>
+        );
+      },
     },
     {
       dataIndex: 'creator',

@@ -1,5 +1,5 @@
 import type { IPoolInfo, ITopPool } from '@/services/pool/types';
-import { poolStateEnum } from '@/services/pool/types';
+import { PoolStateEnum } from '@/services/pool/types';
 import { Input, Modal, Select, Space, Table, Tag, Tooltip, Typography } from 'antd';
 import { PoolFilterEnum } from '@/services/pool/types';
 import React, { useState } from 'react';
@@ -57,7 +57,7 @@ const PoolModal: React.FC<poolModalProps> = ({
       width: 100,
       render: (state: any, record: IPoolInfo) => (
         <Space>
-          {state === poolStateEnum.closed ? (
+          {state === PoolStateEnum.closed ? (
             <Tag color="red">Closed</Tag>
           ) : (
             <Tag color="green">Live</Tag>
@@ -113,7 +113,7 @@ const PoolModal: React.FC<poolModalProps> = ({
     columnWidth: 14,
     getCheckboxProps: (record: IPoolInfo) => ({
       disabled:
-        record.state === poolStateEnum.closed ||
+        record.state === PoolStateEnum.closed ||
         topPools.find(
           (topPool) =>
             topPool.pool_id === record.poolid &&

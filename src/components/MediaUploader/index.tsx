@@ -4,15 +4,32 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { fileUploader } from '@/services/uploader';
 import type { RcFile, UploadChangeParam } from 'antd/lib/upload';
 
+type SupportedFileType = 'image' | 'video';
+
 interface IAvatarUploaderProps {
   value?: any;
   sizeLimit: number;
   onChange?: (value: string | undefined) => void;
+  fileType: SupportedFileType;
 }
 
-const SupportedImgType = ['image/jpg', 'image/png', 'image/gif', 'image/jp2', 'image/jpeg'];
+const supportedFile = {
+  image: {
+    type: ['image/jpg', 'image/png', 'image/gif', 'image/jp2', 'image/jpeg'],
+    helpText: 'Only support jpg, png, gif, jpeg, jp2!',
+  },
+  video: { type: ['video/mp4'], helpText: 'Only support jpg, png, gif, jpeg, jp2!' },
+};
 
-const AvatarUploader: React.FC<IAvatarUploaderProps> = ({ value, sizeLimit, onChange }) => {
+const SupportedImageType = ['image/jpg', 'image/png', 'image/gif', 'image/jp2', 'image/jpeg'];
+const SupportedVideoType = ['video/mp4'];
+
+const AvatarUploader: React.FC<IAvatarUploaderProps> = ({
+  value,
+  onChange,
+  sizeLimit,
+  fileType,
+}) => {
   const isMounted = useRef<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -25,9 +42,11 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({ value, sizeLimit, onCh
   }, []);
 
   function beforeUpload(file: RcFile) {
-    const isTypeLegal = SupportedImgType.find((supportedType) => supportedType === file.type);
+    const isTypeLegal = supportedFile[fileType].type.find(
+      (supportedType) => supportedType === file.type,
+    );
     if (!isTypeLegal) {
-      message.error('Only support jpg, png, gif, jpeg, jp2!');
+      message.error(supportedFile[fileType].helpText);
     }
 
     const isSizeLegal = file.size / 1024 / 1024 < sizeLimit;
@@ -35,7 +54,7 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({ value, sizeLimit, onCh
       message.error(`Image must smaller than ${sizeLimit}M!`);
     }
 
-    return isTypeLegal && isSizeLegal;
+    return isTypeLegal &&  isSizeLegal;
   }
 
   const handleChange = (info: UploadChangeParam) => {
@@ -74,7 +93,7 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({ value, sizeLimit, onCh
   return (
     <Upload
       name="avatar"
-      accept=".jpg, .png, .gif, .jpeg, .jp2,"
+      accept=".mp4,"
       listType="picture-card"
       className="avatar-uploader"
       showUploadList={false}
@@ -82,11 +101,7 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({ value, sizeLimit, onCh
       onChange={handleChange}
     >
       {!loading && value ? (
-        <img
-          src={value}
-          alt="avatar"
-          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-        />
+        <video src={value} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
       ) : (
         uploadButton
       )}

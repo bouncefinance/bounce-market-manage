@@ -8,7 +8,7 @@ import type {
   PoolFilterType,
   poolSaleType,
 } from '@/services/pool/types';
-import { poolStateEnum, PoolFilterEnum } from '@/services/pool/types';
+import { PoolStateEnum, PoolFilterEnum } from '@/services/pool/types';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Col, Row, Modal, message, Typography, Tooltip, Tag, Space } from 'antd';
 
@@ -250,7 +250,7 @@ const RecommendPools: React.FC = () => {
                         <Typography.Paragraph>{`id: ${topPool.pool_id}`}</Typography.Paragraph>
 
                         <Typography.Paragraph>
-                          {topPool?.state === poolStateEnum.closed && <Tag color="red">Closed</Tag>}
+                          {topPool?.state === PoolStateEnum.closed && <Tag color="red">Closed</Tag>}
                         </Typography.Paragraph>
                       </Space>
 

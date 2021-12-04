@@ -26,9 +26,14 @@ import { getAllPoolsByCreatorAddress } from '@/services/pool';
 import { getAccountByAddress } from '@/services/user';
 import type { IUserItem } from '@/services/user/types';
 import AddNftTable from '@/pages/drops/AddNftTable';
-import OperateNftTable from '@/pages/drops/OperateNftTable';
+import OperateNftTable from '@/pages/drops/OperateNftTable2';
 import type { IPoolResponse } from '@/services/pool/types';
 import type { DropsState, IPoolsInfo } from '@/services/drops/types';
+import { AccountSelect } from '@/components/AccountSelect';
+import { BackgroundInput } from './BackgroundInput';
+import FromNowTimePicker from '@/components/FromNowTimePicker';
+import VideoUploader2 from '@/components/MediaUploader';
+import MediaUploader from '@/components/MediaUploader';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -77,10 +82,6 @@ const DropEdit: React.FC = () => {
   const [backgroundType, setBackgroundType] = useState<BGType>('cover');
   const [dropState, setDropState] = useState<DropsState>();
 
-  useEffect(() => {
-    console.log('selectedPoolList: ', selectedPoolList);
-  }, [selectedPoolList]);
-
   const [form] = Form.useForm();
   const location = useLocation();
   const currentDropId = location['query']?.id || '';
@@ -95,35 +96,12 @@ const DropEdit: React.FC = () => {
     },
   };
 
-  useEffect(() => {
-    if (!currentDropId) {
-      setSelectedPoolList([]);
-      setTempSelectedPoolList([]);
-    }
-  }, [selectedAccount]);
-
-  // getAccountByAddress
-  const {
-    data: accountData,
-    loading: accountLoading,
-    run: searchAccount,
-  } = useRequest(
-    (accountaddress) => {
-      return getAccountByAddress({
-        accountaddress,
-      });
-    },
-    {
-      manual: true,
-      cacheKey: 'accounts',
-      formatResult(data: any) {
-        return {
-          list: data.data,
-          total: data.total,
-        };
-      },
-    },
-  );
+  // useEffect(() => {
+  //   if (!currentDropId) {
+  //     setSelectedPoolList([]);
+  //     setTempSelectedPoolList([]);
+  //   }
+  // }, [selectedAccount]);
 
   const { data: dropData, loading: dropDataLoading } = useRequest(
     (dropsid: number) => {
@@ -133,6 +111,26 @@ const DropEdit: React.FC = () => {
     },
     {
       defaultParams: [currentDropId],
+      onSuccess: (data) => {
+        console.log('data in get drop: ', data);
+
+        form.setFieldsValue({
+          accountaddress: data?.accountaddress,
+          background: {
+            bgType: data?.coverimgurl?.length > 0 ? 'image' : 'color',
+            imgUrl: data?.coverimgurl,
+            bgcolor: data?.bgcolor,
+          },
+          nfts: {
+            orderList: data?.poolsinfo
+              ? Array.from(new Array(data?.poolsinfo.length).keys())
+              : undefined,
+            idList: data?.poolsinfo?.map((pool) => {
+              return pool.auctionpoolid;
+            }),
+          },
+        });
+      },
     },
   );
 
@@ -150,14 +148,6 @@ const DropEdit: React.FC = () => {
 
     setDropState(dropData.state);
 
-    const image = {
-      uid: 0,
-      name: 'image file',
-      status: 'done',
-      thumbUrl: dropData.coverimgurl || '',
-      url: dropData.coverimgurl || '',
-    };
-
     const video = {
       uid: 0,
       name: 'video file',
@@ -170,91 +160,104 @@ const DropEdit: React.FC = () => {
     setCoverImage(dropData.coverimgurl || '');
     setVideoUrl(dropData.videourl || '');
 
-    form.setFieldsValue({
-      title: dropData.title,
-      description: dropData.description,
-      website: dropData.website,
-      twitter: dropData.twitter,
-      instagram: dropData.instagram,
-      bgcolor: dropData.bgcolor,
-      coverimgurl: dropData.coverimgurl ? image : null,
-      videourl: dropData.videourl ? video : null,
-      dropdate: moment(dropData.dropdate * 1000),
-    });
+    // form.setFieldsValue({
+    //   title: dropData.title,
+    //   description: dropData.description,
+    //   website: dropData.website,
+    //   twitter: dropData.twitter,
+    //   instagram: dropData.instagram,
+    //   bgcolor: dropData.bgcolor,
+    //   coverimgurl: dropData.coverimgurl ? image : null,
+    //   videourl: dropData.videourl ? video : null,
+    //   dropdate: moment(dropData.dropdate * 1000),
 
-    searchAccount(dropData.accountaddress).then((res) => {
-      setSelectedAccount(res.list[0] || null);
-    });
+    //   accountaddress: dropData.accountaddress,
+    //   background: {
+    //     bgType: dropData.coverimgurl.length > 0 ? 'image' : 'color',
+    //     imgUrl: dropData.coverimgurl,
+    //     bgcolor: dropData.bgcolor,
+    //   },
 
-    getAllPoolsByCreatorAddress(dropData.accountaddress).then((res) => {
-      if (!selectedPoolIds || !res.data) {
-        return;
-      }
+    //   nfts: {
+    //     orderList: dropData.poolsinfo
+    //       ? Array.from(new Array(dropData.poolsinfo.length).keys())
+    //       : undefined,
+    //     idList: dropData.poolsinfo?.map((pool) => {
+    //       return pool.auctionpoolid;
+    //     }),
+    //   },
+    // });
 
-      const selectedPools = selectedPoolIds
-        .map((poolId) =>
-          res.data?.find((pool) => {
-            return poolId === pool.id;
-          }),
-        )
-        .filter((rawPool) => typeof rawPool !== 'undefined');
+    // getAllPoolsByCreatorAddress(dropData.accountaddress).then((res) => {
+    //   if (!selectedPoolIds || !res.data) {
+    //     return;
+    //   }
 
-      // console.log('selectedPools: ', selectedPools);
+    //   const selectedPools = selectedPoolIds
+    //     .map((poolId) =>
+    //       res.data?.find((pool) => {
+    //         return poolId === pool.id;
+    //       }),
+    //     )
+    //     .filter((rawPool) => typeof rawPool !== 'undefined');
 
-      setTempSelectedPoolList((selectedPools as IPoolResponse[]) || []);
-      setSelectedPoolList((selectedPools as IPoolResponse[]) || []);
-    });
+    //   // console.log('selectedPools: ', selectedPools);
+
+    //   setTempSelectedPoolList((selectedPools as IPoolResponse[]) || []);
+    //   setSelectedPoolList((selectedPools as IPoolResponse[]) || []);
+    // });
   }, [currentDropId, dropData, dropDataLoading]);
 
   const handleEdit = (data: any) => {
-    if (!selectedAccount) return;
+    console.log('data: ', data);
+    // if (!selectedAccount) return;
 
-    let bgcolor;
-    let coverimgurl;
-    if (backgroundType === 'bgcolor') {
-      bgcolor = data?.bgcolor;
-      coverimgurl = '';
-    } else {
-      bgcolor = '';
-      coverimgurl = data?.coverimgurl?.url;
-    }
+    // let bgcolor;
+    // let coverimgurl;
+    // if (backgroundType === 'bgcolor') {
+    //   bgcolor = data?.bgcolor;
+    //   coverimgurl = '';
+    // } else {
+    //   bgcolor = '';
+    //   coverimgurl = data?.coverimgurl?.url;
+    // }
 
-    const params = {
-      accountaddress: selectedAccount.accountaddress,
-      website: data.website,
-      twitter: data.twitter,
-      instagram: data.instagram,
-      title: data.title,
-      description: data.description,
-      bgcolor,
-      coverimgurl,
-      videourl: data.videourl?.url || '',
-      poolids: selectedPoolList?.map((nft) => {
-        return nft.id;
-      }),
-      ordernum: new Array(selectedPoolList?.length).fill(0).map((_, index) => {
-        return index;
-      }),
-      dropdate: data.dropdate.unix(),
-    };
+    // const params = {
+    //   accountaddress: selectedAccount.accountaddress,
+    //   website: data.website,
+    //   twitter: data.twitter,
+    //   instagram: data.instagram,
+    //   title: data.title,
+    //   description: data.description,
+    //   bgcolor,
+    //   coverimgurl,
+    //   videourl: data.videourl?.url || '',
+    //   poolids: selectedPoolList?.map((nft) => {
+    //     return nft.id;
+    //   }),
+    //   ordernum: new Array(selectedPoolList?.length).fill(0).map((_, index) => {
+    //     return index;
+    //   }),
+    //   dropdate: data.dropdate.unix(),
+    // };
 
-    if (currentDropId) {
-      updateOneDrop({ ...params, id: Number(currentDropId) }).then((res) => {
-        if (res.code === 1) {
-          message.success('Updated Successfully');
-          history.push('/drops');
-        } else if (res.msg?.includes('timestamp')) message.error('Drop time is over due');
-        else message.error('Update failed');
-      });
-    } else {
-      addOneDrop(params).then((res) => {
-        if (res.code === 1) {
-          message.success('Added Successfully');
-          history.push('/drops');
-        } else if (res.msg?.includes('timestamp')) message.error('Drop time is over due');
-        else message.error('Add failed');
-      });
-    }
+    // if (currentDropId) {
+    //   updateOneDrop({ ...params, id: Number(currentDropId) }).then((res) => {
+    //     if (res.code === 1) {
+    //       message.success('Updated Successfully');
+    //       history.push('/drops');
+    //     } else if (res.msg?.includes('timestamp')) message.error('Drop time is over due');
+    //     else message.error('Update failed');
+    //   });
+    // } else {
+    //   addOneDrop(params).then((res) => {
+    //     if (res.code === 1) {
+    //       message.success('Added Successfully');
+    //       history.push('/drops');
+    //     } else if (res.msg?.includes('timestamp')) message.error('Drop time is over due');
+    //     else message.error('Add failed');
+    //   });
+    // }
   };
 
   const handleReset = () => {
@@ -265,26 +268,26 @@ const DropEdit: React.FC = () => {
     form.resetFields();
   };
 
-  const options = accountData?.list?.map((account: IUserItem) => {
-    return (
-      <Option key={account.id} value={account.accountaddress} disabled={account.identity === 1}>
-        <List.Item.Meta
-          avatar={<Image src={account?.imgurl} width={50} height={50} />}
-          title={
-            <Space>
-              <span>{account?.username}</span>
-              {account?.identity === 1 ? (
-                <Tag color="error">Unverfied</Tag>
-              ) : (
-                <Tag color="blue">Verfied</Tag>
-              )}
-            </Space>
-          }
-          description={<span>{account?.accountaddress}</span>}
-        />
-      </Option>
-    );
-  });
+  // const options = accountData?.list?.map((account: IUserItem) => {
+  //   return (
+  //     <Option key={account.id} value={account.accountaddress} disabled={account.identity === 1}>
+  //       <List.Item.Meta
+  //         avatar={<Image src={account?.imgurl} width={50} height={50} />}
+  //         title={
+  //           <Space>
+  //             <span>{account?.username}</span>
+  //             {account?.identity === 1 ? (
+  //               <Tag color="error">Unverfied</Tag>
+  //             ) : (
+  //               <Tag color="blue">Verfied</Tag>
+  //             )}
+  //           </Space>
+  //         }
+  //         description={<span>{account?.accountaddress}</span>}
+  //       />
+  //     </Option>
+  //   );
+  // });
 
   return (
     <PageContainer>
@@ -296,50 +299,23 @@ const DropEdit: React.FC = () => {
           onFinish={handleEdit}
           validateMessages={validateMessages}
         >
-          <Form.Item label="Account" required>
-            {!currentDropId && (
-              <Select
-                // open
-                loading={accountLoading}
-                optionLabelProp={'value'}
-                defaultActiveFirstOption={false}
-                showSearch
-                value={selectedAccount?.accountaddress}
-                placeholder="Input Address"
-                onSearch={(value) => {
-                  if (value) searchAccount(value);
-                }}
-                onChange={(value) => {
-                  setSelectedAccount(
-                    accountData?.list?.find((account: IUserItem) => {
-                      return account.accountaddress === value;
-                    }),
-                  );
-                }}
-                notFoundContent={<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
-              >
-                {options}
-              </Select>
-            )}
-
-            {selectedAccount ? (
-              <List
-                itemLayout="horizontal"
-                dataSource={[selectedAccount]}
-                renderItem={(item) => (
-                  <List.Item key={item?.id}>
-                    <List.Item.Meta
-                      avatar={<Image src={item?.imgurl} width={50} height={50} />}
-                      title={<span>{item?.username}</span>}
-                      description={item?.accountaddress}
-                    />
-                  </List.Item>
-                )}
-              />
-            ) : null}
+          <Form.Item
+            label="Account"
+            name="accountaddress"
+            rules={[{ required: true, message: 'Account cannot be empty' }]}
+          >
+            <AccountSelect disabled={currentDropId.length > 0} />
           </Form.Item>
 
-          <Form.Item label="Background" required>
+          <Form.Item
+            label="Background"
+            name="background"
+            rules={[{ required: true, message: 'Background cannot be empty' }]}
+          >
+            <BackgroundInput />
+          </Form.Item>
+
+          {/* <Form.Item label="Background" required>
             <Space direction="vertical">
               <Select
                 style={{ width: 160 }}
@@ -396,7 +372,8 @@ const DropEdit: React.FC = () => {
               </div>
             </Form.Item>
           )}
-          <Form.Item
+ */}
+          {/* <Form.Item
             name="title"
             label="Title"
             rules={[{ required: true, message: 'Title cannot be empty' }]}
@@ -409,23 +386,22 @@ const DropEdit: React.FC = () => {
             rules={[{ required: true, message: 'Description cannot be empty' }]}
           >
             <TextArea rows={5} showCount maxLength={300} />
-          </Form.Item>
+          </Form.Item> */}
+
           <Form.Item
             name="dropdate"
             label="Drop Date"
+            // TODO: 校验提交的时间是否过期
             rules={[{ required: true, message: 'Drop date cannot be empty' }]}
           >
-            <DatePicker
-              disabled={dropState === 2 || dropState === 3}
-              inputReadOnly
-              format={'YYYY-MM-DD HH:mm'}
-              showTime={{ defaultValue: moment().add(1, 'minute') }}
-              showNow={false}
-              disabledDate={disabledDate}
-              disabledTime={disabledTime}
-            />
+            <FromNowTimePicker disabled={dropState === 2 || dropState === 3} />
           </Form.Item>
-          <Form.Item label="Video">
+
+          <Form.Item name="videourl" label="video">
+            <MediaUploader sizeLimit={30} />
+          </Form.Item>
+
+          {/* <Form.Item label="Video">
             <Form.Item name="videourl" noStyle>
               <VideoUploader
                 maxCount={1}
@@ -454,30 +430,11 @@ const DropEdit: React.FC = () => {
             <Form.Item name="website" validateTrigger={['onBlur']} rules={[{ type: 'url' }]}>
               <Input addonBefore="Website" />
             </Form.Item>
-          </Form.Item>
+          </Form.Item> */}
 
           {currentDropId.length > 0 && (
-            <Form.Item name="nfts" label="NFTs List">
-              <Space direction="vertical">
-                {(!currentDropId || dropState !== 3) && (
-                  <Button
-                    onClick={() => {
-                      setAddNftModalVisible(true);
-                    }}
-                  >
-                    Add
-                  </Button>
-                )}
-                <OperateNftTable
-                  selectedPoolList={selectedPoolList}
-                  setTempSelectedPoolList={setTempSelectedPoolList}
-                  setSelectedPoolList={setSelectedPoolList}
-                  selectedKeys={selectedKeys}
-                  setSelectedKeys={setSelectedKeys}
-                  tempSelectedKeys={tempSelectedKeys}
-                  setTempSelectedKeys={setTempSelectedKeys}
-                />
-              </Space>
+            <Form.Item name="nfts" label="NFTs">
+              <OperateNftTable creatorAddress={form.getFieldValue('accountaddress')} />
             </Form.Item>
           )}
 
@@ -496,37 +453,6 @@ const DropEdit: React.FC = () => {
             </Button>
           </Form.Item>
         </Form>
-
-        <Modal
-          destroyOnClose
-          title="Select NFTs"
-          width={800}
-          bodyStyle={{ padding: 20 }}
-          visible={addNftModalVisible}
-          onOk={() => {
-            setAddNftModalVisible(false);
-            setSelectedPoolList(tempSelectedPoolList);
-            setSelectedKeys(tempSelectedKeys);
-            // setTempSelectedKeys([])
-            // setTempSelectedPoolList([])
-          }}
-          onCancel={() => {
-            setAddNftModalVisible(false);
-            setTempSelectedPoolList(selectedPoolList);
-            setTempSelectedKeys(selectedKeys);
-          }}
-        >
-          <AddNftTable
-            // userAddress={selectedAccount?.accountaddress || ''}
-            userAddress={selectedAccount?.accountaddress || ''}
-            tempSelectedPoolList={tempSelectedPoolList}
-            setTempSelectedPoolList={setTempSelectedPoolList}
-            tempSelectedKeys={tempSelectedKeys}
-            setTempSelectedKeys={setTempSelectedKeys}
-            selectedKeys={selectedKeys}
-            // setSelectedKeys={setSelectedKeys}
-          />
-        </Modal>
       </Card>
     </PageContainer>
   );

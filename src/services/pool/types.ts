@@ -3,8 +3,8 @@
  * 0 live
  * 1 closed
  */
-export type poolStateType = 0 | 1;
-export enum poolStateEnum {
+export type PoolState = 0 | 1;
+export enum PoolStateEnum {
   live = 0,
   closed = 1,
 }
@@ -117,6 +117,47 @@ export interface IPoolResponse {
   status: number;
   tokenid: number;
   username: string;
-  state: poolStateType;
+  state: PoolState;
   pooltype: poolSaleType;
+}
+
+export interface IUserPool {
+  id: number;
+  poolid: number;
+  tokenid: number;
+  itemname: string;
+  fileurl: string;
+  contractaddress: string;
+  created_at: string;
+  pooltype: EPoolSaleTYPE;
+  category: string;
+  channel: string;
+  standard: EPoolItemStandard;
+  creator: string;
+  status: EPoolItemDisplayState;
+  token_amount0: number;
+  swapped_amount0: number;
+  state: EPoolSaleState;
+}
+
+export enum EPoolSaleTYPE {
+  FIXED_SWAP = 1,
+  ENGLISH_AUCTION = 2,
+  COUNTDOWN_FIXED_SWAP = 3,
+  COUNTDOWN_ENGLISH_AUCTION = 4,
+}
+
+export enum EPoolSaleState {
+  LIVE = 0,
+  CLOSED = 1,
+}
+
+export enum EPoolItemStandard {
+  ERC721 = 0,
+  ERC1155 = 1,
+}
+
+export enum EPoolItemDisplayState {
+  ON_DISPLAY = 0,
+  HIDEN = 1,
 }

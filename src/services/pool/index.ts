@@ -8,6 +8,7 @@ import type {
   IInsertPoolWeightParams,
   PoolFilterType,
   poolSaleType,
+  IUserPool,
 } from './types';
 import { PoolFilterEnum } from './types';
 
@@ -99,7 +100,7 @@ export const deletePoolWeight = ({ poolid, auctionType }: IDeletePoolWeightParam
 };
 
 export const getAllPoolsByCreatorAddress = (userAddress: string) => {
-  return post<IPoolResponse[]>(Apis.getauctionpoolsbyaccount, {
+  return post<IUserPool[]>(Apis.getauctionpoolsbyaccount, {
     userAddress,
   });
 };
@@ -109,7 +110,7 @@ export const getPoolsByCreatorAddress = (
   offset: number = 0,
   limit: number,
 ) => {
-  return post<IPoolResponse[]>(Apis.getauctionpoolsbyaccount, {
+  return post<IUserPool[]>(Apis.getauctionpoolsbyaccount, {
     userAddress,
     offset,
     limit,

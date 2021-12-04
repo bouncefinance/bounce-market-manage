@@ -7,7 +7,7 @@ const { Option } = Select;
 
 type BgType = 'image' | 'color';
 
-interface IBackground {
+export interface IBackground {
   bgType: BgType;
   imgUrl?: string;
   bgColor?: string;

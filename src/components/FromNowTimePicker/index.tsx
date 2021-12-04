@@ -3,6 +3,8 @@ import moment from 'moment';
 import React from 'react';
 
 export type IFromNowTimePickerProps = {
+  value?: any;
+  onChange?: (value: any) => void;
   disabled?: boolean;
 };
 
@@ -46,6 +48,7 @@ const disabledTime = (date: any) => {
 const FromNowTimePicker: React.FC<IFromNowTimePickerProps> = ({ disabled = false }) => {
   return (
     <DatePicker
+      value={value}
       disabled={disabled}
       inputReadOnly
       format={'YYYY-MM-DD HH:mm'}

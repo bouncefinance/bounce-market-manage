@@ -30,7 +30,7 @@ import OperateNftTable from '@/pages/drops/OperateNftTable2';
 import type { IPoolResponse } from '@/services/pool/types';
 import type { DropsState, IPoolsInfo } from '@/services/drops/types';
 import { AccountSelect } from '@/components/AccountSelect';
-import { BackgroundInput } from './BackgroundInput';
+import { BackgroundInput, IBackground } from './BackgroundInput';
 import FromNowTimePicker from '@/components/FromNowTimePicker';
 import VideoUploader2 from '@/components/MediaUploader';
 import MediaUploader from '@/components/MediaUploader';
@@ -147,14 +147,6 @@ const DropEdit: React.FC = () => {
     setSelectedKeys(selectedPoolIds || []);
 
     setDropState(dropData.state);
-
-    const video = {
-      uid: 0,
-      name: 'video file',
-      status: 'done',
-      // thumbUrl: item?.coverimgurl || '',
-      url: dropData.videourl || '',
-    };
 
     setBackgroundType(dropData.coverimgurl ? 'cover' : 'bgcolor');
     setCoverImage(dropData.coverimgurl || '');
@@ -297,6 +289,9 @@ const DropEdit: React.FC = () => {
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 14 }}
           onFinish={handleEdit}
+          onFinishFailed={(errorInfo) => {
+            console.log('errorInfo: ', errorInfo);
+          }}
           validateMessages={validateMessages}
         >
           <Form.Item
@@ -310,7 +305,23 @@ const DropEdit: React.FC = () => {
           <Form.Item
             label="Background"
             name="background"
-            rules={[{ required: true, message: 'Background cannot be empty' }]}
+            rules={[
+              {
+                validator: async (_, background: IBackground) => {
+                  if (
+                    !background ||
+                    (!background.bgColor && !background.imgUrl) ||
+                    (background.bgColor &&
+                      background.bgColor.length <= 0 &&
+                      background.imgUrl &&
+                      background.imgUrl.length <= 0)
+                  ) {
+                    return Promise.reject(new Error('Background cannot be empty'));
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
             <BackgroundInput />
           </Form.Item>
@@ -398,7 +409,7 @@ const DropEdit: React.FC = () => {
           </Form.Item>
 
           <Form.Item name="videourl" label="video">
-            <MediaUploader sizeLimit={30} />
+            <MediaUploader sizeLimit={30} fileType="video" />
           </Form.Item>
 
           {/* <Form.Item label="Video">

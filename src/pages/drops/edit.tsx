@@ -2,85 +2,30 @@ import moment from 'moment';
 import styles from './index.less';
 import React, { useEffect, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import {
-  Button,
-  Card,
-  Form,
-  Input,
-  DatePicker,
-  Modal,
-  message,
-  Space,
-  List,
-  Select,
-  Empty,
-  Tag,
-} from 'antd';
-import Image from '@/components/Image';
-import ImageUploader from '@/components/ImageUploader';
-import VideoUploader from '@/components/VideoUploader';
-import ColorPicker from '@/components/ColorPicker';
+import { Button, Card, Form, Input, Select } from 'antd';
 import { useRequest, useLocation, history } from 'umi';
 import { addOneDrop, updateOneDrop, getOneDropDetail } from '@/services/drops';
 import { getAllPoolsByCreatorAddress } from '@/services/pool';
 import { getAccountByAddress } from '@/services/user';
 import type { IUserItem } from '@/services/user/types';
-import AddNftTable from '@/pages/drops/AddNftTable';
 import OperateNftTable from '@/pages/drops/OperateNftTable2';
 import type { IPoolResponse } from '@/services/pool/types';
 import type { DropsState, IPoolsInfo } from '@/services/drops/types';
 import { AccountSelect } from '@/components/AccountSelect';
 import { BackgroundInput, IBackground } from './BackgroundInput';
 import FromNowTimePicker from '@/components/FromNowTimePicker';
-import VideoUploader2 from '@/components/MediaUploader';
 import MediaUploader from '@/components/MediaUploader';
+import Image from '@/components/Image';
+import { FieldData } from 'rc-field-form/lib/interface';
 
-const { Option } = Select;
 const { TextArea } = Input;
 
-type BGType = 'cover' | 'bgcolor';
-
-function range(start: any, end: any) {
-  const result = [];
-  for (let i = start; i < end; i += 1) {
-    result.push(i);
-  }
-  return result;
-}
-const disabledDate = (currentDate: any) =>
-  currentDate && currentDate < moment().subtract(1, 'day').endOf('day');
-
-const disabledTime = (date: any) => {
-  const hours = moment().hours();
-  const minutes = moment().minutes();
-  // 当日只能选择当前时间之后的时间点
-  if (date && moment(date).date() === moment().date()) {
-    if (moment(date).hour() === moment().hour())
-      return {
-        disabledHours: () => range(0, 24).splice(0, hours),
-        disabledMinutes: () => range(0, 60).splice(0, minutes + 1),
-      };
-    return {
-      disabledHours: () => range(0, 24).splice(0, hours),
-    };
-  }
-  return {
-    disabledHours: () => [],
-    disabledMinutes: () => [],
-  };
-};
+type FormActionType = 'create' | 'edit';
 
 const DropEdit: React.FC = () => {
-  const [coverImage, setCoverImage] = useState<string>('');
-  const [videoUrl, setVideoUrl] = useState<string>('');
-  const [selectedAccount, setSelectedAccount] = useState<IUserItem>();
-  const [addNftModalVisible, setAddNftModalVisible] = useState(false);
-  const [tempSelectedKeys, setTempSelectedKeys] = useState<number[]>([]);
-  const [selectedKeys, setSelectedKeys] = useState<number[]>([]);
-  const [tempSelectedPoolList, setTempSelectedPoolList] = useState<IPoolResponse[]>([]);
-  const [selectedPoolList, setSelectedPoolList] = useState<IPoolResponse[]>([]);
-  const [backgroundType, setBackgroundType] = useState<BGType>('cover');
   const [dropState, setDropState] = useState<DropsState>();
+  const [coverImgUrl, setCoverImgUrl] = useState<string>();
+  const [videoUrl, setVideoUrl] = useState<string>();
 
   const [form] = Form.useForm();
   const location = useLocation();
@@ -95,13 +40,6 @@ const DropEdit: React.FC = () => {
       url: typeTemplate,
     },
   };
-
-  // useEffect(() => {
-  //   if (!currentDropId) {
-  //     setSelectedPoolList([]);
-  //     setTempSelectedPoolList([]);
-  //   }
-  // }, [selectedAccount]);
 
   const { data: dropData, loading: dropDataLoading } = useRequest(
     (dropsid: number) => {
@@ -139,18 +77,7 @@ const DropEdit: React.FC = () => {
       return;
     }
 
-    const selectedPoolIds = dropData?.poolsinfo?.map((pool: IPoolsInfo) => {
-      return pool.auctionpoolid;
-    });
-
-    setTempSelectedKeys(selectedPoolIds || []);
-    setSelectedKeys(selectedPoolIds || []);
-
     setDropState(dropData.state);
-
-    setBackgroundType(dropData.coverimgurl ? 'cover' : 'bgcolor');
-    setCoverImage(dropData.coverimgurl || '');
-    setVideoUrl(dropData.videourl || '');
 
     // form.setFieldsValue({
     //   title: dropData.title,
@@ -179,40 +106,11 @@ const DropEdit: React.FC = () => {
     //     }),
     //   },
     // });
-
-    // getAllPoolsByCreatorAddress(dropData.accountaddress).then((res) => {
-    //   if (!selectedPoolIds || !res.data) {
-    //     return;
-    //   }
-
-    //   const selectedPools = selectedPoolIds
-    //     .map((poolId) =>
-    //       res.data?.find((pool) => {
-    //         return poolId === pool.id;
-    //       }),
-    //     )
-    //     .filter((rawPool) => typeof rawPool !== 'undefined');
-
-    //   // console.log('selectedPools: ', selectedPools);
-
-    //   setTempSelectedPoolList((selectedPools as IPoolResponse[]) || []);
-    //   setSelectedPoolList((selectedPools as IPoolResponse[]) || []);
-    // });
   }, [currentDropId, dropData, dropDataLoading]);
 
   const handleEdit = (data: any) => {
     console.log('data: ', data);
     // if (!selectedAccount) return;
-
-    // let bgcolor;
-    // let coverimgurl;
-    // if (backgroundType === 'bgcolor') {
-    //   bgcolor = data?.bgcolor;
-    //   coverimgurl = '';
-    // } else {
-    //   bgcolor = '';
-    //   coverimgurl = data?.coverimgurl?.url;
-    // }
 
     // const params = {
     //   accountaddress: selectedAccount.accountaddress,
@@ -252,34 +150,30 @@ const DropEdit: React.FC = () => {
     // }
   };
 
-  const handleReset = () => {
-    setSelectedPoolList([]);
-    setCoverImage('');
-    setSelectedAccount(undefined);
-    setSelectedKeys([]);
-    form.resetFields();
+  const handleFinish = (data: any, actionType: FormActionType) => {
+    console.log('data: ', data);
+
+    const params = {};
+
+    const handleCreate = () => {};
+
+    const handleEdit = () => {};
   };
 
-  // const options = accountData?.list?.map((account: IUserItem) => {
-  //   return (
-  //     <Option key={account.id} value={account.accountaddress} disabled={account.identity === 1}>
-  //       <List.Item.Meta
-  //         avatar={<Image src={account?.imgurl} width={50} height={50} />}
-  //         title={
-  //           <Space>
-  //             <span>{account?.username}</span>
-  //             {account?.identity === 1 ? (
-  //               <Tag color="error">Unverfied</Tag>
-  //             ) : (
-  //               <Tag color="blue">Verfied</Tag>
-  //             )}
-  //           </Space>
-  //         }
-  //         description={<span>{account?.accountaddress}</span>}
-  //       />
-  //     </Option>
-  //   );
-  // });
+  const handleFieldsChange = (changedFields: FieldData[]) => {
+    console.log('changedFields: ', changedFields);
+    if (changedFields[0].name[0] === 'background') {
+      if (changedFields[0].value.imgUrl?.length > 0) {
+        setCoverImgUrl(changedFields[0].value.imgUrl);
+      } else {
+        setCoverImgUrl(undefined);
+      }
+    }
+  };
+
+  const handleReset = () => {
+    form.resetFields();
+  };
 
   return (
     <PageContainer>
@@ -289,9 +183,7 @@ const DropEdit: React.FC = () => {
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 14 }}
           onFinish={handleEdit}
-          onFinishFailed={(errorInfo) => {
-            console.log('errorInfo: ', errorInfo);
-          }}
+          onFieldsChange={handleFieldsChange}
           validateMessages={validateMessages}
         >
           <Form.Item
@@ -306,6 +198,7 @@ const DropEdit: React.FC = () => {
             label="Background"
             name="background"
             rules={[
+              { required: true },
               {
                 validator: async (_, background: IBackground) => {
                   if (
@@ -326,78 +219,36 @@ const DropEdit: React.FC = () => {
             <BackgroundInput />
           </Form.Item>
 
-          {/* <Form.Item label="Background" required>
-            <Space direction="vertical">
-              <Select
-                style={{ width: 160 }}
-                // defaultValue={backgroundType}
-                value={backgroundType}
-                onSelect={(value: BGType) => {
-                  setBackgroundType(value);
-                }}
-              >
-                <Option value="cover">Cover</Option>
-                <Option value="bgcolor">Background Color</Option>
-              </Select>
-              {backgroundType === 'cover' && (
-                <>
-                  <Form.Item
-                    name="coverimgurl"
-                    noStyle
-                    rules={[{ required: true, message: 'Cover cannot be empty' }]}
-                  >
-                    <ImageUploader
-                      maxCount={1}
-                      onChange={(file) => {
-                        setCoverImage(file?.thumbUrl || file?.url || '');
-                      }}
-                      limit={4 * 1024 * 1024}
-                    />
-                  </Form.Item>
-                  <span>Support jpg, png, gif, jpeg, jp2. Max size: 4MB.</span>
-                </>
-              )}
-              {backgroundType === 'bgcolor' && (
-                <Form.Item
-                  name="bgcolor"
-                  noStyle
-                  rules={[{ required: true, message: 'Background color cannot be empty' }]}
-                >
-                  <ColorPicker value="#FFF" />
-                </Form.Item>
-              )}
-            </Space>
-          </Form.Item>
-
-          {backgroundType === 'cover' && coverImage && (
+          {coverImgUrl && (
             <Form.Item label="Image Preview">
               <div className={styles['cover-image']}>
                 <div className={styles.preview}>
-                  <Image width={240} height={100} src={coverImage} />
+                  <Image width={240} height={100} src={coverImgUrl} />
                   <span>On PC</span>
                 </div>
                 <div className={styles.preview}>
-                  <Image width={73} height={100} src={coverImage} />
+                  <Image width={73} height={100} src={coverImgUrl} />
                   <span>On phone</span>
                 </div>
               </div>
             </Form.Item>
           )}
- */}
-          {/* <Form.Item
+
+          <Form.Item
             name="title"
             label="Title"
             rules={[{ required: true, message: 'Title cannot be empty' }]}
           >
             <TextArea autoSize showCount maxLength={48} />
           </Form.Item>
+
           <Form.Item
             name="description"
             label="Description"
             rules={[{ required: true, message: 'Description cannot be empty' }]}
           >
             <TextArea rows={5} showCount maxLength={300} />
-          </Form.Item> */}
+          </Form.Item>
 
           <Form.Item
             name="dropdate"
@@ -412,24 +263,11 @@ const DropEdit: React.FC = () => {
             <MediaUploader sizeLimit={30} fileType="video" />
           </Form.Item>
 
-          {/* <Form.Item label="Video">
-            <Form.Item name="videourl" noStyle>
-              <VideoUploader
-                maxCount={1}
-                onChange={(file) => {
-                  setVideoUrl(file?.url || '');
-                }}
-                limit={30 * 1024 * 1024}
-              />
-            </Form.Item>
-            <span>Support mp4. Max size: 30M.</span>
-          </Form.Item>
-
-          {videoUrl && (
+          {/* {form.getFieldValue('videourl') && (
             <Form.Item label="Video Preview">
               <video height={160} src={videoUrl} controls preload={'metadata'} />
             </Form.Item>
-          )}
+          )} */}
 
           <Form.Item label="Links">
             <Form.Item name="instagram" validateTrigger={['onBlur']} rules={[{ type: 'url' }]}>
@@ -441,7 +279,7 @@ const DropEdit: React.FC = () => {
             <Form.Item name="website" validateTrigger={['onBlur']} rules={[{ type: 'url' }]}>
               <Input addonBefore="Website" />
             </Form.Item>
-          </Form.Item> */}
+          </Form.Item>
 
           {currentDropId.length > 0 && (
             <Form.Item name="nfts" label="NFTs">

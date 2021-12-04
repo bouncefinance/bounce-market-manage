@@ -9,7 +9,7 @@ interface ColorPickerProps {
   value?: string;
 }
 
-const ColorPicker: React.FC<ColorPickerProps> = ({ onChange, value = '#000' }) => {
+const ColorPicker: React.FC<ColorPickerProps> = ({ onChange, value = '#fff' }) => {
   const handleChange = (color: ColorResult) => {
     console.log('color: ', color);
     onChange?.(color.hex);
@@ -21,7 +21,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ onChange, value = '#000' }) =
         trigger="click"
         overlayStyle={{ maxWidth: 300 }}
         title={
-          <div style={{ color: '#000' }}>
+          <div style={{ color: '#fff' }}>
             <SketchPicker width="250px" color={value} onChange={handleChange} />
           </div>
         }

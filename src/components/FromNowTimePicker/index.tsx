@@ -1,6 +1,6 @@
 import { DatePicker } from 'antd';
 import moment from 'moment';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export type IFromNowTimePickerProps = {
   value?: any;
@@ -47,25 +47,30 @@ const disabledTime = (date: any) => {
 };
 
 const FromNowTimePicker: React.FC<IFromNowTimePickerProps> = ({
+  value,
   disabled = false,
   format = 'YYYY-MM-DD HH:mm',
   onChange,
 }) => {
-  const [value, setValue] = useState<moment.Moment>();
+  // const [value, setValue] = useState<moment.Moment>();
 
   const triggerChange = (date: moment.Moment) => {
-    setValue(date);
+    // setValue(date);
     onChange?.(date.unix());
   };
 
+  useEffect(() => {
+    console.log('value in FromNowTimePicker: ', value);
+  }, [value]);
+
   return (
     <DatePicker
-      value={value}
+      value={moment(value * 1000)}
       onOk={triggerChange}
       disabled={disabled}
       inputReadOnly
       format={format}
-      showTime={{ defaultValue: moment().add(1, 'minute') }}
+      // showTime={{ defaultValue: moment().add(1, 'minute') }}
       showNow={false}
       disabledDate={disabledDate}
       disabledTime={disabledTime}

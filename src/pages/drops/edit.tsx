@@ -2,7 +2,7 @@ import moment from 'moment';
 import styles from './index.less';
 import React, { useEffect, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Form, Input, Select } from 'antd';
+import { Button, Card, Form, Input, message, Select } from 'antd';
 import { useRequest, useLocation, history } from 'umi';
 import { addOneDrop, updateOneDrop, getOneDropDetail } from '@/services/drops';
 import { getAllPoolsByCreatorAddress } from '@/services/pool';
@@ -22,6 +22,20 @@ const { TextArea } = Input;
 
 type FormActionType = 'create' | 'edit';
 
+interface IFormContent {
+  accountaddress: string;
+  background?: IBackground;
+  description: string;
+  dropdate: number;
+  title: string;
+  videourl?: string;
+  instagram?: string;
+  twitter?: string;
+  website?: string;
+  poolids?: number[];
+  ordernum?: number[];
+}
+
 const DropEdit: React.FC = () => {
   const [dropState, setDropState] = useState<DropsState>();
   const [coverImgUrl, setCoverImgUrl] = useState<string>();
@@ -30,6 +44,7 @@ const DropEdit: React.FC = () => {
   const [form] = Form.useForm();
   const location = useLocation();
   const currentDropId = location['query']?.id || '';
+  const actionType: FormActionType = currentDropId.length > 0 ? 'edit' : 'create';
 
   // eslint-disable-next-line no-template-curly-in-string
   const typeTemplate = 'Please input a valid ${type}';
@@ -55,7 +70,7 @@ const DropEdit: React.FC = () => {
         form.setFieldsValue({
           accountaddress: data?.accountaddress,
           background: {
-            bgType: data?.coverimgurl?.length > 0 ? 'image' : 'color',
+            bgType: data?.coverimgurl && data?.coverimgurl.length > 0 ? 'image' : 'color',
             imgUrl: data?.coverimgurl,
             bgcolor: data?.bgcolor,
           },
@@ -108,7 +123,7 @@ const DropEdit: React.FC = () => {
     // });
   }, [currentDropId, dropData, dropDataLoading]);
 
-  const handleEdit = (data: any) => {
+  const handleEdit = (data: IFormContent) => {
     console.log('data: ', data);
     // if (!selectedAccount) return;
 
@@ -150,12 +165,25 @@ const DropEdit: React.FC = () => {
     // }
   };
 
-  const handleFinish = (data: any, actionType: FormActionType) => {
+  const handleFinish = (data: IFormContent) => {
     console.log('data: ', data);
 
-    const params = {};
+    const params = { ...data, ...data.background };
+    delete params.background;
 
-    const handleCreate = () => {};
+    const handleCreate = () => {
+      addOneDrop(params).then((res) => {
+        if (res.code === 1) {
+          message.success('Added Successfully');
+
+          history.push('/drops');
+        } else if (res.msg?.includes('timestamp')) {
+          message.error('Drop time is over due');
+        } else {
+          message.error('Add failed');
+        }
+      });
+    };
 
     const handleEdit = () => {};
   };
@@ -171,6 +199,38 @@ const DropEdit: React.FC = () => {
     }
   };
 
+  const backgroundValidator = async (_: any, background: IBackground) => {
+    if (
+      !background ||
+      (!background.bgColor && !background.imgUrl) ||
+      (background.bgColor &&
+        background.bgColor.length <= 0 &&
+        background.imgUrl &&
+        background.imgUrl.length <= 0)
+    ) {
+      return Promise.reject(new Error('Background cannot be empty'));
+    }
+    return Promise.resolve();
+  };
+
+  const initialValues: IFormContent = {
+    accountaddress: '',
+    background: {
+      bgType: 'image',
+      bgColor: '',
+      imgUrl: '',
+    },
+    description: '',
+    dropdate: moment().unix(),
+    title: '',
+    videourl: '',
+    instagram: '',
+    twitter: '',
+    website: '',
+    poolids: [],
+    ordernum: [],
+  };
+
   const handleReset = () => {
     form.resetFields();
   };
@@ -182,9 +242,10 @@ const DropEdit: React.FC = () => {
           form={form}
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 14 }}
-          onFinish={handleEdit}
+          onFinish={handleFinish}
           onFieldsChange={handleFieldsChange}
           validateMessages={validateMessages}
+          initialValues={initialValues}
         >
           <Form.Item
             label="Account"
@@ -200,19 +261,7 @@ const DropEdit: React.FC = () => {
             rules={[
               { required: true },
               {
-                validator: async (_, background: IBackground) => {
-                  if (
-                    !background ||
-                    (!background.bgColor && !background.imgUrl) ||
-                    (background.bgColor &&
-                      background.bgColor.length <= 0 &&
-                      background.imgUrl &&
-                      background.imgUrl.length <= 0)
-                  ) {
-                    return Promise.reject(new Error('Background cannot be empty'));
-                  }
-                  return Promise.resolve();
-                },
+                validator: backgroundValidator,
               },
             ]}
           >

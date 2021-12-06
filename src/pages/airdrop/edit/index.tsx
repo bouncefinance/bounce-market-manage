@@ -89,8 +89,6 @@ const EditAirdrop: React.FC = () => {
       userinfos: userInfoArr,
     };
 
-    // console.log('params: ', params);
-
     addAirdrop(params).then((res) => {
       if (res.code === 1) {
         message.success('Added Successfully');
@@ -315,8 +313,8 @@ const EditAirdrop: React.FC = () => {
             <Table
               columns={columns}
               dataSource={userInfoArr}
-              rowKey={(record) => {
-                return `${record.usernames}_${new Date().valueOf()}`;
+              rowKey={(record, index) => {
+                return `${record.usernames}_${index}_${new Date().valueOf()}`;
               }}
             />
           </Form.Item>

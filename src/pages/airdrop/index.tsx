@@ -148,6 +148,13 @@ const AirDrop: React.FC = () => {
       },
     },
     {
+      dataIndex: 'opendate',
+      title: '开抢时间',
+      render: (unixTimeStamp: any) => {
+        return unixTimeStamp === 0 ? '--' : moment(unixTimeStamp * 1000).format('YYYY-MM-DD HH:mm');
+      },
+    },
+    {
       title: 'QR Code',
       render: (_, record) => {
         return (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Typography, Tooltip, Space, Button } from 'antd';
 import Image from '@/components/Image';
 import type { IUserPool } from '@/services/pool/types';
@@ -29,6 +29,10 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [tableData, setTableData] = useState<IUserPool[]>([]);
 
+  useEffect(() => {
+    console.log('tableData: ', tableData);
+  }, [tableData]);
+
   const triggerChange = (newPoolList: IUserPool[]) => {
     console.log('newPoolList: ', newPoolList);
     setTableData(newPoolList);
@@ -38,7 +42,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
     });
   };
 
-  useRequest(
+  const { data: creatorPools } = useRequest(
     () => {
       return getAllPoolsByCreatorAddress(creatorAddress);
     },
@@ -198,9 +202,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
       </Button>
 
       <Table
-        rowKey={(record: IUserPool) => {
-          return record.id;
-        }}
+        rowKey={(record) => `${record.poolid}_${record.standard}`}
         bordered
         pagination={false}
         dataSource={tableData}
@@ -216,6 +218,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
         onChange={(selectedRows) => {
           triggerChange(selectedRows);
         }}
+        dataSource={creatorPools}
       />
     </div>
   );

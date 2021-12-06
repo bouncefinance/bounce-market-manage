@@ -28,7 +28,7 @@ const AddNftModal: React.FC<IAddNftModalProps> = ({
   isVisible,
   setIsVisible,
 }) => {
-  const { tableProps: nftTableProps } = useRequest(
+  const { data: creatorPools, tableProps: nftTableProps } = useRequest(
     ({ pageSize: limit, current: offset }) => {
       return getPoolsByCreatorAddress(creatorAddress, (offset - 1) * limit, limit);
     },
@@ -124,7 +124,9 @@ const AddNftModal: React.FC<IAddNftModalProps> = ({
     }),
     preserveSelectedRowKeys: true,
     hideSelectAll: true,
-    selectedRowKeys: value,
+    selectedRowKeys: value?.filter((idFromApi) => {
+      return creatorPools?.list.find((creatorPool) => creatorPool.id === idFromApi);
+    }),
   };
 
   return (
@@ -141,7 +143,7 @@ const AddNftModal: React.FC<IAddNftModalProps> = ({
       }}
     >
       <Table
-        rowKey={(record) => record.id}
+        rowKey="id"
         rowSelection={{
           type: 'checkbox',
           ...rowSelection,

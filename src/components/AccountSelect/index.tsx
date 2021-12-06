@@ -66,7 +66,6 @@ const AccountSelect: React.FC<IAccountSelectProps> = ({ value, onChange, disable
   return (
     <>
       <Select
-        // open
         loading={accountLoading}
         optionLabelProp={'value'}
         defaultActiveFirstOption={false}
@@ -98,4 +97,4 @@ const AccountSelect: React.FC<IAccountSelectProps> = ({ value, onChange, disable
   );
 };
 
-export { AccountSelect };
+export default AccountSelect;

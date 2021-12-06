@@ -55,6 +55,11 @@ export interface IGetDropDetailParams {
   poolstate?: number;
 }
 
+export enum EDropState {
+  COMING_SOON = 1,
+  LIVE = 2,
+  PREVIOUS = 3,
+}
 export interface IDropResp {
   accountaddress: string;
   website: string;
@@ -73,7 +78,7 @@ export interface IDropResp {
   price: string;
   notsaled: number;
   droptype: number;
-  state: DropsState;
+  state: EDropState;
   maxbuycount: number;
   username: string;
   creatorurl: string;

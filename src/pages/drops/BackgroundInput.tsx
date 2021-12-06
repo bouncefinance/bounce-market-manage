@@ -1,7 +1,7 @@
-import AvatarUploader from '@/components/AvatarUploader';
 import ColorPicker from '@/components/ColorPicker';
+import MediaUploader from '@/components/MediaUploader';
 import { Select } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 const { Option } = Select;
 
@@ -20,21 +20,6 @@ export interface IBackgroundInputProps {
 
 const BackgroundInput: React.FC<IBackgroundInputProps> = ({ value, onChange }) => {
   const [bgType, setBgType] = useState<BgType>('image');
-  // const [bgValue, setBgValue] = useState<string>();
-
-  useEffect(() => {
-    console.log('value: ', value);
-    // setBgType(value?.bgType);
-    // setBgValue(value?.bgValue || '');
-  }, [value]);
-
-  // useEffect(() => {
-  //   console.log('bgType: ', bgType);
-  // }, [bgType]);
-
-  // useEffect(() => {
-  //   console.log('bgValue: ', bgValue);
-  // }, [bgValue]);
 
   const triggerChange = (changedValue: { bgType?: BgType; imgUrl?: string; bgColor?: string }) => {
     onChange?.({ bgType, ...changedValue });
@@ -55,16 +40,25 @@ const BackgroundInput: React.FC<IBackgroundInputProps> = ({ value, onChange }) =
 
   return (
     <div>
-      <Select style={{ width: 160, marginBottom: 10 }} value={bgType} onSelect={handleBgTypeSelect}>
+      <Select
+        style={{ width: 160, marginBottom: 10 }}
+        value={value?.bgType || 'image'}
+        onSelect={handleBgTypeSelect}
+      >
         <Option value="image">Image</Option>
         <Option value="color">Color</Option>
       </Select>
 
-      {bgType === 'image' && (
-        <AvatarUploader value={value?.imgUrl} onChange={handleImgUpload} sizeLimit={4} />
+      {value?.bgType === 'image' && (
+        <MediaUploader
+          value={value?.imgUrl}
+          onChange={handleImgUpload}
+          sizeLimit={4}
+          fileType="image"
+        />
       )}
 
-      {bgType === 'color' && <ColorPicker value={value?.bgColor} onChange={handleBgColorSelect} />}
+      {value?.bgType === 'color' && <ColorPicker value={value?.bgColor} onChange={handleBgColorSelect} />}
     </div>
   );
 };

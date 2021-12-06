@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useEffect, useRef, useState } from 'react';
 import { Upload, message } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
@@ -15,14 +16,16 @@ interface IAvatarUploaderProps {
 
 const supportedFile = {
   image: {
-    type: ['image/jpg', 'image/png', 'image/gif', 'image/jp2', 'image/jpeg'],
+    accept: '.jpg, .png, .jp2, .jpeg',
+    uploadedType: ['image/jpg', 'image/png', 'image/gif', 'image/jp2', 'image/jpeg'],
     helpText: 'Only support jpg, png, gif, jpeg, jp2!',
   },
-  video: { type: ['video/mp4'], helpText: 'Only support jpg, png, gif, jpeg, jp2!' },
+  video: {
+    accept: '.mp4',
+    uploadedType: ['video/mp4'],
+    helpText: 'Only support jpg, png, gif, jpeg, jp2!',
+  },
 };
-
-const SupportedImageType = ['image/jpg', 'image/png', 'image/gif', 'image/jp2', 'image/jpeg'];
-const SupportedVideoType = ['video/mp4'];
 
 const AvatarUploader: React.FC<IAvatarUploaderProps> = ({
   value,
@@ -42,7 +45,8 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({
   }, []);
 
   function beforeUpload(file: RcFile) {
-    const isTypeLegal = supportedFile[fileType].type.find(
+    console.log('file.type: ', file.type);
+    const isTypeLegal = supportedFile[fileType].uploadedType.find(
       (supportedType) => supportedType === file.type,
     );
     if (!isTypeLegal) {
@@ -54,7 +58,7 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({
       message.error(`Image must smaller than ${sizeLimit}M!`);
     }
 
-    return isTypeLegal &&  isSizeLegal;
+    return isTypeLegal && isSizeLegal;
   }
 
   const handleChange = (info: UploadChangeParam) => {
@@ -86,14 +90,14 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({
   const uploadButton = (
     <div>
       {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Upload</div>
+      <div style={{ marginTop: 8 }}>{loading ? 'Uploading' : 'Upload'}</div>
     </div>
   );
 
   return (
     <Upload
       name="avatar"
-      accept=".mp4,"
+      accept={supportedFile[fileType].accept}
       listType="picture-card"
       className="avatar-uploader"
       showUploadList={false}
@@ -101,7 +105,15 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({
       onChange={handleChange}
     >
       {!loading && value ? (
-        <video src={value} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        fileType === 'video' ? (
+          <video src={value} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        ) : (
+          <img
+            src={value}
+            alt="avatar"
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+          />
+        )
       ) : (
         uploadButton
       )}

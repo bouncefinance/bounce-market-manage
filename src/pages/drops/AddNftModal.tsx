@@ -28,8 +28,6 @@ const AddNftModal: React.FC<IAddNftModalProps> = ({
   isVisible,
   setIsVisible,
 }) => {
-  const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
-
   const { tableProps: nftTableProps } = useRequest(
     ({ pageSize: limit, current: offset }) => {
       return getPoolsByCreatorAddress(creatorAddress, (offset - 1) * limit, limit);
@@ -115,21 +113,11 @@ const AddNftModal: React.FC<IAddNftModalProps> = ({
   ];
 
   const rowSelection = {
-    onChange: (_: React.Key[], selectedRows: any) => {
-      // setSelectedKeys(selectedRowKeys);
+    onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
+      console.log('selectedRowKeys: ', selectedRowKeys);
       console.log('selectedRows: ', selectedRows);
       onChange?.(selectedRows);
     },
-    // onSelect: (record: IUserPool, selected: boolean) => {
-    //   if (selected) {
-    //     const tempArr = [...selectedKeys];
-    //     tempArr.push(record.id);
-
-    //     setSelectedKeys(tempArr);
-    //   } else {
-    //     setSelectedKeys(selectedKeys.filter((key) => key !== record.id));
-    //   }
-    // },
     getCheckboxProps: (record: IUserPool) => ({
       disabled:
         record.state === EPoolSaleState.CLOSED || record.status === EPoolItemDisplayState.HIDEN,

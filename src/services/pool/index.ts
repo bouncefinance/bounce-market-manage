@@ -3,7 +3,6 @@ import type {
   IDeletePoolWeightParams,
   IGetPoolsParams,
   IPoolInfo,
-  IPoolResponse,
   ITopPool,
   IInsertPoolWeightParams,
   PoolFilterType,

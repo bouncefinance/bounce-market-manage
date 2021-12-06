@@ -1,22 +1,21 @@
-import moment from 'moment';
 import styles from './index.less';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Form, Input, message, Select } from 'antd';
-import { useRequest, useLocation, history } from 'umi';
+import { Button, Card, Form, Input, message } from 'antd';
+import { useRequest, history, useHistory } from 'umi';
+import type { Location } from 'umi';
 import { addOneDrop, updateOneDrop, getOneDropDetail } from '@/services/drops';
-import { getAllPoolsByCreatorAddress } from '@/services/pool';
-import { getAccountByAddress } from '@/services/user';
-import type { IUserItem } from '@/services/user/types';
-import OperateNftTable from '@/pages/drops/OperateNftTable2';
-import type { IPoolResponse } from '@/services/pool/types';
-import type { DropsState, IPoolsInfo } from '@/services/drops/types';
-import { AccountSelect } from '@/components/AccountSelect';
-import { BackgroundInput, IBackground } from './BackgroundInput';
+import OperateNftTable from '@/pages/drops/OperateNftTable';
+import type { IDropPoolsInfo } from '@/pages/drops/OperateNftTable';
+import type { EDropState, IAddDropParams } from '@/services/drops/types';
+import AccountSelect from '@/components/AccountSelect';
+import type { IBackground } from './BackgroundInput';
+import { BackgroundInput } from './BackgroundInput';
 import FromNowTimePicker from '@/components/FromNowTimePicker';
 import MediaUploader from '@/components/MediaUploader';
 import Image from '@/components/Image';
-import { FieldData } from 'rc-field-form/lib/interface';
+import type { FieldData } from 'rc-field-form/lib/interface';
+import type { IResponse } from '@/services/types';
 
 const { TextArea } = Input;
 
@@ -32,19 +31,20 @@ interface IFormContent {
   instagram?: string;
   twitter?: string;
   website?: string;
-  poolids?: number[];
-  ordernum?: number[];
+  pools?: IDropPoolsInfo;
 }
 
 const DropEdit: React.FC = () => {
-  const [dropState, setDropState] = useState<DropsState>();
+  const [dropState, setDropState] = useState<EDropState>();
   const [coverImgUrl, setCoverImgUrl] = useState<string>();
-  const [videoUrl, setVideoUrl] = useState<string>();
+  const [creatorAddress, setCreatorAddress] = useState<string>();
+  // const [videoUrl, setVideoUrl] = useState<string>();
 
   const [form] = Form.useForm();
-  const location = useLocation();
-  const currentDropId = location['query']?.id || '';
-  const actionType: FormActionType = currentDropId.length > 0 ? 'edit' : 'create';
+  const { location } = useHistory();
+  const { query = {} } = location as Location;
+  const dropId = query.id;
+  const actionType: FormActionType = dropId ? 'edit' : 'create';
 
   // eslint-disable-next-line no-template-curly-in-string
   const typeTemplate = 'Please input a valid ${type}';
@@ -56,140 +56,99 @@ const DropEdit: React.FC = () => {
     },
   };
 
-  const { data: dropData, loading: dropDataLoading } = useRequest(
-    (dropsid: number) => {
+  const { loading: dropDataLoading } = useRequest(
+    () => {
       return getOneDropDetail({
-        dropsid: Number(dropsid),
+        dropsid: Number(dropId),
       });
     },
     {
-      defaultParams: [currentDropId],
+      ready: !!dropId, // 一个!是将对象转为布尔型并取反，两个!是将取反后的布尔值再取反，相当于直接将非布尔类型值转为布尔类型值。
       onSuccess: (data) => {
-        console.log('data in get drop: ', data);
+        if (!data) {
+          message.error(`Failed to fetch drop's info`);
+          return;
+        }
+
+        setDropState(data.state);
+        setCreatorAddress(data.accountaddress);
+
+        if (data.coverimgurl && data.coverimgurl.length > 0) {
+          setCoverImgUrl(data.coverimgurl);
+        } else {
+          setCoverImgUrl(undefined);
+        }
 
         form.setFieldsValue({
-          accountaddress: data?.accountaddress,
+          accountaddress: data.accountaddress,
+          title: data.title,
           background: {
-            bgType: data?.coverimgurl && data?.coverimgurl.length > 0 ? 'image' : 'color',
-            imgUrl: data?.coverimgurl,
-            bgcolor: data?.bgcolor,
+            bgType: data.coverimgurl && data.coverimgurl.length > 0 ? 'image' : 'color',
+            imgUrl: data.coverimgurl,
+            bgColor: data.bgcolor,
           },
-          nfts: {
-            orderList: data?.poolsinfo
-              ? Array.from(new Array(data?.poolsinfo.length).keys())
-              : undefined,
-            idList: data?.poolsinfo?.map((pool) => {
-              return pool.auctionpoolid;
-            }),
+          description: data.description,
+          dropdate: data.dropdate,
+          website: data.website,
+          twitter: data.twitter,
+          instagram: data.instagram,
+          videourl: data.videourl,
+          pools: {
+            orderList: data.poolsinfo ? Array.from(new Array(data.poolsinfo.length).keys()) : [],
+            idList: data.poolsinfo
+              ? data.poolsinfo.map((pool) => {
+                  return pool.auctionpoolid;
+                })
+              : [],
           },
         });
       },
     },
   );
 
-  useEffect(() => {
-    if (!currentDropId || !dropData || dropDataLoading) {
-      return;
-    }
-
-    setDropState(dropData.state);
-
-    // form.setFieldsValue({
-    //   title: dropData.title,
-    //   description: dropData.description,
-    //   website: dropData.website,
-    //   twitter: dropData.twitter,
-    //   instagram: dropData.instagram,
-    //   bgcolor: dropData.bgcolor,
-    //   coverimgurl: dropData.coverimgurl ? image : null,
-    //   videourl: dropData.videourl ? video : null,
-    //   dropdate: moment(dropData.dropdate * 1000),
-
-    //   accountaddress: dropData.accountaddress,
-    //   background: {
-    //     bgType: dropData.coverimgurl.length > 0 ? 'image' : 'color',
-    //     imgUrl: dropData.coverimgurl,
-    //     bgcolor: dropData.bgcolor,
-    //   },
-
-    //   nfts: {
-    //     orderList: dropData.poolsinfo
-    //       ? Array.from(new Array(dropData.poolsinfo.length).keys())
-    //       : undefined,
-    //     idList: dropData.poolsinfo?.map((pool) => {
-    //       return pool.auctionpoolid;
-    //     }),
-    //   },
-    // });
-  }, [currentDropId, dropData, dropDataLoading]);
-
-  const handleEdit = (data: IFormContent) => {
-    console.log('data: ', data);
-    // if (!selectedAccount) return;
-
-    // const params = {
-    //   accountaddress: selectedAccount.accountaddress,
-    //   website: data.website,
-    //   twitter: data.twitter,
-    //   instagram: data.instagram,
-    //   title: data.title,
-    //   description: data.description,
-    //   bgcolor,
-    //   coverimgurl,
-    //   videourl: data.videourl?.url || '',
-    //   poolids: selectedPoolList?.map((nft) => {
-    //     return nft.id;
-    //   }),
-    //   ordernum: new Array(selectedPoolList?.length).fill(0).map((_, index) => {
-    //     return index;
-    //   }),
-    //   dropdate: data.dropdate.unix(),
-    // };
-
-    // if (currentDropId) {
-    //   updateOneDrop({ ...params, id: Number(currentDropId) }).then((res) => {
-    //     if (res.code === 1) {
-    //       message.success('Updated Successfully');
-    //       history.push('/drops');
-    //     } else if (res.msg?.includes('timestamp')) message.error('Drop time is over due');
-    //     else message.error('Update failed');
-    //   });
-    // } else {
-    //   addOneDrop(params).then((res) => {
-    //     if (res.code === 1) {
-    //       message.success('Added Successfully');
-    //       history.push('/drops');
-    //     } else if (res.msg?.includes('timestamp')) message.error('Drop time is over due');
-    //     else message.error('Add failed');
-    //   });
-    // }
-  };
-
   const handleFinish = (data: IFormContent) => {
-    console.log('data: ', data);
+    const rawParams = { ...data };
+    delete rawParams.background;
+    const params: IAddDropParams = {
+      ...rawParams,
+      coverimgurl: data.background?.imgUrl,
+      bgcolor: data.background?.bgColor,
+      poolids: data.pools ? data.pools.idList : [],
+      ordernum: data.pools ? data.pools.orderList : [],
+    };
 
-    const params = { ...data, ...data.background };
-    delete params.background;
+    const messageHandler = (res: IResponse<unknown>) => {
+      if (res.code === 1) {
+        message.success('Added Successfully');
+
+        history.push('/drops');
+      } else if (res.msg?.includes('timestamp')) {
+        message.error('Drop time is over due');
+      } else {
+        message.error('Add failed');
+      }
+    };
 
     const handleCreate = () => {
       addOneDrop(params).then((res) => {
-        if (res.code === 1) {
-          message.success('Added Successfully');
-
-          history.push('/drops');
-        } else if (res.msg?.includes('timestamp')) {
-          message.error('Drop time is over due');
-        } else {
-          message.error('Add failed');
-        }
+        messageHandler(res);
       });
     };
 
-    const handleEdit = () => {};
+    const handleEdit = () => {
+      updateOneDrop({ ...params, id: Number(dropId) }).then((res) => {
+        messageHandler(res);
+      });
+    };
+
+    if (actionType === 'create') {
+      handleCreate();
+    } else {
+      handleEdit();
+    }
   };
 
   const handleFieldsChange = (changedFields: FieldData[]) => {
-    console.log('changedFields: ', changedFields);
     if (changedFields[0].name[0] === 'background') {
       if (changedFields[0].value.imgUrl?.length > 0) {
         setCoverImgUrl(changedFields[0].value.imgUrl);
@@ -213,22 +172,13 @@ const DropEdit: React.FC = () => {
     return Promise.resolve();
   };
 
-  const initialValues: IFormContent = {
-    accountaddress: '',
+  const initialValues = {
     background: {
       bgType: 'image',
       bgColor: '',
       imgUrl: '',
     },
-    description: '',
-    dropdate: moment().unix(),
-    title: '',
-    videourl: '',
-    instagram: '',
-    twitter: '',
-    website: '',
-    poolids: [],
-    ordernum: [],
+    dropdate: null,
   };
 
   const handleReset = () => {
@@ -236,7 +186,7 @@ const DropEdit: React.FC = () => {
   };
 
   return (
-    <PageContainer>
+    <PageContainer loading={dropDataLoading}>
       <Card>
         <Form
           form={form}
@@ -252,7 +202,7 @@ const DropEdit: React.FC = () => {
             name="accountaddress"
             rules={[{ required: true, message: 'Account cannot be empty' }]}
           >
-            <AccountSelect disabled={currentDropId.length > 0} />
+            <AccountSelect disabled={!!dropId} />
           </Form.Item>
 
           <Form.Item
@@ -330,9 +280,9 @@ const DropEdit: React.FC = () => {
             </Form.Item>
           </Form.Item>
 
-          {currentDropId.length > 0 && (
-            <Form.Item name="nfts" label="NFTs">
-              <OperateNftTable creatorAddress={form.getFieldValue('accountaddress')} />
+          {dropId && creatorAddress && (
+            <Form.Item name="pools" label="NFTs">
+              <OperateNftTable creatorAddress={creatorAddress} />
             </Form.Item>
           )}
 
@@ -347,7 +297,7 @@ const DropEdit: React.FC = () => {
               Reset
             </Button>
             <Button type="primary" htmlType="submit">
-              {currentDropId ? 'Save' : 'Create'}
+              {dropId ? 'Save' : 'Create'}
             </Button>
           </Form.Item>
         </Form>

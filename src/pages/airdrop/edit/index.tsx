@@ -293,19 +293,9 @@ const EditAirdrop: React.FC = () => {
             name="supply"
             label="Total Supply"
             validateTrigger={['onSubmit', 'onChange']}
-            rules={[
-              { required: true },
-              () => ({
-                validator(_, value) {
-                  if (!value || value <= 50) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error('Total supply must be under 50'));
-                },
-              }),
-            ]}
+            rules={[{ required: true }]}
           >
-            <Input type="number" max={50} />
+            <Input type="number" />
           </Form.Item>
 
           <Form.Item name="tokenimgs" label="image链接" rules={[{ required: true }]}>

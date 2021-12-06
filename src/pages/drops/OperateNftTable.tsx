@@ -218,7 +218,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
         onChange={(selectedRows) => {
           triggerChange(selectedRows);
         }}
-        dataSource={creatorPools}
+        dataSource={creatorPools || []}
       />
     </div>
   );

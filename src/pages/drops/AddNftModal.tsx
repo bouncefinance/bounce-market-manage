@@ -8,7 +8,7 @@ import {
   PoolState,
 } from '@/services/pool/types';
 import { Modal, Table, Tag, Tooltip, Typography } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from '@/components/Image';
 import { getPoolsByCreatorAddress } from '@/services/pool';
 import { useRequest } from 'umi';
@@ -19,6 +19,7 @@ export interface IAddNftModalProps {
   creatorAddress: string;
   isVisible: boolean;
   setIsVisible: (isVisible: boolean) => void;
+  dataSource: IUserPool[];
 }
 
 const AddNftModal: React.FC<IAddNftModalProps> = ({
@@ -27,7 +28,12 @@ const AddNftModal: React.FC<IAddNftModalProps> = ({
   creatorAddress,
   isVisible,
   setIsVisible,
+  dataSource,
 }) => {
+  useEffect(() => {
+    console.log('dataSource: ', dataSource)
+  }, [dataSource])
+
   const { data: creatorPools, tableProps: nftTableProps } = useRequest(
     ({ pageSize: limit, current: offset }) => {
       return getPoolsByCreatorAddress(creatorAddress, (offset - 1) * limit, limit);
@@ -124,9 +130,7 @@ const AddNftModal: React.FC<IAddNftModalProps> = ({
     }),
     preserveSelectedRowKeys: true,
     hideSelectAll: true,
-    selectedRowKeys: value?.filter((idFromApi) => {
-      return creatorPools?.list.find((creatorPool) => creatorPool.id === idFromApi);
-    }),
+    selectedRowKeys: value,
   };
 
   return (
@@ -149,7 +153,8 @@ const AddNftModal: React.FC<IAddNftModalProps> = ({
           ...rowSelection,
         }}
         columns={columns}
-        {...nftTableProps}
+        // {...nftTableProps}
+        dataSource={dataSource}
         size="small"
         style={{ width: 800 }}
       />

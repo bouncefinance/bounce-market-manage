@@ -297,7 +297,7 @@ const DropEdit: React.FC = () => {
               Reset
             </Button>
             <Button type="primary" htmlType="submit">
-              {dropId ? 'Save' : 'Create'}
+              {actionType === 'edit' ? 'Save' : 'Create'}
             </Button>
           </Form.Item>
         </Form>

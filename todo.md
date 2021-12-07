@@ -45,7 +45,9 @@
   - 一键复制的按钮改成 antd 自带的
 
 - [x] 添加图片上传组件的上传中状态
-- [ ] AccountSelect: 按照antd文档中的“搜索用户”案例或使用input进行优化
+- [ ] AccountSelect: 按照 antd 文档中的“搜索用户”案例或使用 input 进行优化
+- [ ] 优化 OperateNftTable 和 AddNftModal 之间的通信（考虑用 useReducer）
+- [ ] 上传组件的预览
 
 原型地址
 

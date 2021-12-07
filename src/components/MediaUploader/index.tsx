@@ -35,7 +35,7 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({
 }) => {
   const isMounted = useRef<boolean>(false);
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [uploading, setUploading] = useState<boolean>(false);
 
   useEffect(() => {
     isMounted.current = true;
@@ -45,7 +45,6 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({
   }, []);
 
   function beforeUpload(file: RcFile) {
-    console.log('file.type: ', file.type);
     const isTypeLegal = supportedFile[fileType].uploadedType.find(
       (supportedType) => supportedType === file.type,
     );
@@ -63,7 +62,7 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({
 
   const handleChange = (info: UploadChangeParam) => {
     if (info.file.status === 'uploading' && isMounted.current) {
-      setLoading(true);
+      setUploading(true);
       return;
     }
     if (info.file.status === 'done' && info.file.originFileObj) {
@@ -77,7 +76,7 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({
             onChange?.(res.result.path);
 
             setTimeout(() => {
-              setLoading(false);
+              setUploading(false);
             }, 1000);
           }
         } else {
@@ -89,10 +88,22 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({
 
   const uploadButton = (
     <div>
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>{loading ? 'Uploading' : 'Upload'}</div>
+      {uploading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div style={{ marginTop: 8 }}>{uploading ? 'Uploading' : 'Upload'}</div>
     </div>
   );
+
+  const showUploadResult = () => {
+    return fileType === 'video' ? (
+      <video src={value} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+    ) : (
+      <img
+        src={value}
+        alt="avatar"
+        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+      />
+    );
+  };
 
   return (
     <Upload
@@ -100,23 +111,10 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({
       accept={supportedFile[fileType].accept}
       listType="picture-card"
       className="avatar-uploader"
-      showUploadList={false}
       beforeUpload={beforeUpload}
       onChange={handleChange}
     >
-      {!loading && value ? (
-        fileType === 'video' ? (
-          <video src={value} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-        ) : (
-          <img
-            src={value}
-            alt="avatar"
-            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-          />
-        )
-      ) : (
-        uploadButton
-      )}
+      {!uploading && value ? showUploadResult() : uploadButton}
     </Upload>
   );
 };

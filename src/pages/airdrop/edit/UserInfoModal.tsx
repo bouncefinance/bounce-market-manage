@@ -47,9 +47,12 @@ const UserInfoModal: React.FC<IUserInfoModalProps> = ({
     setIsModalVisible(false);
   };
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: {
+    userName: string | undefined;
+    avatarimg: string | undefined;
+  }) => {
     const tempArr = userInfoArr;
-    tempArr[userIndex] = { useravatars: values.avatarimg, usernames: values.userName };
+    tempArr[userIndex] = { useravatars: values.avatarimg || '', usernames: values.userName || '' };
 
     setUserInfoArr(
       tempArr.map((userInfo) => {
@@ -76,16 +79,12 @@ const UserInfoModal: React.FC<IUserInfoModalProps> = ({
         autoComplete="off"
         onFinish={handleSubmit}
       >
-        <Form.Item name="userName" label="username" rules={[{ required: true }]}>
+        <Form.Item name="userName" label="username">
           <Input />
         </Form.Item>
 
         <Form.Item label="avatar">
-          <Form.Item
-            name="avatarimg"
-            noStyle
-            rules={[{ required: true, message: 'Cover cannot be empty' }]}
-          >
+          <Form.Item name="avatarimg" noStyle>
             <AvatarUploader sizeLimit={4} />
           </Form.Item>
           <span>Support jpg, png, gif, jpeg, jp2. Max size: 10MB.</span>

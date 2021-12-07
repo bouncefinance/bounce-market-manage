@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Table, Typography, Tooltip, Space, Button } from 'antd';
 import Image from '@/components/Image';
 import type { IUserPool } from '@/services/pool/types';
@@ -29,12 +29,7 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [tableData, setTableData] = useState<IUserPool[]>([]);
 
-  useEffect(() => {
-    console.log('tableData: ', tableData);
-  }, [tableData]);
-
   const triggerChange = (newPoolList: IUserPool[]) => {
-    console.log('newPoolList: ', newPoolList);
     setTableData(newPoolList);
     onChange?.({
       orderList: newPoolList.length > 0 ? Array.from(new Array(newPoolList.length).keys()) : [],
@@ -58,8 +53,6 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
       refreshDeps: [creatorAddress],
       ready: Boolean(value),
       onSuccess: (data) => {
-        console.log('value in onSuccess: ', value);
-
         if (!value?.idList) {
           return;
         }
@@ -210,16 +203,17 @@ const AddNftTable: React.FC<IOperateNftTableProps> = ({
         size="small"
       />
 
-      <AddNftModal
-        creatorAddress={creatorAddress}
-        isVisible={isModalVisible}
-        setIsVisible={setIsModalVisible}
-        value={value?.idList}
-        onChange={(selectedRows) => {
-          triggerChange(selectedRows);
-        }}
-        dataSource={creatorPools || []}
-      />
+      {creatorPools && (
+        <AddNftModal
+          isVisible={isModalVisible}
+          setIsVisible={setIsModalVisible}
+          value={value?.idList}
+          onChange={(selectedRows) => {
+            triggerChange(selectedRows);
+          }}
+          poolMap={creatorPools}
+        />
+      )}
     </div>
   );
 };

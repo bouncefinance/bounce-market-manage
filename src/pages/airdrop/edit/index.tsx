@@ -89,8 +89,6 @@ const EditAirdrop: React.FC = () => {
       userinfos: userInfoArr,
     };
 
-    // console.log('params: ', params);
-
     addAirdrop(params).then((res) => {
       if (res.code === 1) {
         message.success('Added Successfully');
@@ -293,19 +291,9 @@ const EditAirdrop: React.FC = () => {
             name="supply"
             label="Total Supply"
             validateTrigger={['onSubmit', 'onChange']}
-            rules={[
-              { required: true },
-              () => ({
-                validator(_, value) {
-                  if (!value || value <= 50) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error('Total supply must be under 50'));
-                },
-              }),
-            ]}
+            rules={[{ required: true }]}
           >
-            <Input type="number" max={50} />
+            <Input type="number" />
           </Form.Item>
 
           <Form.Item name="tokenimgs" label="image链接" rules={[{ required: true }]}>
@@ -325,8 +313,8 @@ const EditAirdrop: React.FC = () => {
             <Table
               columns={columns}
               dataSource={userInfoArr}
-              rowKey={(record) => {
-                return `${record.usernames}_${new Date().valueOf()}`;
+              rowKey={(record, index) => {
+                return `${record.usernames}_${index}_${new Date().valueOf()}`;
               }}
             />
           </Form.Item>

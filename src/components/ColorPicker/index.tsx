@@ -11,7 +11,6 @@ interface ColorPickerProps {
 
 const ColorPicker: React.FC<ColorPickerProps> = ({ onChange, value = '#fff' }) => {
   const handleChange = (color: ColorResult) => {
-    console.log('color: ', color);
     onChange?.(color.hex);
   };
 

@@ -1,55 +1,24 @@
-import {
-  EPoolItemDisplayState,
-  EPoolSaleState,
-  EPoolSaleTYPE,
-  IUserPooIUserPool,
-  IUserPool,
-  l,
-  PoolState,
-} from '@/services/pool/types';
+import type { IUserPool } from '@/services/pool/types';
+import { EPoolItemDisplayState, EPoolSaleState, EPoolSaleTYPE } from '@/services/pool/types';
 import { Modal, Table, Tag, Tooltip, Typography } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Image from '@/components/Image';
-import { getPoolsByCreatorAddress } from '@/services/pool';
-import { useRequest } from 'umi';
 
 export interface IAddNftModalProps {
   value?: number[];
-  onChange?: (value: any) => void;
-  creatorAddress: string;
+  onChange?: (value: IUserPool[]) => void;
   isVisible: boolean;
   setIsVisible: (isVisible: boolean) => void;
-  dataSource: IUserPool[];
+  poolMap: Map<number, IUserPool>;
 }
 
 const AddNftModal: React.FC<IAddNftModalProps> = ({
   value,
   onChange,
-  creatorAddress,
   isVisible,
   setIsVisible,
-  dataSource,
+  poolMap,
 }) => {
-  useEffect(() => {
-    console.log('dataSource: ', dataSource)
-  }, [dataSource])
-
-  const { data: creatorPools, tableProps: nftTableProps } = useRequest(
-    ({ pageSize: limit, current: offset }) => {
-      return getPoolsByCreatorAddress(creatorAddress, (offset - 1) * limit, limit);
-    },
-    {
-      paginated: true,
-      defaultParams: [{ pageSize: 5, current: 1 }, creatorAddress],
-      formatResult(data: any) {
-        return {
-          list: data.data,
-          total: data.total,
-        };
-      },
-    },
-  );
-
   const columns = [
     {
       dataIndex: 'id',
@@ -119,9 +88,7 @@ const AddNftModal: React.FC<IAddNftModalProps> = ({
   ];
 
   const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
-      console.log('selectedRowKeys: ', selectedRowKeys);
-      console.log('selectedRows: ', selectedRows);
+    onChange: (_: React.Key[], selectedRows: IUserPool[]) => {
       onChange?.(selectedRows);
     },
     getCheckboxProps: (record: IUserPool) => ({
@@ -154,7 +121,8 @@ const AddNftModal: React.FC<IAddNftModalProps> = ({
         }}
         columns={columns}
         // {...nftTableProps}
-        dataSource={dataSource}
+        dataSource={[...poolMap.values()]}
+        pagination={{ pageSize: 5, total: [...poolMap.keys()].length }}
         size="small"
         style={{ width: 800 }}
       />

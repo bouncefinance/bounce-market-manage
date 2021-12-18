@@ -78,6 +78,7 @@ const EditAirdrop: React.FC = () => {
       category: data.category,
       channel: data.channel,
       coverimgurl: data.coverimgurl,
+      logourl: data.logourl,
       description: data.description,
       tokenimgs: data.tokenimgs,
       opendate: data.opendate.unix(),
@@ -234,6 +235,14 @@ const EditAirdrop: React.FC = () => {
           <Form.Item
             label="cover"
             name="coverimgurl"
+            tooltip="Support jpg, png, gif, jpeg, jp2. Max size: 10MB."
+          >
+            <AvatarUploader sizeLimit={10} />
+          </Form.Item>
+
+          <Form.Item
+            label="Logo"
+            name="logourl"
             tooltip="Support jpg, png, gif, jpeg, jp2. Max size: 10MB."
           >
             <AvatarUploader sizeLimit={10} />

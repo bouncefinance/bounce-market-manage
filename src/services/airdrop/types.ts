@@ -14,6 +14,7 @@ export interface IAddAirdropParams {
   channel: string;
   collection: string;
   coverimgurl: string;
+  logourl: string;
   description: string;
   dropdate: number;
   opendate: number;

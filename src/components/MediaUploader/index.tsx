@@ -110,6 +110,7 @@ const AvatarUploader: React.FC<IAvatarUploaderProps> = ({
       name="avatar"
       accept={supportedFile[fileType].accept}
       listType="picture-card"
+      showUploadList={false}
       className="avatar-uploader"
       beforeUpload={beforeUpload}
       onChange={handleChange}

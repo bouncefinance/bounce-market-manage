@@ -55,7 +55,7 @@ export type categoryType = 'image' | 'video';
 export interface IPoolInfo {
   id?: number;
   poolid?: number;
-  tokenid?: number;
+  tokenid?: string;
   itemname: string;
   fileurl?: string;
   likecount?: number;
@@ -99,7 +99,7 @@ export interface IGetPoolsParams {
   likestr?: string;
   limit?: number;
   offset?: number;
-  tokenid?: number;
+  tokenid?: string;
 }
 
 export interface IPoolResponse {
@@ -115,7 +115,7 @@ export interface IPoolResponse {
   popularweight: number;
   standard: number;
   status: number;
-  tokenid: number;
+  tokenid: string;
   username: string;
   state: PoolState;
   pooltype: poolSaleType;
@@ -124,7 +124,7 @@ export interface IPoolResponse {
 export interface IUserPool {
   id: number;
   poolid: number;
-  tokenid: number;
+  tokenid: string;
   itemname: string;
   fileurl: string;
   contractaddress: string;

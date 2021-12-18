@@ -93,7 +93,7 @@ export interface IPoolsInfo {
   username: string;
   standard: number;
   contractaddress: string;
-  tokenid: number;
+  tokenid: string;
   auctionpoolid: number;
   creatorurl: string;
   created_at: string;

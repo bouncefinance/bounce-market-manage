@@ -37,7 +37,7 @@ export const getPoolsByFilter = (
 
     case PoolFilterEnum.tokenid:
       data = {
-        tokenid: Number(searchText),
+        tokenid: searchText,
         limit,
         offset,
       };

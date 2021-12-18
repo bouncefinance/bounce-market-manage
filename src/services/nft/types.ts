@@ -19,7 +19,7 @@ export interface INftItem {
   standard: number;
   status: number;
   supply: number;
-  tokenid: number;
+  tokenid: string;
   updated_at: string;
 }
 

@@ -53,7 +53,7 @@ export interface IQueryOneAirdropUserInfoResponse {
   dropsid: number;
   username: string;
   imgurl: number;
-  tokenid: number;
+  tokenid: string;
   contractaddress: string;
   verifycode: string;
   state: number;
@@ -120,6 +120,6 @@ export interface IExportAirdropUserInfoResponse {
   useravatar: string;
   nftname: string;
   nftimgurl: string;
-  tokenid: number;
+  tokenid: string;
   verifycode: string;
 }

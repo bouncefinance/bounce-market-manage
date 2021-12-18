@@ -27,7 +27,7 @@ const { Search } = Input;
 const { confirm } = Modal;
 const { Option } = Select;
 
-const handleDeleteItem = async (contractaddress: string, tokenid: number, reload: () => void) => {
+const handleDeleteItem = async (contractaddress: string, tokenid: string, reload: () => void) => {
   confirm({
     // title: 'Delete',
     icon: <ExclamationCircleOutlined />,
@@ -48,7 +48,7 @@ const handleDeleteItem = async (contractaddress: string, tokenid: number, reload
 
 const handleHideItem = async (
   contractaddress: string,
-  tokenid: number,
+  tokenid: string,
   status: NftDisplayEnum,
   reload: () => void,
 ) => {

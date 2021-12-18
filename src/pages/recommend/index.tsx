@@ -28,7 +28,7 @@ export interface IpoolItem {
   state: number;
   token0: string;
   token1: string;
-  tokenid: number;
+  tokenid: string;
   username: string;
   itemname: string;
   category: string;

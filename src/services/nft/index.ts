@@ -6,7 +6,7 @@ export const deleteNft = ({
   tokenid,
 }: {
   contractaddress: string;
-  tokenid: number;
+  tokenid: string;
 }) => {
   return post(Apis.delpoolitem, {
     contractaddress,
@@ -20,7 +20,7 @@ export const hideNft = ({
   status,
 }: {
   contractaddress: string;
-  tokenid: number;
+  tokenid: string;
   status: NftDisplayEnum;
 }) => {
   return post(Apis.updatepoolitem, {

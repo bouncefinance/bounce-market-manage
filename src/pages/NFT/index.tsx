@@ -170,7 +170,7 @@ const NFT: React.FC = () => {
             if (checked) {
               handleHideItem(record.token0, record.tokenid, NftDisplayEnum.hide, reloadItem);
             } else {
-              handleHideItem(record.token0, record.tokenid, NftDisplayEnum.hide, reloadItem);
+              handleHideItem(record.token0, record.tokenid, NftDisplayEnum.show, reloadItem);
             }
           }}
         />
